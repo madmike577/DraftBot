@@ -1404,6 +1404,34 @@
       "team": "bone1905",
       "player": "Gary Anderson",
       "sport": "PDC Darts"
+    },
+    {
+      "pick": 191,
+      "round": 14,
+      "team": "allenisfeliz",
+      "player": "Justin Rose",
+      "sport": "PGA Golf"
+    },
+    {
+      "pick": 192,
+      "round": 14,
+      "team": "pixelatedfool",
+      "player": "Texas Rangers",
+      "sport": "MLB"
+    },
+    {
+      "pick": 193,
+      "round": 14,
+      "team": "zedispresident",
+      "player": "Jacksonville Jaguars",
+      "sport": "NFL"
+    },
+    {
+      "pick": 194,
+      "round": 14,
+      "team": "peltron3030",
+      "player": "Los Angeles Chargers",
+      "sport": "NFL"
     }
   ],
   "team_rosters": {
@@ -1606,6 +1634,11 @@
         "pick": 171,
         "player": "Gerwyn Price",
         "sport": "PDC Darts"
+      },
+      {
+        "pick": 194,
+        "player": "Los Angeles Chargers",
+        "sport": "NFL"
       }
     ],
     "zedispresident": [
@@ -1673,6 +1706,11 @@
         "pick": 172,
         "player": "Tottenham Hotspur",
         "sport": "UEFA Champions League"
+      },
+      {
+        "pick": 193,
+        "player": "Jacksonville Jaguars",
+        "sport": "NFL"
       }
     ],
     "pixelatedfool": [
@@ -1740,6 +1778,11 @@
         "pick": 173,
         "player": "Nebraska",
         "sport": "NCAA Basketball - Men's"
+      },
+      {
+        "pick": 192,
+        "player": "Texas Rangers",
+        "sport": "MLB"
       }
     ],
     "allenisfeliz": [
@@ -1807,6 +1850,11 @@
         "pick": 174,
         "player": "Duke",
         "sport": "NCAA Basketball - Women's"
+      },
+      {
+        "pick": 191,
+        "player": "Justin Rose",
+        "sport": "PGA Golf"
       }
     ],
     "bone1905": [
@@ -2386,8 +2434,8 @@
       }
     ]
   },
-  "current_pick": 191,
-  "last_known_pick": 191,
+  "current_pick": 195,
+  "last_known_pick": 195,
   "api_available": true,
   "using_sample_data": false,
   "draft_was_paused": false

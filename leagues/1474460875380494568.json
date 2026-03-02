@@ -1159,6 +1159,20 @@
       "team": "bakrondo",
       "player": "Fremantle Dockers",
       "sport": "Aussie Rules Football"
+    },
+    {
+      "pick": 156,
+      "round": 12,
+      "team": "smelscifi",
+      "player": "Gerwyn Price",
+      "sport": "PDC Darts"
+    },
+    {
+      "pick": 157,
+      "round": 12,
+      "team": "peteg__",
+      "player": "Philadelphia Eagles",
+      "sport": "NFL"
     }
   ],
   "team_rosters": {
@@ -1844,6 +1858,11 @@
         "pick": 152,
         "player": "Josh Rock",
         "sport": "PDC Darts"
+      },
+      {
+        "pick": 157,
+        "player": "Philadelphia Eagles",
+        "sport": "NFL"
       }
     ],
     "smelscifi": [
@@ -1901,6 +1920,11 @@
         "pick": 153,
         "player": "Chelsea",
         "sport": "UEFA Champions League"
+      },
+      {
+        "pick": 156,
+        "player": "Gerwyn Price",
+        "sport": "PDC Darts"
       }
     ],
     "bakrondo": [
@@ -1966,8 +1990,8 @@
       }
     ]
   },
-  "current_pick": 156,
-  "last_known_pick": 156,
+  "current_pick": 158,
+  "last_known_pick": 158,
   "api_available": true,
   "using_sample_data": false,
   "draft_was_paused": false

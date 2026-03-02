@@ -20,16 +20,16 @@ intents.message_content = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 brackt = app_commands.Group(
-    name="brackt",
-    description="Brackt Draft Bot commands",
+    name="bradmin",
+    description="Brackt Draft Bot admin commands",
     default_permissions=discord.Permissions(manage_guild=True)
 )
 tree.add_command(brackt)
 
 # Public read-only group — visible to everyone
 brackt_public = app_commands.Group(
-    name="draft",
-    description="View draft info"
+    name="brackt",
+    description="Brackt Draft Bot commands"
 )
 tree.add_command(brackt_public)
 
@@ -194,7 +194,7 @@ def sync_from_api(league: dict, data: dict):
 async def no_league_response(interaction: discord.Interaction):
     await interaction.response.send_message(
         '❌ No league configured in this channel. '
-        'A server admin must run `/brackt setup` first.',
+        'A server admin must run `/bradmin setup` first.',
         ephemeral=True
     )
 
@@ -808,7 +808,7 @@ async def help_command(interaction: discord.Interaction):
         '`/draft status` — Show current draft state\n'
         '`/draft help` — Show this message\n\n'
         'All commands support a `display` option: **public** (default) or **private**\n\n'
-        '⚙️ *Admin commands are available to server managers via `/brackt`*'
+        '⚙️ *Admin commands are available to server managers via `/bradmin`*'
     )
     await interaction.response.send_message(msg, ephemeral=True)
 
@@ -847,41 +847,45 @@ async def poll_all_leagues():
                 # Safety guard — sync silently on first poll
                 if last_known == 0:
                     sync_from_api(league, data)
-                    league['last_known_pick'] = new_pick_number
                     save_league(channel_id, league)
                     continue
 
                 # Announce new picks
                 if new_pick_number > last_known:
                     new_picks = [p for p in data['picks'] if p['pickNumber'] > last_known]
+
                     for pick in sorted(new_picks, key=lambda x: x['pickNumber']):
                         username = pick['username']
                         player = pick['participantName']
                         sport = pick['sport']
                         pick_num = pick['pickNumber']
                         formatted, _ = format_pick_number(league, pick_num)
-                        await channel.send(
-                            f'✅ **Pick {formatted} ({pick_num}):** {mention(league, username)} '
-                            f'selected **{player}** ({sport})!'
+                        after_username = get_next_pick_username(league, pick_num)
+                        on_deck = (
+                            f'\n📋 **On Deck:** {mention(league, after_username)}'
+                            if after_username else ''
                         )
+                        next_username = get_team_for_pick(league, pick_num + 1)
 
-                    if data['isDraftComplete']:
-                        total = get_total_picks(league)
-                        await channel.send(
-                            f'🏆 **The draft is complete! All {total} picks have been made. '
-                            f'Good luck everyone!**'
-                        )
-                    else:
-                        on_clock = data['onTheClock']
-                        next_username = on_clock['username']
-                        next_pick_num = new_pick_number
-                        formatted, _ = format_pick_number(league, next_pick_num)
-                        after_username = get_next_pick_username(league, next_pick_num)
-                        up_next = f'\nUp next: {mention(league, after_username)}' if after_username else ''
-                        await channel.send(
-                            f'🕐 **Pick {formatted} ({next_pick_num}):** '
-                            f'{mention(league, next_username)} is on the clock!{up_next}'
-                        )
+                        if data['isDraftComplete'] and pick_num == new_pick_number:
+                            total = get_total_picks(league)
+                            await channel.send(
+                                f'━━━━━━━━━━━━━━━━━━━━━━\n'
+                                f'✅ **Pick {formatted}** — {mention(league, username)}\n'
+                                f'**{player}** · {sport}\n'
+                                f'━━━━━━━━━━━━━━━━━━━━━━\n'
+                                f'🏆 **The draft is complete!**\n'
+                                f'All **{total} picks** have been made. Good luck everyone!'
+                            )
+                        else:
+                            await channel.send(
+                                f'━━━━━━━━━━━━━━━━━━━━━━\n'
+                                f'✅ **Pick {formatted}** — {mention(league, username)}\n'
+                                f'**{player}** · {sport}\n'
+                                f'━━━━━━━━━━━━━━━━━━━━━━\n'
+                                f'🕐 **On the Clock:** {mention(league, next_username)}'
+                                f'{on_deck}'
+                            )
 
                 # Pause detection
                 is_paused = data.get('isPaused', False)
@@ -892,10 +896,13 @@ async def poll_all_leagues():
                     await channel.send('▶️ **The draft has resumed!**')
 
                 sync_from_api(league, data)
-                league['last_known_pick'] = new_pick_number
+                league['last_known_pick'] = last_known
                 league['draft_was_paused'] = is_paused
                 save_league(channel_id, league)
 
+            except discord.Forbidden:
+                print(f'League {filename}: Missing channel permissions — skipping')
+                continue
             except Exception as e:
                 print(f'Error polling league {filename}: {e}')
                 continue
@@ -918,10 +925,11 @@ async def on_ready():
                 continue
             data = fetch_draft_state(league)
             if data:
+                saved_last_known = league.get('last_known_pick', 0)
                 sync_from_api(league, data)
-                league['last_known_pick'] = data['currentPickNumber']
+                league['last_known_pick'] = saved_last_known
                 save_league(channel_id, league)
-                print(f'League {channel_id} synced at pick {league["current_pick"]}')
+                print(f'League {channel_id} synced at pick {league["current_pick"]}, last known: {saved_last_known}')
             else:
                 print(f'League {channel_id} API unavailable — using saved state')
         except Exception as e:
