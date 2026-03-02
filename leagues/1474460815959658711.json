@@ -1432,6 +1432,13 @@
       "team": "peltron3030",
       "player": "Los Angeles Chargers",
       "sport": "NFL"
+    },
+    {
+      "pick": 195,
+      "round": 14,
+      "team": "norogg",
+      "player": "Dallas Wings",
+      "sport": "WNBA"
     }
   ],
   "team_rosters": {
@@ -1567,6 +1574,11 @@
         "pick": 170,
         "player": "Ben Shelton",
         "sport": "Tennis - Men's"
+      },
+      {
+        "pick": 195,
+        "player": "Dallas Wings",
+        "sport": "WNBA"
       }
     ],
     "peltron3030": [
@@ -2434,8 +2446,8 @@
       }
     ]
   },
-  "current_pick": 195,
-  "last_known_pick": 195,
+  "current_pick": 196,
+  "last_known_pick": 196,
   "api_available": true,
   "using_sample_data": false,
   "draft_was_paused": false

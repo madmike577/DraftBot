@@ -851,6 +851,7 @@ async def poll_all_leagues():
                     continue
 
                 # Announce new picks
+                print(f'League {channel_id}: new={new_pick_number} last={last_known}')
                 if new_pick_number > last_known:
                     new_picks = [p for p in data['picks'] if p['pickNumber'] > last_known]
 
@@ -896,7 +897,7 @@ async def poll_all_leagues():
                     await channel.send('▶️ **The draft has resumed!**')
 
                 sync_from_api(league, data)
-                league['last_known_pick'] = last_known
+                league['last_known_pick'] = new_pick_number
                 league['draft_was_paused'] = is_paused
                 save_league(channel_id, league)
 
