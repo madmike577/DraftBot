@@ -19,6 +19,8 @@ intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
+
+# Admin commands — hidden from regular users via manage_guild permission
 brackt = app_commands.Group(
     name="bradmin",
     description="Brackt Draft Bot admin commands",
@@ -26,12 +28,22 @@ brackt = app_commands.Group(
 )
 tree.add_command(brackt)
 
-# Public read-only group — visible to everyone
+# Public read commands — visible to everyone
 brackt_public = app_commands.Group(
     name="brackt",
     description="Brackt Draft Bot commands"
 )
 tree.add_command(brackt_public)
+
+# --- SHARED IN-MEMORY CACHE ---
+# Single source of truth for the polling loop and commands that modify league state.
+# Loaded on startup, kept in sync by all write operations.
+leagues_cache: dict[int, dict] = {}
+
+def update_cache(channel_id: int, league: dict):
+    """Update both the in-memory cache and persist to disk."""
+    leagues_cache[channel_id] = league
+    save_league(channel_id, league)
 
 # --- LEAGUE DATA MANAGEMENT ---
 
@@ -102,10 +114,12 @@ def get_team_for_pick(league: dict, pick_number: int) -> str | None:
         return order[n - 1 - position]
 
 def get_next_pick_username(league: dict, pick_number: int) -> str | None:
+    """Return the username for the pick AFTER pick_number. Returns None if at end of draft."""
     total = get_total_picks(league)
-    if pick_number >= total:
+    next_pick = pick_number + 1
+    if next_pick > total:
         return None
-    return get_team_for_pick(league, pick_number + 1)
+    return get_team_for_pick(league, next_pick)
 
 def format_pick_number(league: dict, overall: int) -> tuple:
     n = get_num_teams(league)
@@ -133,7 +147,7 @@ def get_flex_remaining(league: dict, brackt_username: str) -> int:
     drafted_sports = [p['sport'] for p in roster]
     required_filled = sum(1 for s in league['required_sports'] if s in drafted_sports)
     flex_used = len(roster) - required_filled
-    return league['flex_spots'] - flex_used
+    return max(0, league['flex_spots'] - flex_used)
 
 def mode_label(league: dict) -> str:
     if league.get('api_available') and not league.get('using_sample_data'):
@@ -166,7 +180,10 @@ def fetch_draft_state(league: dict) -> dict | None:
         return None
 
 def sync_from_api(league: dict, data: dict):
-    """Sync full pick state from confirmed live API data."""
+    """
+    Rebuild pick history and rosters from API data.
+    Does NOT modify last_known_pick — caller is responsible for setting that.
+    """
     league['current_pick'] = data['currentPickNumber']
     league['pick_history'] = []
     league['team_rosters'] = {t: [] for t in league['draft_order']}
@@ -201,12 +218,12 @@ async def no_league_response(interaction: discord.Interaction):
 async def not_league_admin_response(interaction: discord.Interaction):
     await interaction.response.send_message(
         '❌ Only the league admin can use this command. '
-        'Ask the current admin to run `/brackt admintransfer @you` if needed.',
+        'Ask the current admin to run `/bradmin admintransfer @you` if needed.',
         ephemeral=True
     )
 
 def check_league_and_admin(interaction: discord.Interaction) -> tuple[dict | None, bool]:
-    """Returns (league, is_league_admin). Handles both checks in one call."""
+    """Load league from disk and check admin. Returns (league, is_league_admin)."""
     league = load_league(interaction.channel_id)
     if not league:
         return None, False
@@ -229,13 +246,11 @@ async def brackt_username_autocomplete(
             choices.append(app_commands.Choice(name=display, value=username))
     return choices[:25]
 
-# --- ADMIN COMMANDS (visible only to Manage Server / Administrator) ---
-# The entire brackt group has default_permissions=manage_guild set at group level
-# so all commands in this group are hidden from regular users automatically.
+# --- ADMIN COMMANDS ---
 
 @brackt.command(name="setup", description="Initialize a new league in this channel")
 async def setup(interaction: discord.Interaction):
-    # Double-check server permission even though the group restricts visibility
+    # Double-check server permission as a safety net
     if not interaction.user.guild_permissions.manage_guild and \
        not interaction.user.guild_permissions.administrator:
         await interaction.response.send_message(
@@ -248,22 +263,22 @@ async def setup(interaction: discord.Interaction):
     if existing:
         await interaction.response.send_message(
             '⚠️ A league is already configured in this channel. '
-            'Use `/brackt adminsettings` to view current settings.',
+            'Use `/bradmin adminsettings` to view current settings.',
             ephemeral=True
         )
         return
     league = default_league(channel_id, interaction.user.id)
-    save_league(channel_id, league)
+    update_cache(channel_id, league)
     await interaction.response.send_message(
         f'✅ **League initialized!** You ({interaction.user.mention}) are the league admin.\n\n'
         f'**Recommended setup order:**\n'
-        f'1️⃣ `/brackt setapi [url]` — Connect your brackt.com draft\n'
-        f'2️⃣ `/brackt setrounds [n]` — Set total rounds (default: 20)\n'
-        f'3️⃣ `/brackt setflex [n]` — Set flex spots (default: 4)\n'
-        f'4️⃣ `/brackt addplayer [username] [@user]` — Map each player\n'
-        f'5️⃣ `/brackt setdraftorder [u1,u2,...]` — Set snake draft order\n'
-        f'6️⃣ `/brackt syncnow` — Pull live data and auto-populate sports\n'
-        f'\n💡 `/brackt addsport` is available for new drafts with no picks yet.',
+        f'1️⃣ `/bradmin setapi [url]` — Connect your brackt.com draft\n'
+        f'2️⃣ `/bradmin setrounds [n]` — Set total rounds (default: 20)\n'
+        f'3️⃣ `/bradmin setflex [n]` — Set flex spots (default: 4)\n'
+        f'4️⃣ `/bradmin addplayer [username] [@user]` — Map each player\n'
+        f'5️⃣ `/bradmin setdraftorder [u1,u2,...]` — Set snake draft order\n'
+        f'6️⃣ `/bradmin syncnow` — Pull live data and auto-populate sports\n'
+        f'\n💡 `/bradmin addsport` is available for new drafts with no picks yet.',
         ephemeral=True
     )
 
@@ -283,9 +298,9 @@ async def setapi(interaction: discord.Interaction, url: str):
         )
         return
     league['api_url'] = url
-    save_league(interaction.channel_id, league)
+    update_cache(interaction.channel_id, league)
     await interaction.response.send_message(
-        '✅ API URL set. Run `/brackt syncnow` to pull current draft data.',
+        '✅ API URL set. Run `/bradmin syncnow` to pull current draft data.',
         ephemeral=True
     )
 
@@ -303,7 +318,7 @@ async def setrounds(interaction: discord.Interaction, rounds: int):
         )
         return
     league['total_rounds'] = rounds
-    save_league(interaction.channel_id, league)
+    update_cache(interaction.channel_id, league)
     await interaction.response.send_message(
         f'✅ Total rounds set to **{rounds}**.', ephemeral=True
     )
@@ -322,7 +337,7 @@ async def setflex(interaction: discord.Interaction, spots: int):
         )
         return
     league['flex_spots'] = spots
-    save_league(interaction.channel_id, league)
+    update_cache(interaction.channel_id, league)
     await interaction.response.send_message(
         f'✅ Flex spots set to **{spots}**.', ephemeral=True
     )
@@ -345,7 +360,7 @@ async def addsport(interaction: discord.Interaction, sport: str):
         )
         return
     league['required_sports'].append(sport)
-    save_league(interaction.channel_id, league)
+    update_cache(interaction.channel_id, league)
     await interaction.response.send_message(
         f'✅ Added **{sport}**. ({len(league["required_sports"])} required sports total)',
         ephemeral=True
@@ -365,7 +380,7 @@ async def removesport(interaction: discord.Interaction, sport: str):
         )
         return
     league['required_sports'].remove(sport)
-    save_league(interaction.channel_id, league)
+    update_cache(interaction.channel_id, league)
     await interaction.response.send_message(
         f'✅ Removed **{sport}**.', ephemeral=True
     )
@@ -385,7 +400,6 @@ async def addplayer(interaction: discord.Interaction, brackt_username: str, disc
     if not brackt_username:
         await interaction.response.send_message('❌ Brackt username cannot be empty.', ephemeral=True)
         return
-    # Prevent mapping a bot account
     if discord_user.bot:
         await interaction.response.send_message(
             '❌ Cannot map a brackt username to a bot account.', ephemeral=True
@@ -395,7 +409,7 @@ async def addplayer(interaction: discord.Interaction, brackt_username: str, disc
     league['handles'][brackt_username] = discord_user.display_name
     if brackt_username not in league['team_rosters']:
         league['team_rosters'][brackt_username] = []
-    save_league(interaction.channel_id, league)
+    update_cache(interaction.channel_id, league)
     await interaction.response.send_message(
         f'✅ Mapped **{brackt_username}** → {discord_user.mention}', ephemeral=True
     )
@@ -415,7 +429,7 @@ async def removeplayer(interaction: discord.Interaction, brackt_username: str):
         return
     league['players'].pop(brackt_username)
     league['handles'].pop(brackt_username, None)
-    save_league(interaction.channel_id, league)
+    update_cache(interaction.channel_id, league)
     await interaction.response.send_message(
         f'✅ Removed **{brackt_username}**.', ephemeral=True
     )
@@ -434,11 +448,9 @@ async def setdraftorder(interaction: discord.Interaction, order: str):
             '❌ Please provide at least 2 usernames separated by commas.', ephemeral=True
         )
         return
-    # Check for duplicates
     if len(draft_order) != len(set(draft_order)):
         await interaction.response.send_message(
-            '❌ Duplicate usernames detected. Each team should appear once.',
-            ephemeral=True
+            '❌ Duplicate usernames detected. Each team should appear once.', ephemeral=True
         )
         return
     unknown = [u for u in draft_order if u not in league['players']]
@@ -446,7 +458,7 @@ async def setdraftorder(interaction: discord.Interaction, order: str):
         if u not in league['team_rosters']:
             league['team_rosters'][u] = []
     league['draft_order'] = draft_order
-    save_league(interaction.channel_id, league)
+    update_cache(interaction.channel_id, league)
     order_text = '\n'.join([f'{i+1}. {u}' for i, u in enumerate(draft_order)])
     warning = (
         f'\n\n⚠️ These usernames are not yet mapped to Discord users: '
@@ -466,7 +478,7 @@ async def syncnow(interaction: discord.Interaction):
         await not_league_admin_response(interaction); return
     if not league.get('api_url'):
         await interaction.response.send_message(
-            '❌ No API URL set. Run `/brackt setapi [url]` first.', ephemeral=True
+            '❌ No API URL set. Run `/bradmin setapi [url]` first.', ephemeral=True
         )
         return
     await interaction.response.defer(ephemeral=True)
@@ -478,7 +490,7 @@ async def syncnow(interaction: discord.Interaction):
         )
         return
 
-    # Auto-populate draft order if not set
+    # Auto-populate draft order from API if not yet set
     if not league.get('draft_order'):
         seen = []
         for pick in sorted(data['picks'], key=lambda x: x['pickNumber']):
@@ -490,7 +502,7 @@ async def syncnow(interaction: discord.Interaction):
                 league['team_rosters'][u] = []
         print(f'Auto-populated draft order for league {league["channel_id"]}: {seen}')
 
-    # Auto-populate required sports if not set
+    # Auto-populate required sports from API if not yet set
     sports_populated = False
     if not league.get('required_sports'):
         seen_sports = []
@@ -501,9 +513,17 @@ async def syncnow(interaction: discord.Interaction):
         sports_populated = True
         print(f'Auto-populated {len(seen_sports)} sports for league {league["channel_id"]}')
 
+    # Preserve last_known_pick so polling loop can detect future picks correctly
+    preserved_last_known = league.get('last_known_pick', 0)
     sync_from_api(league, data)
-    league['last_known_pick'] = data['currentPickNumber']
-    save_league(interaction.channel_id, league)
+    # On first sync (last_known is 0), set to current - 1 so next pick gets announced
+    # On subsequent syncs, preserve existing last_known so no picks are skipped
+    if preserved_last_known == 0:
+        league['last_known_pick'] = data['currentPickNumber'] - 1
+    else:
+        league['last_known_pick'] = preserved_last_known
+
+    update_cache(interaction.channel_id, league)
 
     sports_note = (
         f'\n📋 **{len(league["required_sports"])} required sports auto-populated** from pick history.'
@@ -536,7 +556,7 @@ async def admintransfer(interaction: discord.Interaction, new_admin: discord.Mem
         )
         return
     league['admin_id'] = new_admin.id
-    save_league(interaction.channel_id, league)
+    update_cache(interaction.channel_id, league)
     await interaction.response.send_message(
         f'✅ Admin role transferred to {new_admin.mention}.', ephemeral=True
     )
@@ -585,7 +605,7 @@ async def adminpick(interaction: discord.Interaction, player: str, sport: str, b
         await not_league_admin_response(interaction); return
     if not league['draft_order']:
         await interaction.response.send_message(
-            '❌ Draft order not set. Use `/brackt setdraftorder` first.', ephemeral=True
+            '❌ Draft order not set. Use `/bradmin setdraftorder` first.', ephemeral=True
         )
         return
 
@@ -598,12 +618,10 @@ async def adminpick(interaction: discord.Interaction, player: str, sport: str, b
         )
         return
 
-    # Warn if sport doesn't match required list but allow flex picks through
+    # Validate flex picks
     if league['required_sports'] and sport not in league['required_sports']:
-        remaining_flex = get_flex_remaining(
-            league,
-            brackt_username or get_team_for_pick(league, league['current_pick'])
-        )
+        target_team = brackt_username or get_team_for_pick(league, league['current_pick'])
+        remaining_flex = get_flex_remaining(league, target_team)
         if remaining_flex <= 0:
             await interaction.response.send_message(
                 f'❌ **{sport}** is not a required sport and this team has no flex spots remaining.',
@@ -625,6 +643,7 @@ async def adminpick(interaction: discord.Interaction, player: str, sport: str, b
     if team not in league['team_rosters']:
         league['team_rosters'][team] = []
 
+    formatted, _ = format_pick_number(league, league['current_pick'])
     pick_entry = {
         'pick': league['current_pick'],
         'round': ((league['current_pick'] - 1) // get_num_teams(league)) + 1,
@@ -639,23 +658,29 @@ async def adminpick(interaction: discord.Interaction, player: str, sport: str, b
         'sport': sport
     })
 
-    formatted, _ = format_pick_number(league, league['current_pick'])
-    league['last_known_pick'] = league['current_pick']
+    league['last_known_pick'] = league['current_pick'] - 1
     league['current_pick'] += 1
     next_team = get_team_for_pick(league, league['current_pick'])
-    save_league(interaction.channel_id, league)
+    on_deck_team = get_team_for_pick(league, league['current_pick'] + 1)
+    on_deck = f'\n📋 **On Deck:** {mention(league, on_deck_team)}' if on_deck_team else ''
+
+    # Update cache so polling loop won't double-announce this pick
+    update_cache(interaction.channel_id, league)
 
     channel = client.get_channel(interaction.channel_id)
-    up_next = f'\n🕐 Now on the clock: {mention(league, next_team)}' if next_team else ''
     await channel.send(
-        f'✅ **Pick {formatted} ({league["current_pick"] - 1}):** {mention(league, team)} '
-        f'selected **{player}** ({sport})!{up_next}'
+        f'━━━━━━━━━━━━━━━━━━━━━━\n'
+        f'✅ **Pick {formatted}** — {mention(league, team)}\n'
+        f'**{player}** · {sport}\n'
+        f'━━━━━━━━━━━━━━━━━━━━━━\n'
+        f'🕐 **On the Clock:** {mention(league, next_team)}'
+        f'{on_deck}'
     )
     await interaction.response.send_message(
         f'✅ Pick recorded: **{player}** ({sport}) for '
         f'**{league["handles"].get(team, team)}**',
         ephemeral=True
-    ) 
+    )
 
 # --- PUBLIC READ COMMANDS ---
 
@@ -667,9 +692,7 @@ async def onclock(interaction: discord.Interaction, display: str = "public"):
     if not league:
         await no_league_response(interaction); return
     if not league['draft_order']:
-        await interaction.response.send_message(
-            '❌ Draft not configured yet.', ephemeral=True
-        ); return
+        await interaction.response.send_message('❌ Draft not configured yet.', ephemeral=True); return
     pick_num = league['current_pick']
     formatted, _ = format_pick_number(league, pick_num)
     username = get_team_for_pick(league, pick_num)
@@ -714,15 +737,13 @@ async def team_command(interaction: discord.Interaction, brackt_username: str, d
     if brackt_username not in league['team_rosters']:
         known = ', '.join(f'`{u}`' for u in league['draft_order']) or 'None configured'
         await interaction.response.send_message(
-            f'❌ Unknown username: `{brackt_username}`\nKnown teams: {known}',
-            ephemeral=True
+            f'❌ Unknown username: `{brackt_username}`\nKnown teams: {known}', ephemeral=True
         ); return
     roster = league['team_rosters'].get(brackt_username, [])
     handle = league['handles'].get(brackt_username, brackt_username)
     if not roster:
         await interaction.response.send_message(
-            f'📋 No picks recorded for **{handle}** yet.',
-            ephemeral=is_ephemeral(display)
+            f'📋 No picks recorded for **{handle}** yet.', ephemeral=is_ephemeral(display)
         ); return
     text = f'📋 **{handle}\'s Picks ({len(roster)}/{league["total_rounds"]})**\n\n'
     for p in roster:
@@ -752,7 +773,7 @@ async def mysports(interaction: discord.Interaction, brackt_username: str = None
         )
         if brackt_username is None:
             await interaction.response.send_message(
-                '❌ Could not find your team. Try `/draft mysports [brackt username]`',
+                '❌ Could not find your team. Try `/brackt mysports [brackt username]`',
                 ephemeral=True
             ); return
     if brackt_username not in league['team_rosters']:
@@ -779,9 +800,7 @@ async def status(interaction: discord.Interaction, display: str = "public"):
     if not league:
         await no_league_response(interaction); return
     if not league['draft_order']:
-        await interaction.response.send_message(
-            '❌ Draft not configured yet.', ephemeral=True
-        ); return
+        await interaction.response.send_message('❌ Draft not configured yet.', ephemeral=True); return
     pick_num = league['current_pick']
     total_picks = get_total_picks(league)
     _, round_num = format_pick_number(league, pick_num)
@@ -801,14 +820,14 @@ async def help_command(interaction: discord.Interaction):
     msg = (
         f'📖 **Brackt Draft Bot** ({mode})\n\n'
         '**Commands:**\n'
-        '`/draft onclock` — Show who is on the clock\n'
-        '`/draft last5` — Show the last 5 picks\n'
-        '`/draft team [username]` — Show a team\'s picks\n'
-        '`/draft mysports [username]` — Show missing sports and flex spots\n'
-        '`/draft status` — Show current draft state\n'
-        '`/draft help` — Show this message\n\n'
+        '`/brackt onclock` — Show who is on the clock\n'
+        '`/brackt last5` — Show the last 5 picks\n'
+        '`/brackt team [username]` — Show a team\'s picks\n'
+        '`/brackt mysports [username]` — Show missing sports and flex spots\n'
+        '`/brackt status` — Show current draft state\n'
+        '`/brackt help` — Show this message\n\n'
         'All commands support a `display` option: **public** (default) or **private**\n\n'
-        '⚙️ *Admin commands are available to server managers via `/bradmin`*'
+        '⚙️ *Server managers can access admin commands via `/bradmin`*'
     )
     await interaction.response.send_message(msg, ephemeral=True)
 
@@ -819,14 +838,19 @@ async def poll_all_leagues():
     print(f'Polling all leagues every {POLL_INTERVAL} seconds...')
 
     while not client.is_closed():
-        league_files = [f for f in os.listdir(LEAGUES_DIR) if f.endswith('.json')]
-
-        for filename in league_files:
-            try:
+        # Pick up any newly created league files not yet in cache
+        for filename in os.listdir(LEAGUES_DIR):
+            if filename.endswith('.json'):
                 channel_id = int(filename.replace('.json', ''))
-                league = load_league(channel_id)
+                if channel_id not in leagues_cache:
+                    league = load_league(channel_id)
+                    if league:
+                        update_cache(channel_id, league)
+                        print(f'New league {channel_id} loaded into cache')
 
-                if not league or not league.get('api_url') or not league.get('draft_order'):
+        for channel_id, league in list(leagues_cache.items()):
+            try:
+                if not league.get('api_url') or not league.get('draft_order'):
                     continue
 
                 channel = client.get_channel(channel_id)
@@ -835,25 +859,33 @@ async def poll_all_leagues():
 
                 data = fetch_draft_state(league)
                 if data is None:
+                    # API went down — mark unavailable but keep saved state intact
                     if league.get('api_available'):
                         league['api_available'] = False
                         league['using_sample_data'] = True
-                        save_league(channel_id, league)
+                        update_cache(channel_id, league)
                     continue
 
-                new_pick_number = data['currentPickNumber']
+                # currentPickNumber is the NEXT pick to be made.
+                # last_completed = currentPickNumber - 1 = last pick that was actually made.
+                last_completed = data['currentPickNumber'] - 1
                 last_known = league.get('last_known_pick', 0)
 
-                # Safety guard — sync silently on first poll
+                # First poll after startup — sync silently without announcing
                 if last_known == 0:
                     sync_from_api(league, data)
-                    save_league(channel_id, league)
+                    league['last_known_pick'] = last_completed
+                    update_cache(channel_id, league)
                     continue
 
-                # Announce new picks
-                print(f'League {channel_id}: new={new_pick_number} last={last_known}')
-                if new_pick_number > last_known:
+                # Detect new picks — last_completed > last_known means picks were made
+                if last_completed > last_known:
                     new_picks = [p for p in data['picks'] if p['pickNumber'] > last_known]
+
+                    # API timing guard — currentPickNumber advanced but picks not in array yet
+                    # Skip sync and retry next poll cycle
+                    if not new_picks:
+                        continue
 
                     for pick in sorted(new_picks, key=lambda x: x['pickNumber']):
                         username = pick['username']
@@ -861,15 +893,17 @@ async def poll_all_leagues():
                         sport = pick['sport']
                         pick_num = pick['pickNumber']
                         formatted, _ = format_pick_number(league, pick_num)
-                        after_username = get_next_pick_username(league, pick_num)
-                        on_deck = (
-                            f'\n📋 **On Deck:** {mention(league, after_username)}'
-                            if after_username else ''
-                        )
-                        next_username = get_team_for_pick(league, pick_num + 1)
 
-                        if data['isDraftComplete'] and pick_num == new_pick_number:
-                            total = get_total_picks(league)
+                        # On the Clock = pick_num + 1, On Deck = pick_num + 2
+                        next_username = get_team_for_pick(league, pick_num + 1)
+                        on_deck_username = get_team_for_pick(league, pick_num + 2)
+                        total = get_total_picks(league)
+                        on_deck = (
+                            f'\n📋 **On Deck:** {mention(league, on_deck_username)}'
+                            if on_deck_username and pick_num + 2 <= total else ''
+                        )
+
+                        if data['isDraftComplete'] and pick_num == last_completed:
                             await channel.send(
                                 f'━━━━━━━━━━━━━━━━━━━━━━\n'
                                 f'✅ **Pick {formatted}** — {mention(league, username)}\n'
@@ -888,7 +922,10 @@ async def poll_all_leagues():
                                 f'{on_deck}'
                             )
 
-                # Pause detection
+                    # Sync rosters and pick history only when new picks were announced
+                    sync_from_api(league, data)
+
+                # Always update last_known_pick and pause state after a successful poll
                 is_paused = data.get('isPaused', False)
                 was_paused = league.get('draft_was_paused', False)
                 if is_paused and not was_paused:
@@ -896,16 +933,15 @@ async def poll_all_leagues():
                 elif not is_paused and was_paused:
                     await channel.send('▶️ **The draft has resumed!**')
 
-                sync_from_api(league, data)
-                league['last_known_pick'] = new_pick_number
+                league['last_known_pick'] = last_completed
                 league['draft_was_paused'] = is_paused
-                save_league(channel_id, league)
+                update_cache(channel_id, league)
 
             except discord.Forbidden:
-                print(f'League {filename}: Missing channel permissions — skipping')
+                print(f'League {channel_id}: Missing channel permissions — skipping')
                 continue
             except Exception as e:
-                print(f'Error polling league {filename}: {e}')
+                print(f'Error polling league {channel_id}: {e}')
                 continue
 
         await asyncio.sleep(POLL_INTERVAL)
@@ -916,23 +952,39 @@ async def poll_all_leagues():
 async def on_ready():
     print(f'Bot is online as {client.user}')
 
-    league_files = [f for f in os.listdir(LEAGUES_DIR) if f.endswith('.json')]
-    for filename in league_files:
+    for filename in os.listdir(LEAGUES_DIR):
+        if not filename.endswith('.json'):
+            continue
         try:
             channel_id = int(filename.replace('.json', ''))
             league = load_league(channel_id)
             if not league or not league.get('api_url'):
                 print(f'League {channel_id} skipped — no API URL configured')
+                # Still load into cache so commands work even without API
+                if league:
+                    leagues_cache[channel_id] = league
                 continue
+
+            # Preserve last_known_pick from disk before syncing
+            saved_last_known = league.get('last_known_pick', 0)
+
             data = fetch_draft_state(league)
             if data:
-                saved_last_known = league.get('last_known_pick', 0)
                 sync_from_api(league, data)
-                league['last_known_pick'] = saved_last_known
-                save_league(channel_id, league)
-                print(f'League {channel_id} synced at pick {league["current_pick"]}, last known: {saved_last_known}')
+                last_completed = data['currentPickNumber'] - 1
+                # If saved_last_known is valid and <= last_completed, restore it
+                # so polling loop announces picks made while bot was offline.
+                # If it was 0 or somehow ahead, use last_completed as safe default.
+                if 0 < saved_last_known <= last_completed:
+                    league['last_known_pick'] = saved_last_known
+                else:
+                    league['last_known_pick'] = last_completed
+                print(f'League {channel_id} synced at pick {league["current_pick"]}, resuming from pick {league["last_known_pick"]}')
             else:
                 print(f'League {channel_id} API unavailable — using saved state')
+
+            update_cache(channel_id, league)
+
         except Exception as e:
             print(f'Error initializing league {filename}: {e}')
 

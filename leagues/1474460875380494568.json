@@ -1173,6 +1173,104 @@
       "team": "peteg__",
       "player": "Philadelphia Eagles",
       "sport": "NFL"
+    },
+    {
+      "pick": 158,
+      "round": 12,
+      "team": "ikyn",
+      "player": "Denver Broncos",
+      "sport": "NFL"
+    },
+    {
+      "pick": 159,
+      "round": 12,
+      "team": "tanay002",
+      "player": "San Francisco 49ers",
+      "sport": "NFL"
+    },
+    {
+      "pick": 160,
+      "round": 12,
+      "team": "brando1609",
+      "player": "Detroit Lions",
+      "sport": "NFL"
+    },
+    {
+      "pick": 161,
+      "round": 12,
+      "team": "Madmike",
+      "player": "Aurora",
+      "sport": "Counter Strike"
+    },
+    {
+      "pick": 162,
+      "round": 12,
+      "team": "snarkymcgee",
+      "player": "Kansas City Chiefs",
+      "sport": "NFL"
+    },
+    {
+      "pick": 163,
+      "round": 12,
+      "team": "christhrowsrocks",
+      "player": "Mark Williams",
+      "sport": "Snooker"
+    },
+    {
+      "pick": 164,
+      "round": 12,
+      "team": "pandabair",
+      "player": "Alex de Minaur",
+      "sport": "Tennis - Men's"
+    },
+    {
+      "pick": 165,
+      "round": 12,
+      "team": "apatel78",
+      "player": "Netherlands",
+      "sport": "FIFA Men's World Cup"
+    },
+    {
+      "pick": 166,
+      "round": 12,
+      "team": "mart121",
+      "player": "Gary Anderson",
+      "sport": "PDC Darts"
+    },
+    {
+      "pick": 167,
+      "round": 12,
+      "team": ".herbal",
+      "player": "Shaun Murphy",
+      "sport": "Snooker"
+    },
+    {
+      "pick": 168,
+      "round": 12,
+      "team": "code.monkey",
+      "player": "Taylor Fritz",
+      "sport": "Tennis - Men's"
+    },
+    {
+      "pick": 169,
+      "round": 13,
+      "team": "code.monkey",
+      "player": "Miami (FL)",
+      "sport": "NCAA Football"
+    },
+    {
+      "pick": 170,
+      "round": 13,
+      "team": ".herbal",
+      "player": "Dallas Wings",
+      "sport": "WNBA"
+    },
+    {
+      "pick": 171,
+      "round": 13,
+      "team": "mart121",
+      "player": "United States",
+      "sport": "FIFA Men's World Cup"
     }
   ],
   "team_rosters": {
@@ -1231,6 +1329,16 @@
         "pick": 141,
         "player": "Buffalo Bills",
         "sport": "NFL"
+      },
+      {
+        "pick": 168,
+        "player": "Taylor Fritz",
+        "sport": "Tennis - Men's"
+      },
+      {
+        "pick": 169,
+        "player": "Miami (FL)",
+        "sport": "NCAA Football"
       }
     ],
     ".herbal": [
@@ -1288,6 +1396,16 @@
         "pick": 142,
         "player": "Real Madrid",
         "sport": "UEFA Champions League"
+      },
+      {
+        "pick": 167,
+        "player": "Shaun Murphy",
+        "sport": "Snooker"
+      },
+      {
+        "pick": 170,
+        "player": "Dallas Wings",
+        "sport": "WNBA"
       }
     ],
     "mart121": [
@@ -1344,6 +1462,16 @@
       {
         "pick": 143,
         "player": "Norway",
+        "sport": "FIFA Men's World Cup"
+      },
+      {
+        "pick": 166,
+        "player": "Gary Anderson",
+        "sport": "PDC Darts"
+      },
+      {
+        "pick": 171,
+        "player": "United States",
         "sport": "FIFA Men's World Cup"
       }
     ],
@@ -1402,6 +1530,11 @@
         "pick": 144,
         "player": "Lorenzo Musetti",
         "sport": "Tennis - Men's"
+      },
+      {
+        "pick": 165,
+        "player": "Netherlands",
+        "sport": "FIFA Men's World Cup"
       }
     ],
     "pandabair": [
@@ -1458,6 +1591,11 @@
       {
         "pick": 145,
         "player": "Ben Shelton",
+        "sport": "Tennis - Men's"
+      },
+      {
+        "pick": 164,
+        "player": "Alex de Minaur",
         "sport": "Tennis - Men's"
       }
     ],
@@ -1516,6 +1654,11 @@
         "pick": 146,
         "player": "John Higgins",
         "sport": "Snooker"
+      },
+      {
+        "pick": 163,
+        "player": "Mark Williams",
+        "sport": "Snooker"
       }
     ],
     "snarkymcgee": [
@@ -1573,6 +1716,11 @@
         "pick": 147,
         "player": "Fernando Alonso",
         "sport": "Formula 1"
+      },
+      {
+        "pick": 162,
+        "player": "Kansas City Chiefs",
+        "sport": "NFL"
       }
     ],
     "Madmike": [
@@ -1630,6 +1778,11 @@
         "pick": 148,
         "player": "Jon Rahm",
         "sport": "PGA Golf"
+      },
+      {
+        "pick": 161,
+        "player": "Aurora",
+        "sport": "Counter Strike"
       }
     ],
     "brando1609": [
@@ -1687,6 +1840,11 @@
         "pick": 149,
         "player": "Natus Vincere",
         "sport": "Counter Strike"
+      },
+      {
+        "pick": 160,
+        "player": "Detroit Lions",
+        "sport": "NFL"
       }
     ],
     "tanay002": [
@@ -1744,6 +1902,11 @@
         "pick": 150,
         "player": "David Malukas",
         "sport": "Indycar Series"
+      },
+      {
+        "pick": 159,
+        "player": "San Francisco 49ers",
+        "sport": "NFL"
       }
     ],
     "ikyn": [
@@ -1801,6 +1964,11 @@
         "pick": 151,
         "player": "Collingwood Magpies",
         "sport": "Aussie Rules Football"
+      },
+      {
+        "pick": 158,
+        "player": "Denver Broncos",
+        "sport": "NFL"
       }
     ],
     "peteg__": [
@@ -1990,8 +2158,8 @@
       }
     ]
   },
-  "current_pick": 158,
-  "last_known_pick": 158,
+  "current_pick": 172,
+  "last_known_pick": 171,
   "api_available": true,
   "using_sample_data": false,
   "draft_was_paused": false

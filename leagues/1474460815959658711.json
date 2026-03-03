@@ -37,10 +37,10 @@
     "bootzay": "186195753612345344",
     "ender2399": "138022935163174913",
     "listem.": "454827891197476874",
-    "philosophraptors": "285642034507939841",
     "dume66": "704566835433046138",
     "nermelcambium": "143509428098957312",
-    "jom315": "329830988823658496"
+    "jom315": "329830988823658496",
+    "philosohraptors": "285642034507939841"
   },
   "handles": {
     "elementsoul": "Cancer should have won",
@@ -53,10 +53,10 @@
     "bootzay": "Bootz - \ud83d\udca9",
     "ender2399": "Ender",
     "listem.": "ListEm\u2122",
-    "philosophraptors": "Philosohraptors",
     "dume66": "DUME",
     "nermelcambium": "Nermel/Cambium",
-    "jom315": "Jom"
+    "jom315": "Jom",
+    "philosohraptors": "Philosohraptors"
   },
   "draft_order": [
     "elementsoul",
@@ -1439,6 +1439,160 @@
       "team": "norogg",
       "player": "Dallas Wings",
       "sport": "WNBA"
+    },
+    {
+      "pick": 196,
+      "round": 14,
+      "team": "elementsoul",
+      "player": "Carlton Blues",
+      "sport": "Aussie Rules Football"
+    },
+    {
+      "pick": 197,
+      "round": 15,
+      "team": "elementsoul",
+      "player": "Joao Fonseca",
+      "sport": "Tennis - Men's"
+    },
+    {
+      "pick": 198,
+      "round": 15,
+      "team": "norogg",
+      "player": "Houston Texans",
+      "sport": "NFL"
+    },
+    {
+      "pick": 199,
+      "round": 15,
+      "team": "peltron3030",
+      "player": "Taylor Fritz",
+      "sport": "Tennis - Men's"
+    },
+    {
+      "pick": 200,
+      "round": 15,
+      "team": "zedispresident",
+      "player": "Louisville",
+      "sport": "NCAA Basketball - Women's"
+    },
+    {
+      "pick": 201,
+      "round": 15,
+      "team": "pixelatedfool",
+      "player": "Bod\u00f8/Glimt",
+      "sport": "UEFA Champions League"
+    },
+    {
+      "pick": 202,
+      "round": 15,
+      "team": "allenisfeliz",
+      "player": "Carlos Sainz",
+      "sport": "Formula 1"
+    },
+    {
+      "pick": 203,
+      "round": 15,
+      "team": "bone1905",
+      "player": "Madison Keys",
+      "sport": "Tennis - Women's"
+    },
+    {
+      "pick": 204,
+      "round": 15,
+      "team": "bootzay",
+      "player": "US - Mountain",
+      "sport": "Little League World Series"
+    },
+    {
+      "pick": 205,
+      "round": 15,
+      "team": "ender2399",
+      "player": "G2 Esports",
+      "sport": "Counter Strike"
+    },
+    {
+      "pick": 206,
+      "round": 15,
+      "team": "listem.",
+      "player": "Ole Miss",
+      "sport": "NCAA Football"
+    },
+    {
+      "pick": 207,
+      "round": 15,
+      "team": "philosohraptors",
+      "player": "Panama",
+      "sport": "Little League World Series"
+    },
+    {
+      "pick": 208,
+      "round": 15,
+      "team": "dume66",
+      "player": "Iowa",
+      "sport": "NCAA Basketball - Women's"
+    },
+    {
+      "pick": 209,
+      "round": 15,
+      "team": "nermelcambium",
+      "player": "United States",
+      "sport": "FIFA Men's World Cup"
+    },
+    {
+      "pick": 210,
+      "round": 15,
+      "team": "jom315",
+      "player": "Florida Panthers",
+      "sport": "NHL"
+    },
+    {
+      "pick": 211,
+      "round": 16,
+      "team": "jom315",
+      "player": "Italy",
+      "sport": "FIFA Men's World Cup"
+    },
+    {
+      "pick": 212,
+      "round": 16,
+      "team": "nermelcambium",
+      "player": "Golden State Warriors",
+      "sport": "NBA"
+    },
+    {
+      "pick": 213,
+      "round": 16,
+      "team": "dume66",
+      "player": "Kansas City Chiefs",
+      "sport": "NFL"
+    },
+    {
+      "pick": 214,
+      "round": 16,
+      "team": "philosohraptors",
+      "player": "Syracuse",
+      "sport": "NCAA Basketball - Men's"
+    },
+    {
+      "pick": 215,
+      "round": 16,
+      "team": "listem.",
+      "player": "Denver Broncos",
+      "sport": "NFL"
+    },
+    {
+      "pick": 216,
+      "round": 16,
+      "team": "ender2399",
+      "player": "Florida",
+      "sport": "NCAA Football"
+    },
+    {
+      "pick": 217,
+      "round": 16,
+      "team": "bootzay",
+      "player": "Norway",
+      "sport": "FIFA Men's World Cup"
     }
   ],
   "team_rosters": {
@@ -1507,6 +1661,16 @@
         "pick": 169,
         "player": "FaZe Clan",
         "sport": "Counter Strike"
+      },
+      {
+        "pick": 196,
+        "player": "Carlton Blues",
+        "sport": "Aussie Rules Football"
+      },
+      {
+        "pick": 197,
+        "player": "Joao Fonseca",
+        "sport": "Tennis - Men's"
       }
     ],
     "norogg": [
@@ -1579,6 +1743,11 @@
         "pick": 195,
         "player": "Dallas Wings",
         "sport": "WNBA"
+      },
+      {
+        "pick": 198,
+        "player": "Houston Texans",
+        "sport": "NFL"
       }
     ],
     "peltron3030": [
@@ -1651,6 +1820,11 @@
         "pick": 194,
         "player": "Los Angeles Chargers",
         "sport": "NFL"
+      },
+      {
+        "pick": 199,
+        "player": "Taylor Fritz",
+        "sport": "Tennis - Men's"
       }
     ],
     "zedispresident": [
@@ -1723,6 +1897,11 @@
         "pick": 193,
         "player": "Jacksonville Jaguars",
         "sport": "NFL"
+      },
+      {
+        "pick": 200,
+        "player": "Louisville",
+        "sport": "NCAA Basketball - Women's"
       }
     ],
     "pixelatedfool": [
@@ -1795,6 +1974,11 @@
         "pick": 192,
         "player": "Texas Rangers",
         "sport": "MLB"
+      },
+      {
+        "pick": 201,
+        "player": "Bod\u00f8/Glimt",
+        "sport": "UEFA Champions League"
       }
     ],
     "allenisfeliz": [
@@ -1867,6 +2051,11 @@
         "pick": 191,
         "player": "Justin Rose",
         "sport": "PGA Golf"
+      },
+      {
+        "pick": 202,
+        "player": "Carlos Sainz",
+        "sport": "Formula 1"
       }
     ],
     "bone1905": [
@@ -1939,6 +2128,11 @@
         "pick": 190,
         "player": "Gary Anderson",
         "sport": "PDC Darts"
+      },
+      {
+        "pick": 203,
+        "player": "Madison Keys",
+        "sport": "Tennis - Women's"
       }
     ],
     "bootzay": [
@@ -2011,6 +2205,16 @@
         "pick": 189,
         "player": "Green Bay Packers",
         "sport": "NFL"
+      },
+      {
+        "pick": 204,
+        "player": "US - Mountain",
+        "sport": "Little League World Series"
+      },
+      {
+        "pick": 217,
+        "player": "Norway",
+        "sport": "FIFA Men's World Cup"
       }
     ],
     "ender2399": [
@@ -2083,6 +2287,16 @@
         "pick": 188,
         "player": "St Kilda Saints",
         "sport": "Aussie Rules Football"
+      },
+      {
+        "pick": 205,
+        "player": "G2 Esports",
+        "sport": "Counter Strike"
+      },
+      {
+        "pick": 216,
+        "player": "Florida",
+        "sport": "NCAA Football"
       }
     ],
     "listem.": [
@@ -2155,6 +2369,16 @@
         "pick": 187,
         "player": "Sporting CP",
         "sport": "UEFA Champions League"
+      },
+      {
+        "pick": 206,
+        "player": "Ole Miss",
+        "sport": "NCAA Football"
+      },
+      {
+        "pick": 215,
+        "player": "Denver Broncos",
+        "sport": "NFL"
       }
     ],
     "philosohraptors": [
@@ -2227,6 +2451,16 @@
         "pick": 186,
         "player": "Golden State Valkyries",
         "sport": "WNBA"
+      },
+      {
+        "pick": 207,
+        "player": "Panama",
+        "sport": "Little League World Series"
+      },
+      {
+        "pick": 214,
+        "player": "Syracuse",
+        "sport": "NCAA Basketball - Men's"
       }
     ],
     "dume66": [
@@ -2299,6 +2533,16 @@
         "pick": 185,
         "player": "Miami (FL)",
         "sport": "NCAA Football"
+      },
+      {
+        "pick": 208,
+        "player": "Iowa",
+        "sport": "NCAA Basketball - Women's"
+      },
+      {
+        "pick": 213,
+        "player": "Kansas City Chiefs",
+        "sport": "NFL"
       }
     ],
     "nermelcambium": [
@@ -2371,6 +2615,16 @@
         "pick": 184,
         "player": "Seattle Kraken",
         "sport": "NHL"
+      },
+      {
+        "pick": 209,
+        "player": "United States",
+        "sport": "FIFA Men's World Cup"
+      },
+      {
+        "pick": 212,
+        "player": "Golden State Warriors",
+        "sport": "NBA"
       }
     ],
     "jom315": [
@@ -2443,12 +2697,22 @@
         "pick": 183,
         "player": "Ludvig Aberg",
         "sport": "PGA Golf"
+      },
+      {
+        "pick": 210,
+        "player": "Florida Panthers",
+        "sport": "NHL"
+      },
+      {
+        "pick": 211,
+        "player": "Italy",
+        "sport": "FIFA Men's World Cup"
       }
     ]
   },
-  "current_pick": 196,
-  "last_known_pick": 196,
-  "api_available": true,
-  "using_sample_data": false,
+  "current_pick": 218,
+  "last_known_pick": 217,
+  "api_available": false,
+  "using_sample_data": true,
   "draft_was_paused": false
 }

@@ -1084,6 +1084,76 @@
       "team": "Madmike",
       "player": "Detroit Lions",
       "sport": "NFL"
+    },
+    {
+      "pick": 148,
+      "round": 17,
+      "team": "getofffmynuts3",
+      "player": "USC",
+      "sport": "NCAA Football"
+    },
+    {
+      "pick": 149,
+      "round": 17,
+      "team": "jdog1202.",
+      "player": "Baltimore Orioles",
+      "sport": "MLB"
+    },
+    {
+      "pick": 150,
+      "round": 17,
+      "team": "benziti",
+      "player": "Jordan Spieth",
+      "sport": "PGA Golf"
+    },
+    {
+      "pick": 151,
+      "round": 17,
+      "team": "tomy",
+      "player": "Justin Rose",
+      "sport": "PGA Golf"
+    },
+    {
+      "pick": 152,
+      "round": 17,
+      "team": "mws1395",
+      "player": "Michigan St.",
+      "sport": "NCAA Basketball - Men's"
+    },
+    {
+      "pick": 153,
+      "round": 17,
+      "team": "el_stove",
+      "player": "Michigan",
+      "sport": "NCAA Basketball - Women's"
+    },
+    {
+      "pick": 154,
+      "round": 18,
+      "team": "el_stove",
+      "player": "US - Mid-Atlantic",
+      "sport": "Little League World Series"
+    },
+    {
+      "pick": 155,
+      "round": 18,
+      "team": "mws1395",
+      "player": "Chris Gotterup",
+      "sport": "PGA Golf"
+    },
+    {
+      "pick": 156,
+      "round": 18,
+      "team": "tomy",
+      "player": "San Francisco 49ers",
+      "sport": "NFL"
+    },
+    {
+      "pick": 157,
+      "round": 18,
+      "team": "benziti",
+      "player": "Houston Astros",
+      "sport": "MLB"
     }
   ],
   "team_rosters": {
@@ -1428,6 +1498,11 @@
         "pick": 141,
         "player": "Minnesota Timberwolves",
         "sport": "NBA"
+      },
+      {
+        "pick": 148,
+        "player": "USC",
+        "sport": "NCAA Football"
       }
     ],
     "jdog1202.": [
@@ -1510,6 +1585,11 @@
         "pick": 140,
         "player": "New England Patriots",
         "sport": "NFL"
+      },
+      {
+        "pick": 149,
+        "player": "Baltimore Orioles",
+        "sport": "MLB"
       }
     ],
     "benziti": [
@@ -1592,6 +1672,16 @@
         "pick": 139,
         "player": "The MongolZ",
         "sport": "Counter Strike"
+      },
+      {
+        "pick": 150,
+        "player": "Jordan Spieth",
+        "sport": "PGA Golf"
+      },
+      {
+        "pick": 157,
+        "player": "Houston Astros",
+        "sport": "MLB"
       }
     ],
     "tomy": [
@@ -1674,6 +1764,16 @@
         "pick": 138,
         "player": "Alex de Minaur",
         "sport": "Tennis - Men's"
+      },
+      {
+        "pick": 151,
+        "player": "Justin Rose",
+        "sport": "PGA Golf"
+      },
+      {
+        "pick": 156,
+        "player": "San Francisco 49ers",
+        "sport": "NFL"
       }
     ],
     "mws1395": [
@@ -1756,6 +1856,16 @@
         "pick": 137,
         "player": "Danny Noppert",
         "sport": "PDC Darts"
+      },
+      {
+        "pick": 152,
+        "player": "Michigan St.",
+        "sport": "NCAA Basketball - Men's"
+      },
+      {
+        "pick": 155,
+        "player": "Chris Gotterup",
+        "sport": "PGA Golf"
       }
     ],
     "el_stove": [
@@ -1838,11 +1948,21 @@
         "pick": 136,
         "player": "Latin America",
         "sport": "Little League World Series"
+      },
+      {
+        "pick": 153,
+        "player": "Michigan",
+        "sport": "NCAA Basketball - Women's"
+      },
+      {
+        "pick": 154,
+        "player": "US - Mid-Atlantic",
+        "sport": "Little League World Series"
       }
     ]
   },
-  "current_pick": 148,
-  "last_known_pick": 148,
+  "current_pick": 158,
+  "last_known_pick": 157,
   "api_available": true,
   "using_sample_data": false,
   "draft_was_paused": false
