@@ -1154,6 +1154,13 @@
       "team": "benziti",
       "player": "Houston Astros",
       "sport": "MLB"
+    },
+    {
+      "pick": 158,
+      "round": 18,
+      "team": "jdog1202.",
+      "player": "LA Lakers",
+      "sport": "NBA"
     }
   ],
   "team_rosters": {
@@ -1590,6 +1597,11 @@
         "pick": 149,
         "player": "Baltimore Orioles",
         "sport": "MLB"
+      },
+      {
+        "pick": 158,
+        "player": "LA Lakers",
+        "sport": "NBA"
       }
     ],
     "benziti": [
@@ -1961,8 +1973,8 @@
       }
     ]
   },
-  "current_pick": 158,
-  "last_known_pick": 157,
+  "current_pick": 159,
+  "last_known_pick": 158,
   "api_available": true,
   "using_sample_data": false,
   "draft_was_paused": false

@@ -87,7 +87,7 @@
       "round": 1,
       "team": ".herbal",
       "player": "Carlos Alcaraz",
-      "sport": "Tennis - Men's"
+      "sport": "Tennis - Men"
     },
     {
       "pick": 3,
@@ -108,7 +108,7 @@
       "round": 1,
       "team": "pandabair",
       "player": "Aryna Sabalenka",
-      "sport": "Tennis - Women's"
+      "sport": "Tennis - Women"
     },
     {
       "pick": 6,
@@ -129,7 +129,7 @@
       "round": 1,
       "team": "Madmike",
       "player": "Connecticut (UConn)",
-      "sport": "NCAA Basketball - Women's"
+      "sport": "NCAAW Basketball"
     },
     {
       "pick": 9,
@@ -143,14 +143,14 @@
       "round": 1,
       "team": "tanay002",
       "player": "Jannik Sinner",
-      "sport": "Tennis - Men's"
+      "sport": "Tennis - Men"
     },
     {
       "pick": 11,
       "round": 1,
       "team": "ikyn",
       "player": "Iga Swiatek",
-      "sport": "Tennis - Women's"
+      "sport": "Tennis - Women"
     },
     {
       "pick": 12,
@@ -234,7 +234,7 @@
       "round": 2,
       "team": "christhrowsrocks",
       "player": "Michigan",
-      "sport": "NCAA Basketball - Men's"
+      "sport": "NCAAM Basketball"
     },
     {
       "pick": 24,
@@ -248,7 +248,7 @@
       "round": 2,
       "team": "apatel78",
       "player": "Coco Gauff",
-      "sport": "Tennis - Women's"
+      "sport": "Tennis - Women"
     },
     {
       "pick": 26,
@@ -304,7 +304,7 @@
       "round": 3,
       "team": "pandabair",
       "player": "Duke",
-      "sport": "NCAA Basketball - Men's"
+      "sport": "NCAAM Basketball"
     },
     {
       "pick": 34,
@@ -339,14 +339,14 @@
       "round": 3,
       "team": "tanay002",
       "player": "South Carolina",
-      "sport": "NCAA Basketball - Women's"
+      "sport": "NCAAW Basketball"
     },
     {
       "pick": 39,
       "round": 3,
       "team": "ikyn",
       "player": "UCLA",
-      "sport": "NCAA Basketball - Women's"
+      "sport": "NCAAW Basketball"
     },
     {
       "pick": 40,
@@ -374,7 +374,7 @@
       "round": 4,
       "team": "bakrondo",
       "player": "Arizona",
-      "sport": "NCAA Basketball - Men's"
+      "sport": "NCAAM Basketball"
     },
     {
       "pick": 44,
@@ -409,7 +409,7 @@
       "round": 4,
       "team": "brando1609",
       "player": "Elena Rybakina",
-      "sport": "Tennis - Women's"
+      "sport": "Tennis - Women"
     },
     {
       "pick": 49,
@@ -423,7 +423,7 @@
       "round": 4,
       "team": "snarkymcgee",
       "player": "Novak Djokovic",
-      "sport": "Tennis - Men's"
+      "sport": "Tennis - Men"
     },
     {
       "pick": 51,
@@ -444,7 +444,7 @@
       "round": 4,
       "team": "apatel78",
       "player": "Houston",
-      "sport": "NCAA Basketball - Men's"
+      "sport": "NCAAM Basketball"
     },
     {
       "pick": 54,
@@ -556,7 +556,7 @@
       "round": 5,
       "team": "smelscifi",
       "player": "Texas",
-      "sport": "NCAA Basketball - Women's"
+      "sport": "NCAAW Basketball"
     },
     {
       "pick": 70,
@@ -605,7 +605,7 @@
       "round": 6,
       "team": "brando1609",
       "player": "Alexander Zverev",
-      "sport": "Tennis - Men's"
+      "sport": "Tennis - Men"
     },
     {
       "pick": 77,
@@ -619,7 +619,7 @@
       "round": 6,
       "team": "snarkymcgee",
       "player": "Illinois",
-      "sport": "NCAA Basketball - Men's"
+      "sport": "NCAAM Basketball"
     },
     {
       "pick": 79,
@@ -710,7 +710,7 @@
       "round": 7,
       "team": "snarkymcgee",
       "player": "Vanderbilt",
-      "sport": "NCAA Basketball - Women's"
+      "sport": "NCAAW Basketball"
     },
     {
       "pick": 92,
@@ -724,7 +724,7 @@
       "round": 7,
       "team": "brando1609",
       "player": "Connecticut",
-      "sport": "NCAA Basketball - Men's"
+      "sport": "NCAAM Basketball"
     },
     {
       "pick": 94,
@@ -745,7 +745,7 @@
       "round": 7,
       "team": "peteg__",
       "player": "Amanda Anisimova",
-      "sport": "Tennis - Women's"
+      "sport": "Tennis - Women"
     },
     {
       "pick": 97,
@@ -801,7 +801,7 @@
       "round": 8,
       "team": "brando1609",
       "player": "Madison Keys",
-      "sport": "Tennis - Women's"
+      "sport": "Tennis - Women"
     },
     {
       "pick": 105,
@@ -829,21 +829,21 @@
       "round": 8,
       "team": "pandabair",
       "player": "LSU",
-      "sport": "NCAA Basketball - Women's"
+      "sport": "NCAAW Basketball"
     },
     {
       "pick": 109,
       "round": 8,
       "team": "apatel78",
       "player": "Michigan",
-      "sport": "NCAA Basketball - Women's"
+      "sport": "NCAAW Basketball"
     },
     {
       "pick": 110,
       "round": 8,
       "team": "mart121",
       "player": "Kansas",
-      "sport": "NCAA Basketball - Men's"
+      "sport": "NCAAM Basketball"
     },
     {
       "pick": 111,
@@ -864,14 +864,14 @@
       "round": 9,
       "team": "code.monkey",
       "player": "Iowa St.",
-      "sport": "NCAA Basketball - Men's"
+      "sport": "NCAAM Basketball"
     },
     {
       "pick": 114,
       "round": 9,
       "team": ".herbal",
       "player": "Florida",
-      "sport": "NCAA Basketball - Men's"
+      "sport": "NCAAM Basketball"
     },
     {
       "pick": 115,
@@ -899,7 +899,7 @@
       "round": 9,
       "team": "christhrowsrocks",
       "player": "Jessica Pegula",
-      "sport": "Tennis - Women's"
+      "sport": "Tennis - Women"
     },
     {
       "pick": 119,
@@ -962,7 +962,7 @@
       "round": 10,
       "team": "bakrondo",
       "player": "Mirra Andreeva",
-      "sport": "Tennis - Women's"
+      "sport": "Tennis - Women"
     },
     {
       "pick": 128,
@@ -976,7 +976,7 @@
       "round": 10,
       "team": "peteg__",
       "player": "Jack Draper",
-      "sport": "Tennis - Men's"
+      "sport": "Tennis - Men"
     },
     {
       "pick": 130,
@@ -1081,14 +1081,14 @@
       "round": 11,
       "team": "apatel78",
       "player": "Lorenzo Musetti",
-      "sport": "Tennis - Men's"
+      "sport": "Tennis - Men"
     },
     {
       "pick": 145,
       "round": 11,
       "team": "pandabair",
       "player": "Ben Shelton",
-      "sport": "Tennis - Men's"
+      "sport": "Tennis - Men"
     },
     {
       "pick": 146,
@@ -1221,7 +1221,7 @@
       "round": 12,
       "team": "pandabair",
       "player": "Alex de Minaur",
-      "sport": "Tennis - Men's"
+      "sport": "Tennis - Men"
     },
     {
       "pick": 165,
@@ -1249,7 +1249,7 @@
       "round": 12,
       "team": "code.monkey",
       "player": "Taylor Fritz",
-      "sport": "Tennis - Men's"
+      "sport": "Tennis - Men"
     },
     {
       "pick": 169,
@@ -1271,6 +1271,55 @@
       "team": "mart121",
       "player": "United States",
       "sport": "FIFA Men's World Cup"
+    },
+    {
+      "pick": 172,
+      "round": 13,
+      "team": "apatel78",
+      "player": "Texas Tech",
+      "sport": "NCAA Football"
+    },
+    {
+      "pick": 173,
+      "round": 13,
+      "team": "pandabair",
+      "player": "LSU",
+      "sport": "NCAA Football"
+    },
+    {
+      "pick": 174,
+      "round": 13,
+      "team": "christhrowsrocks",
+      "player": "G2 Esports",
+      "sport": "Counter Strike"
+    },
+    {
+      "pick": 175,
+      "round": 13,
+      "team": "snarkymcgee",
+      "player": "Victoria Mboko",
+      "sport": "Tennis - Women"
+    },
+    {
+      "pick": 176,
+      "round": 13,
+      "team": "Madmike",
+      "player": "Mark Allen",
+      "sport": "Snooker"
+    },
+    {
+      "pick": 177,
+      "round": 13,
+      "team": "brando1609",
+      "player": "Iowa",
+      "sport": "NCAAM Basketball"
+    },
+    {
+      "pick": 178,
+      "round": 13,
+      "team": "tanay002",
+      "player": "FaZe Clan",
+      "sport": "Counter Strike"
     }
   ],
   "team_rosters": {
@@ -1318,7 +1367,7 @@
       {
         "pick": 113,
         "player": "Iowa St.",
-        "sport": "NCAA Basketball - Men's"
+        "sport": "NCAAM Basketball"
       },
       {
         "pick": 140,
@@ -1333,7 +1382,7 @@
       {
         "pick": 168,
         "player": "Taylor Fritz",
-        "sport": "Tennis - Men's"
+        "sport": "Tennis - Men"
       },
       {
         "pick": 169,
@@ -1345,7 +1394,7 @@
       {
         "pick": 2,
         "player": "Carlos Alcaraz",
-        "sport": "Tennis - Men's"
+        "sport": "Tennis - Men"
       },
       {
         "pick": 27,
@@ -1385,7 +1434,7 @@
       {
         "pick": 114,
         "player": "Florida",
-        "sport": "NCAA Basketball - Men's"
+        "sport": "NCAAM Basketball"
       },
       {
         "pick": 139,
@@ -1447,7 +1496,7 @@
       {
         "pick": 110,
         "player": "Kansas",
-        "sport": "NCAA Basketball - Men's"
+        "sport": "NCAAM Basketball"
       },
       {
         "pick": 115,
@@ -1484,7 +1533,7 @@
       {
         "pick": 25,
         "player": "Coco Gauff",
-        "sport": "Tennis - Women's"
+        "sport": "Tennis - Women"
       },
       {
         "pick": 32,
@@ -1494,7 +1543,7 @@
       {
         "pick": 53,
         "player": "Houston",
-        "sport": "NCAA Basketball - Men's"
+        "sport": "NCAAM Basketball"
       },
       {
         "pick": 60,
@@ -1514,7 +1563,7 @@
       {
         "pick": 109,
         "player": "Michigan",
-        "sport": "NCAA Basketball - Women's"
+        "sport": "NCAAW Basketball"
       },
       {
         "pick": 116,
@@ -1529,19 +1578,24 @@
       {
         "pick": 144,
         "player": "Lorenzo Musetti",
-        "sport": "Tennis - Men's"
+        "sport": "Tennis - Men"
       },
       {
         "pick": 165,
         "player": "Netherlands",
         "sport": "FIFA Men's World Cup"
+      },
+      {
+        "pick": 172,
+        "player": "Texas Tech",
+        "sport": "NCAA Football"
       }
     ],
     "pandabair": [
       {
         "pick": 5,
         "player": "Aryna Sabalenka",
-        "sport": "Tennis - Women's"
+        "sport": "Tennis - Women"
       },
       {
         "pick": 24,
@@ -1551,7 +1605,7 @@
       {
         "pick": 33,
         "player": "Duke",
-        "sport": "NCAA Basketball - Men's"
+        "sport": "NCAAM Basketball"
       },
       {
         "pick": 52,
@@ -1576,7 +1630,7 @@
       {
         "pick": 108,
         "player": "LSU",
-        "sport": "NCAA Basketball - Women's"
+        "sport": "NCAAW Basketball"
       },
       {
         "pick": 117,
@@ -1591,12 +1645,17 @@
       {
         "pick": 145,
         "player": "Ben Shelton",
-        "sport": "Tennis - Men's"
+        "sport": "Tennis - Men"
       },
       {
         "pick": 164,
         "player": "Alex de Minaur",
-        "sport": "Tennis - Men's"
+        "sport": "Tennis - Men"
+      },
+      {
+        "pick": 173,
+        "player": "LSU",
+        "sport": "NCAA Football"
       }
     ],
     "christhrowsrocks": [
@@ -1608,7 +1667,7 @@
       {
         "pick": 23,
         "player": "Michigan",
-        "sport": "NCAA Basketball - Men's"
+        "sport": "NCAAM Basketball"
       },
       {
         "pick": 34,
@@ -1643,7 +1702,7 @@
       {
         "pick": 118,
         "player": "Jessica Pegula",
-        "sport": "Tennis - Women's"
+        "sport": "Tennis - Women"
       },
       {
         "pick": 135,
@@ -1659,6 +1718,11 @@
         "pick": 163,
         "player": "Mark Williams",
         "sport": "Snooker"
+      },
+      {
+        "pick": 174,
+        "player": "G2 Esports",
+        "sport": "Counter Strike"
       }
     ],
     "snarkymcgee": [
@@ -1680,7 +1744,7 @@
       {
         "pick": 50,
         "player": "Novak Djokovic",
-        "sport": "Tennis - Men's"
+        "sport": "Tennis - Men"
       },
       {
         "pick": 63,
@@ -1690,12 +1754,12 @@
       {
         "pick": 78,
         "player": "Illinois",
-        "sport": "NCAA Basketball - Men's"
+        "sport": "NCAAM Basketball"
       },
       {
         "pick": 91,
         "player": "Vanderbilt",
-        "sport": "NCAA Basketball - Women's"
+        "sport": "NCAAW Basketball"
       },
       {
         "pick": 106,
@@ -1721,13 +1785,18 @@
         "pick": 162,
         "player": "Kansas City Chiefs",
         "sport": "NFL"
+      },
+      {
+        "pick": 175,
+        "player": "Victoria Mboko",
+        "sport": "Tennis - Women"
       }
     ],
     "Madmike": [
       {
         "pick": 8,
         "player": "Connecticut (UConn)",
-        "sport": "NCAA Basketball - Women's"
+        "sport": "NCAAW Basketball"
       },
       {
         "pick": 21,
@@ -1783,6 +1852,11 @@
         "pick": 161,
         "player": "Aurora",
         "sport": "Counter Strike"
+      },
+      {
+        "pick": 176,
+        "player": "Mark Allen",
+        "sport": "Snooker"
       }
     ],
     "brando1609": [
@@ -1804,7 +1878,7 @@
       {
         "pick": 48,
         "player": "Elena Rybakina",
-        "sport": "Tennis - Women's"
+        "sport": "Tennis - Women"
       },
       {
         "pick": 65,
@@ -1814,17 +1888,17 @@
       {
         "pick": 76,
         "player": "Alexander Zverev",
-        "sport": "Tennis - Men's"
+        "sport": "Tennis - Men"
       },
       {
         "pick": 93,
         "player": "Connecticut",
-        "sport": "NCAA Basketball - Men's"
+        "sport": "NCAAM Basketball"
       },
       {
         "pick": 104,
         "player": "Madison Keys",
-        "sport": "Tennis - Women's"
+        "sport": "Tennis - Women"
       },
       {
         "pick": 121,
@@ -1845,13 +1919,18 @@
         "pick": 160,
         "player": "Detroit Lions",
         "sport": "NFL"
+      },
+      {
+        "pick": 177,
+        "player": "Iowa",
+        "sport": "NCAAM Basketball"
       }
     ],
     "tanay002": [
       {
         "pick": 10,
         "player": "Jannik Sinner",
-        "sport": "Tennis - Men's"
+        "sport": "Tennis - Men"
       },
       {
         "pick": 19,
@@ -1861,7 +1940,7 @@
       {
         "pick": 38,
         "player": "South Carolina",
-        "sport": "NCAA Basketball - Women's"
+        "sport": "NCAAW Basketball"
       },
       {
         "pick": 47,
@@ -1907,13 +1986,18 @@
         "pick": 159,
         "player": "San Francisco 49ers",
         "sport": "NFL"
+      },
+      {
+        "pick": 178,
+        "player": "FaZe Clan",
+        "sport": "Counter Strike"
       }
     ],
     "ikyn": [
       {
         "pick": 11,
         "player": "Iga Swiatek",
-        "sport": "Tennis - Women's"
+        "sport": "Tennis - Women"
       },
       {
         "pick": 18,
@@ -1923,7 +2007,7 @@
       {
         "pick": 39,
         "player": "UCLA",
-        "sport": "NCAA Basketball - Women's"
+        "sport": "NCAAW Basketball"
       },
       {
         "pick": 46,
@@ -2005,7 +2089,7 @@
       {
         "pick": 96,
         "player": "Amanda Anisimova",
-        "sport": "Tennis - Women's"
+        "sport": "Tennis - Women"
       },
       {
         "pick": 101,
@@ -2020,7 +2104,7 @@
       {
         "pick": 129,
         "player": "Jack Draper",
-        "sport": "Tennis - Men's"
+        "sport": "Tennis - Men"
       },
       {
         "pick": 152,
@@ -2057,7 +2141,7 @@
       {
         "pick": 69,
         "player": "Texas",
-        "sport": "NCAA Basketball - Women's"
+        "sport": "NCAAW Basketball"
       },
       {
         "pick": 72,
@@ -2114,7 +2198,7 @@
       {
         "pick": 43,
         "player": "Arizona",
-        "sport": "NCAA Basketball - Men's"
+        "sport": "NCAAM Basketball"
       },
       {
         "pick": 70,
@@ -2144,7 +2228,7 @@
       {
         "pick": 127,
         "player": "Mirra Andreeva",
-        "sport": "Tennis - Women's"
+        "sport": "Tennis - Women"
       },
       {
         "pick": 154,
@@ -2158,8 +2242,8 @@
       }
     ]
   },
-  "current_pick": 172,
-  "last_known_pick": 171,
+  "current_pick": 179,
+  "last_known_pick": 178,
   "api_available": true,
   "using_sample_data": false,
   "draft_was_paused": false
