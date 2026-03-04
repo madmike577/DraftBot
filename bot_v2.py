@@ -878,8 +878,29 @@ async def poll_all_leagues():
                     update_cache(channel_id, league)
                     continue
 
+                # Detect rollback — last_completed < last_known means picks were undone
+                if last_completed < last_known:
+                    picks_rolled_back = last_known - last_completed
+                    current_username = get_team_for_pick(league, last_completed + 1)
+                    on_deck_username = get_team_for_pick(league, last_completed + 2)
+                    total = get_total_picks(league)
+                    formatted, _ = format_pick_number(league, last_completed + 1)
+                    on_deck = (
+                        f'\n📋 **On Deck:** {mention(league, on_deck_username)}'
+                        if on_deck_username and last_completed + 2 <= total else ''
+                    )
+                    await channel.send(
+                        f'⏪ **Draft Rolled Back {picks_rolled_back} pick{"s" if picks_rolled_back > 1 else ""}**\n'
+                        f'━━━━━━━━━━━━━━━━━━━━━━\n'
+                        f'Returning to Pick {formatted}\n'
+                        f'━━━━━━━━━━━━━━━━━━━━━━\n'
+                        f'🕐 **On the Clock:** {mention(league, current_username)}'
+                        f'{on_deck}'
+                    )
+                    sync_from_api(league, data)
+
                 # Detect new picks — last_completed > last_known means picks were made
-                if last_completed > last_known:
+                elif last_completed > last_known:
                     new_picks = [p for p in data['picks'] if p['pickNumber'] > last_known]
 
                     # API timing guard — currentPickNumber advanced but picks not in array yet
