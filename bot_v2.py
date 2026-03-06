@@ -924,7 +924,8 @@ async def poll_all_leagues():
                             if on_deck_username and pick_num + 2 <= total else ''
                         )
 
-                        if data['isDraftComplete'] and pick_num == last_completed:
+                        is_last_pick = data['isDraftComplete'] and pick_num == sorted(new_picks, key=lambda x: x['pickNumber'])[-1]['pickNumber']
+                        if is_last_pick:
                             await channel.send(
                                 f'━━━━━━━━━━━━━━━━━━━━━━\n'
                                 f'✅ **Pick {formatted}** — {mention(league, username)}\n'
