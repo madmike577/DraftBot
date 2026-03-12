@@ -4,10 +4,12 @@ import requests
 import asyncio
 import json
 import os
+import datetime
 from dotenv import load_dotenv
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
+FOOTBALL_DATA_TOKEN = os.getenv('FOOTBALL_DATA_TOKEN')
 
 LEAGUES_DIR = 'leagues'
 USER_AGENT = 'BracktDraftNotify/1.0'
@@ -86,7 +88,8 @@ def default_league(channel_id: int, admin_id: int) -> dict:
         'last_known_pick': 0,
         'api_available': False,
         'using_sample_data': False,
-        'draft_was_paused': False
+        'draft_was_paused': False,
+        'draft_active': True
     }
 
 def is_admin(league: dict, user_id: int) -> bool:
@@ -219,6 +222,12 @@ async def not_league_admin_response(interaction: discord.Interaction):
     await interaction.response.send_message(
         '❌ Only the league admin can use this command. '
         'Ask the current admin to run `/bradmin admintransfer @you` if needed.',
+        ephemeral=True
+    )
+
+async def draft_inactive_response(interaction: discord.Interaction):
+    await interaction.response.send_message(
+        '📋 The draft for this league is complete. Draft commands are disabled.',
         ephemeral=True
     )
 
@@ -583,12 +592,34 @@ async def adminsettings(interaction: discord.Interaction):
         f'**Teams:** {get_num_teams(league)}\n'
         f'**Total Picks:** {get_total_picks(league)}\n'
         f'**Current Pick:** {league["current_pick"]}\n'
+        f'**Draft Active:** {"✅ Yes" if league.get("draft_active", True) else "🔴 No (disabled)"}\n'
         f'**Status:** {mode_label(league)}\n\n'
         f'**Draft Order:** {order_text}\n\n'
         f'**Players ({len(league["players"])}):**\n{players_text}\n\n'
         f'**Required Sports ({len(league["required_sports"])}):**\n{sports_text}'
     )
     await interaction.response.send_message(msg, ephemeral=True)
+
+@brackt.command(name="draftstatus", description="Enable or disable draft commands for this league")
+@app_commands.describe(status="Enable or disable draft commands")
+@app_commands.choices(status=[
+    app_commands.Choice(name="enable", value="enable"),
+    app_commands.Choice(name="disable", value="disable"),
+])
+async def draftstatus(interaction: discord.Interaction, status: str):
+    league, admin = check_league_and_admin(interaction)
+    if not league:
+        await no_league_response(interaction); return
+    if not admin:
+        await not_league_admin_response(interaction); return
+    league['draft_active'] = (status == 'enable')
+    update_cache(interaction.channel_id, league)
+    state = '✅ enabled' if league['draft_active'] else '🔴 disabled'
+    await interaction.response.send_message(
+        f'Draft commands are now **{state}**.\n'
+        f'Affected commands: `/brackt onclock`, `/brackt last5`, `/brackt status`',
+        ephemeral=True
+    )
 
 @brackt.command(name="adminpick", description="Manually record a pick")
 @app_commands.describe(
@@ -682,6 +713,203 @@ async def adminpick(interaction: discord.Interaction, player: str, sport: str, b
         ephemeral=True
     )
 
+# --- UCL FIXTURE DATA ---
+
+UCL_COMPETITION_ID = 'CL'
+
+# Maps brackt.com club names to football-data.org club names
+UCL_NAME_MAP = {
+    'Arsenal': 'Arsenal FC',
+    'Bayern Munich': 'FC Bayern München',
+    'Barcelona': 'FC Barcelona',
+    'Paris Saint-Germain': 'Paris Saint-Germain FC',
+    'Manchester City': 'Manchester City FC',
+    'Liverpool': 'Liverpool FC',
+    'Chelsea': 'Chelsea FC',
+    'Atlético Madrid': 'Club Atlético de Madrid',
+    'Newcastle United': 'Newcastle United FC',
+    'Tottenham Hotspur': 'Tottenham Hotspur FC',
+    'Real Madrid': 'Real Madrid CF',
+    'Galatasaray': 'Galatasaray SK',
+    'Atalanta': 'Atalanta BC',
+    'Bayer Leverkusen': 'Bayer 04 Leverkusen',
+    'Bodø/Glimt': 'FK Bodø/Glimt',
+    'Sporting CP': 'Sporting CP',
+}
+# Reverse map: API name → brackt name
+UCL_REVERSE_MAP = {v: k for k, v in UCL_NAME_MAP.items()}
+
+def fetch_ucl_fixtures() -> list | None:
+    """Fetch UCL Round of 16 fixtures from football-data.org."""
+    if not FOOTBALL_DATA_TOKEN:
+        return None
+    try:
+        response = requests.get(
+            f'https://api.football-data.org/v4/competitions/{UCL_COMPETITION_ID}/matches',
+            headers={'X-Auth-Token': FOOTBALL_DATA_TOKEN},
+            params={'stage': 'LAST_16'},
+            timeout=10
+        )
+        if response.status_code == 200:
+            return response.json().get('matches', [])
+        else:
+            print(f'football-data.org returned {response.status_code}')
+            return None
+    except Exception as e:
+        print(f'UCL fixture fetch error: {e}')
+        return None
+
+def ucl_pick_owner(league: dict, brackt_name: str) -> str | None:
+    """Return the display handle of the manager who owns a UCL club."""
+    for p in league['pick_history']:
+        if p['sport'] == 'UEFA Champions League' and p['player'] == brackt_name:
+            return league['handles'].get(p['team'], p['team'])
+    return None
+
+def match_score(match: dict, team_key: str):
+    """Extract full-time score for 'home' or 'away' from a match dict. Returns None if not finished."""
+    if not match or match.get('status') != 'FINISHED':
+        return None
+    s = match.get('score', {}).get('fullTime', {})
+    return s.get('home') if team_key == 'home' else s.get('away')
+
+def build_ucl_matchups(league: dict, matches: list) -> list:
+    """
+    Group UCL matches into two-leg ties and compute aggregate scores.
+    Returns a list of tie dicts sorted by next relevant date.
+    """
+    # Set of API club names that were drafted
+    drafted = {
+        UCL_NAME_MAP.get(p['player'], p['player'])
+        for p in league['pick_history']
+        if p['sport'] == 'UEFA Champions League'
+    }
+
+    # Group matches into ties keyed by frozenset of the two club API names
+    ties: dict = {}
+    for m in matches:
+        home = m['homeTeam']['name']
+        away = m['awayTeam']['name']
+        key = frozenset([home, away])
+        if key not in ties:
+            ties[key] = []
+        ties[key].append(m)
+
+    result = []
+    for key, legs in ties.items():
+        legs = sorted(legs, key=lambda x: x['utcDate'])
+        home_api = legs[0]['homeTeam']['name']
+        away_api = legs[0]['awayTeam']['name']
+        home_brackt = UCL_REVERSE_MAP.get(home_api, home_api)
+        away_brackt = UCL_REVERSE_MAP.get(away_api, away_api)
+
+        # Only include ties where at least one club was drafted
+        if home_api not in drafted and away_api not in drafted:
+            continue
+
+        home_owner = ucl_pick_owner(league, home_brackt)
+        away_owner = ucl_pick_owner(league, away_brackt)
+
+        leg1 = legs[0] if len(legs) > 0 else None
+        leg2 = legs[1] if len(legs) > 1 else None
+
+        # Leg 1: home/away from leg 1 perspective
+        l1_home = match_score(leg1, 'home')
+        l1_away = match_score(leg1, 'away')
+        l1_played = l1_home is not None
+
+        # Leg 2 swaps home/away clubs relative to leg 1
+        l2_home = match_score(leg2, 'home')  # leg1 away club scores in leg2
+        l2_away = match_score(leg2, 'away')  # leg1 home club scores in leg2
+        l2_played = l2_home is not None
+
+        # Aggregate from leg1 home club perspective
+        agg_home = (l1_home or 0) + (l2_away or 0)
+        agg_away = (l1_away or 0) + (l2_home or 0)
+
+        # Next relevant date for sorting
+        if leg2 and leg2['status'] != 'FINISHED':
+            next_date = leg2['utcDate']
+        elif leg1 and leg1['status'] != 'FINISHED':
+            next_date = leg1['utcDate']
+        else:
+            next_date = leg2['utcDate'] if leg2 else leg1['utcDate']
+
+        result.append({
+            'home_brackt': home_brackt,
+            'away_brackt': away_brackt,
+            'home_owner': home_owner,
+            'away_owner': away_owner,
+            'leg1': leg1,
+            'leg2': leg2,
+            'l1_home': l1_home,
+            'l1_away': l1_away,
+            'l2_home': l2_home,
+            'l2_away': l2_away,
+            'l1_played': l1_played,
+            'l2_played': l2_played,
+            'agg_home': agg_home,
+            'agg_away': agg_away,
+            'next_date': next_date,
+        })
+
+    return sorted(result, key=lambda x: x['next_date'])
+
+def format_ucl_tie(t: dict) -> str:
+    """Format a single UCL two-leg tie into a Discord message block."""
+    home = t['home_brackt']
+    away = t['away_brackt']
+    home_o = f" ({t['home_owner']})" if t['home_owner'] else ''
+    away_o = f" ({t['away_owner']})" if t['away_owner'] else ''
+
+    if t['l2_played']:
+        # Both legs done — show winner
+        agg_home = t['agg_home']
+        agg_away = t['agg_away']
+        if agg_home > agg_away:
+            winner, loser = home, away
+            winner_o, loser_o = home_o, away_o
+            agg_w, agg_l = agg_home, agg_away
+        elif agg_away > agg_home:
+            winner, loser = away, home
+            winner_o, loser_o = away_o, home_o
+            agg_w, agg_l = agg_away, agg_home
+        else:
+            # Level on aggregate — went to extra time/penalties
+            return (
+                f'✅ **{home}{home_o}** vs **{away}{away_o}** — '
+                f'{agg_home}–{agg_away} agg (decided by extra time/pens)'
+            )
+        return (
+            f'✅ **{winner}{winner_o}** beat **{loser}{loser_o}** '
+            f'{agg_w}–{agg_l} on aggregate'
+        )
+
+    elif t['l1_played']:
+        # Leg 1 done, leg 2 upcoming
+        leg2_ts = int(datetime.datetime.fromisoformat(
+            t['leg2']['utcDate'].replace('Z', '+00:00')).timestamp()) if t['leg2'] else None
+        date_str = f'<t:{leg2_ts}:F>' if leg2_ts else 'TBD'
+        if t['l1_home'] > t['l1_away']:
+            lead_str = f'{home} leads {t["l1_home"]}–{t["l1_away"]} from leg 1'
+        elif t['l1_away'] > t['l1_home']:
+            lead_str = f'{away} leads {t["l1_away"]}–{t["l1_home"]} from leg 1'
+        else:
+            lead_str = f'Level {t["l1_home"]}–{t["l1_away"]} from leg 1'
+        return (
+            f'⏳ **{home}{home_o}** vs **{away}{away_o}**\n'
+            f'   Leg 2: {date_str} · {lead_str}'
+        )
+    else:
+        # Neither leg played
+        leg1_ts = int(datetime.datetime.fromisoformat(
+            t['leg1']['utcDate'].replace('Z', '+00:00')).timestamp()) if t['leg1'] else None
+        date_str = f'<t:{leg1_ts}:F>' if leg1_ts else 'TBD'
+        return (
+            f'🔜 **{home}{home_o}** vs **{away}{away_o}**\n'
+            f'   Leg 1: {date_str}'
+        )
+
 # --- PUBLIC READ COMMANDS ---
 
 @brackt_public.command(name="onclock", description="Show who is currently on the clock")
@@ -691,6 +919,8 @@ async def onclock(interaction: discord.Interaction, display: str = "public"):
     league = load_league(interaction.channel_id)
     if not league:
         await no_league_response(interaction); return
+    if not league.get('draft_active', True):
+        await draft_inactive_response(interaction); return
     if not league['draft_order']:
         await interaction.response.send_message('❌ Draft not configured yet.', ephemeral=True); return
     pick_num = league['current_pick']
@@ -711,6 +941,8 @@ async def last5(interaction: discord.Interaction, display: str = "public"):
     league = load_league(interaction.channel_id)
     if not league:
         await no_league_response(interaction); return
+    if not league.get('draft_active', True):
+        await draft_inactive_response(interaction); return
     if not league['pick_history']:
         await interaction.response.send_message(
             '📋 No picks have been made yet.', ephemeral=is_ephemeral(display)
@@ -799,6 +1031,8 @@ async def status(interaction: discord.Interaction, display: str = "public"):
     league = load_league(interaction.channel_id)
     if not league:
         await no_league_response(interaction); return
+    if not league.get('draft_active', True):
+        await draft_inactive_response(interaction); return
     if not league['draft_order']:
         await interaction.response.send_message('❌ Draft not configured yet.', ephemeral=True); return
     pick_num = league['current_pick']
@@ -813,6 +1047,186 @@ async def status(interaction: discord.Interaction, display: str = "public"):
     )
     await interaction.response.send_message(msg, ephemeral=is_ephemeral(display))
 
+async def sport_autocomplete(
+    interaction: discord.Interaction,
+    current: str
+) -> list[app_commands.Choice[str]]:
+    league = load_league(interaction.channel_id)
+    if not league or not league.get('required_sports'):
+        return []
+    return [
+        app_commands.Choice(name=s, value=s)
+        for s in league['required_sports']
+        if current.lower() in s.lower()
+    ][:25]
+
+@brackt_public.command(name="sport", description="Show all drafted picks for a specific sport")
+@app_commands.describe(
+    sport="Select a sport",
+    display="Show publicly or privately (default: private)"
+)
+@app_commands.autocomplete(sport=sport_autocomplete)
+@app_commands.choices(display=DISPLAY_CHOICES)
+async def sport_command(interaction: discord.Interaction, sport: str, display: str = "private"):
+    league = load_league(interaction.channel_id)
+    if not league:
+        await no_league_response(interaction); return
+    if not league.get('pick_history'):
+        await interaction.response.send_message(
+            '📋 No picks recorded yet.', ephemeral=True
+        ); return
+
+    # Filter picks by sport, sorted by overall pick number
+    sport_picks = sorted(
+        [p for p in league['pick_history'] if p['sport'].lower() == sport.lower()],
+        key=lambda x: x['pick']
+    )
+
+    if not sport_picks:
+        available = ', '.join(f'`{s}`' for s in league['required_sports'])
+        await interaction.response.send_message(
+            f'❌ No picks found for **{sport}**.\nAvailable sports: {available}',
+            ephemeral=True
+        ); return
+
+    lines = []
+    for i, p in enumerate(sport_picks, 1):
+        handle = league['handles'].get(p['team'], p['team'])
+        lines.append(f'{i}. **{p["player"]}** — {handle} ({p["pick"]})')
+
+    text = f'🏅 **{sport}** — {len(sport_picks)} pick{"s" if len(sport_picks) > 1 else ""}\n\n'
+    text += '\n'.join(lines)
+
+    await interaction.response.send_message(text, ephemeral=is_ephemeral(display))
+
+async def schedule_sport_autocomplete(
+    interaction: discord.Interaction,
+    current: str
+) -> list[app_commands.Choice[str]]:
+    league = load_league(interaction.channel_id)
+    if not league or not league.get('required_sports'):
+        return []
+    return [
+        app_commands.Choice(name=s, value=s)
+        for s in league['required_sports']
+        if current.lower() in s.lower()
+    ][:25]
+
+# Sports with live fixture support implemented
+SCHEDULE_SUPPORTED_SPORTS = {'UEFA Champions League'}
+
+@brackt_public.command(name="schedule", description="Show upcoming fixtures and results for a sport")
+@app_commands.describe(
+    sport="Select a sport",
+    display="Show publicly or privately (default: private)"
+)
+@app_commands.autocomplete(sport=schedule_sport_autocomplete)
+@app_commands.choices(display=DISPLAY_CHOICES)
+async def schedule_command(interaction: discord.Interaction, sport: str, display: str = "private"):
+    league = load_league(interaction.channel_id)
+    if not league:
+        await no_league_response(interaction); return
+
+    if sport not in SCHEDULE_SUPPORTED_SPORTS:
+        await interaction.response.send_message(
+            f'🚧 Schedule support for **{sport}** is coming soon!',
+            ephemeral=True
+        ); return
+
+    if sport == 'UEFA Champions League':
+        if not any(p['sport'] == 'UEFA Champions League' for p in league.get('pick_history', [])):
+            await interaction.response.send_message(
+                '❌ No UEFA Champions League picks found in this league.', ephemeral=True
+            ); return
+        await interaction.response.defer(ephemeral=is_ephemeral(display))
+        matches = fetch_ucl_fixtures()
+        if matches is None:
+            await interaction.followup.send(
+                '❌ Could not reach the football data API. Try again later.',
+                ephemeral=True
+            ); return
+        ties = build_ucl_matchups(league, matches)
+        if not ties:
+            await interaction.followup.send(
+                '❌ No UCL fixtures found involving drafted clubs.',
+                ephemeral=True
+            ); return
+        lines = ['🏆 **UEFA Champions League — Round of 16**\n']
+        for t in ties:
+            lines.append(format_ucl_tie(t))
+        await interaction.followup.send('\n'.join(lines), ephemeral=is_ephemeral(display))
+
+@brackt_public.command(name="nextmatch", description="Show your next upcoming match for a sport")
+@app_commands.describe(
+    sport="Select a sport with fixture support",
+    display="Show publicly or privately (default: private)"
+)
+@app_commands.autocomplete(sport=schedule_sport_autocomplete)
+@app_commands.choices(display=DISPLAY_CHOICES)
+async def nextmatch_command(interaction: discord.Interaction, sport: str, display: str = "private"):
+    league = load_league(interaction.channel_id)
+    if not league:
+        await no_league_response(interaction); return
+
+    if sport not in SCHEDULE_SUPPORTED_SPORTS:
+        await interaction.response.send_message(
+            f'🚧 Schedule support for **{sport}** is coming soon!',
+            ephemeral=True
+        ); return
+
+    if sport == 'UEFA Champions League':
+        if not any(p['sport'] == 'UEFA Champions League' for p in league.get('pick_history', [])):
+            await interaction.response.send_message(
+                '❌ No UEFA Champions League picks found in this league.', ephemeral=True
+            ); return
+
+        sender_id = str(interaction.user.id)
+        user_teams = [u for u, uid in league['players'].items() if uid == sender_id]
+        if not user_teams:
+            await interaction.response.send_message(
+                '❌ Your Discord account is not mapped to any team in this league.',
+                ephemeral=True
+            ); return
+
+        user_ucl_picks = [
+            p['player'] for p in league['pick_history']
+            if p['sport'] == 'UEFA Champions League' and p['team'] in user_teams
+        ]
+        if not user_ucl_picks:
+            await interaction.response.send_message(
+                '❌ You have no UEFA Champions League picks in this league.',
+                ephemeral=True
+            ); return
+
+        await interaction.response.defer(ephemeral=is_ephemeral(display))
+        matches = fetch_ucl_fixtures()
+        if matches is None:
+            await interaction.followup.send(
+                '❌ Could not reach the football data API. Try again later.',
+                ephemeral=True
+            ); return
+
+        ties = build_ucl_matchups(league, matches)
+        user_api_names = {UCL_NAME_MAP.get(p, p) for p in user_ucl_picks}
+
+        relevant = []
+        for t in ties:
+            home_api = UCL_NAME_MAP.get(t['home_brackt'], t['home_brackt'])
+            away_api = UCL_NAME_MAP.get(t['away_brackt'], t['away_brackt'])
+            if home_api in user_api_names or away_api in user_api_names:
+                relevant.append(t)
+
+        if not relevant:
+            await interaction.followup.send(
+                '✅ All your UCL teams have finished their fixtures.',
+                ephemeral=is_ephemeral(display)
+            ); return
+
+        lines = [f'📅 **Your next UCL match{"es" if len(relevant) > 1 else ""}:**\n']
+        for t in relevant:
+            lines.append(format_ucl_tie(t))
+        await interaction.followup.send('\n'.join(lines), ephemeral=is_ephemeral(display))
+
 @brackt_public.command(name="help", description="Show all available draft commands")
 async def help_command(interaction: discord.Interaction):
     league = load_league(interaction.channel_id)
@@ -824,6 +1238,9 @@ async def help_command(interaction: discord.Interaction):
         '`/brackt last5` — Show the last 5 picks\n'
         '`/brackt team [username]` — Show a team\'s picks\n'
         '`/brackt mysports [username]` — Show missing sports and flex spots\n'
+        '`/brackt sport [sport]` — Show all picks for a specific sport\n'
+        '`/brackt schedule [sport]` — Show upcoming fixtures and results\n'
+        '`/brackt nextmatch [sport]` — Show your next upcoming match\n'
         '`/brackt status` — Show current draft state\n'
         '`/brackt help` — Show this message\n\n'
         'All commands support a `display` option: **public** (default) or **private**\n\n'
@@ -908,7 +1325,10 @@ async def poll_all_leagues():
                     if not new_picks:
                         continue
 
-                    for pick in sorted(new_picks, key=lambda x: x['pickNumber']):
+                    sorted_new_picks = sorted(new_picks, key=lambda x: x['pickNumber'])
+                    last_pick_num = sorted_new_picks[-1]['pickNumber']
+
+                    for pick in sorted_new_picks:
                         username = pick['username']
                         player = pick['participantName']
                         sport = pick['sport']
@@ -924,7 +1344,7 @@ async def poll_all_leagues():
                             if on_deck_username and pick_num + 2 <= total else ''
                         )
 
-                        is_last_pick = data['isDraftComplete'] and pick_num == sorted(new_picks, key=lambda x: x['pickNumber'])[-1]['pickNumber']
+                        is_last_pick = data['isDraftComplete'] and pick_num == last_pick_num
                         if is_last_pick:
                             await channel.send(
                                 f'━━━━━━━━━━━━━━━━━━━━━━\n'
