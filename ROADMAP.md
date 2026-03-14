@@ -1,8 +1,16 @@
 # Brackt Notify — Roadmap
 
 ## In Progress
-- [ ] UCL quarterfinals — update `stage=LAST_16` to `LAST_8` before April 15 (QF draw March 21)
 - [ ] NBA play-in/playoffs — verify balldontlie tags play-in games as `postseason=true` when April 15 arrives
+
+## Reminders
+- [ ] **March 18** — check `/brackt schedule UCL` after R16 second legs finish; confirm auto-advances to QF
+- [ ] **April 15** — NBA play-in begins; verify postseason flag behaviour
+
+## Annual Maintenance (each season)
+- [ ] Update `NBA_PLAYIN_START` and `NBA_PLAYIN_END` dates
+- [ ] Add new NBA Cup Final game ID to `NBA_CUP_GAME_IDS`
+- [ ] Update `NBA_SEASON` constant (drives season start date and postseason queries automatically)
 
 ## Backlog
 - [ ] Discord embeds for cleaner output
@@ -34,3 +42,4 @@
 - [x] NBA rate limit fix — reduced to 2 API calls per team via fetch_nba_team_data()
 - [x] NBA Cup Final exclusion from W/L record (NBA_CUP_GAME_IDS)
 - [x] Correct balldontlie team IDs verified for all 17 drafted teams
+- [x] UCL auto stage detection — advances R16 → QF → SF → Final automatically, no manual updates needed

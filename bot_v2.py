@@ -800,21 +800,64 @@ UCL_NAME_MAP = {
 UCL_REVERSE_MAP = {v: k for k, v in UCL_NAME_MAP.items()}
 
 def fetch_ucl_fixtures() -> list | None:
-    """Fetch UCL Round of 16 fixtures from football-data.org."""
+    """
+    Fetch UCL knockout matches from football-data.org.
+    Automatically detects the current active stage so no manual updates
+    are needed as the tournament progresses each round or season.
+    """
     if not FOOTBALL_DATA_TOKEN:
         return None
     try:
         response = requests.get(
             f'https://api.football-data.org/v4/competitions/{UCL_COMPETITION_ID}/matches',
             headers={'X-Auth-Token': FOOTBALL_DATA_TOKEN},
-            params={'stage': 'LAST_16'},
             timeout=10
         )
-        if response.status_code == 200:
-            return response.json().get('matches', [])
-        else:
+        if response.status_code != 200:
             print(f'football-data.org returned {response.status_code}')
             return None
+        matches = response.json().get('matches', [])
+
+        # Knockout stage order — used to find the current active round
+        KNOCKOUT_STAGE_ORDER = [
+            'LAST_16', 'QUARTER_FINALS', 'SEMI_FINALS', 'FINAL'
+        ]
+        knockout_stages = set(KNOCKOUT_STAGE_ORDER)
+
+        # Group matches by stage, only considering knockout rounds
+        by_stage: dict[str, list] = {}
+        for m in matches:
+            stage = m.get('stage', '')
+            if stage in knockout_stages:
+                by_stage.setdefault(stage, []).append(m)
+
+        # Current stage = earliest knockout stage that isn't fully finished
+        current_stage = None
+        for stage in KNOCKOUT_STAGE_ORDER:
+            stage_matches = by_stage.get(stage, [])
+            if not stage_matches:
+                continue
+            if any(m.get('status') != 'FINISHED' for m in stage_matches):
+                current_stage = stage
+                break
+
+        if not current_stage:
+            # All knockout stages finished — return Final matches
+            for stage in reversed(KNOCKOUT_STAGE_ORDER):
+                if stage in by_stage:
+                    current_stage = stage
+                    break
+
+        if not current_stage:
+            return []
+
+        print(f'UCL current stage detected: {current_stage}')
+        # Tag each match with the detected stage so callers can adapt formatting
+        stage_matches = by_stage[current_stage]
+        for m in stage_matches:
+            m['_detected_stage'] = current_stage
+        return stage_matches
+
     except Exception as e:
         print(f'UCL fixture fetch error: {e}')
         return None
@@ -872,6 +915,7 @@ def build_ucl_matchups(league: dict, matches: list) -> list:
 
         leg1 = legs[0] if len(legs) > 0 else None
         leg2 = legs[1] if len(legs) > 1 else None
+        is_final = leg1 and leg1.get('_detected_stage') == 'FINAL'
 
         # Leg 1: home/away from leg 1 perspective
         l1_home = match_score(leg1, 'home')
@@ -911,16 +955,39 @@ def build_ucl_matchups(league: dict, matches: list) -> list:
             'agg_home': agg_home,
             'agg_away': agg_away,
             'next_date': next_date,
+            'is_final': is_final,
         })
 
     return sorted(result, key=lambda x: x['next_date'])
 
 def format_ucl_tie(t: dict) -> str:
-    """Format a single UCL two-leg tie into a Discord message block."""
+    """Format a single UCL two-leg tie (or Final) into a Discord message block."""
     home = t['home_brackt']
     away = t['away_brackt']
     home_o = f" ({t['home_owner']})" if t['home_owner'] else ''
     away_o = f" ({t['away_owner']})" if t['away_owner'] else ''
+    is_final = t.get('is_final', False)
+
+    if is_final:
+        # Single match — no aggregate, no legs
+        if t['l1_played']:
+            # Final is done
+            h, a = t['l1_home'], t['l1_away']
+            if h > a:
+                return f'🏆 **{home}{home_o}** are Champions! Beat **{away}{away_o}** {h}–{a}'
+            elif a > h:
+                return f'🏆 **{away}{away_o}** are Champions! Beat **{home}{home_o}** {a}–{h}'
+            else:
+                return f'🏆 **{home}{home_o}** vs **{away}{away_o}** — {h}–{h} (decided by pens)'
+        else:
+            # Final upcoming
+            leg1_ts = int(datetime.datetime.fromisoformat(
+                t['leg1']['utcDate'].replace('Z', '+00:00')).timestamp()) if t['leg1'] else None
+            date_str = f'<t:{leg1_ts}:F>' if leg1_ts else 'TBD'
+            return (
+                f'🏆 **UCL Final:** **{home}{home_o}** vs **{away}{away_o}**\n'
+                f'   {date_str}'
+            )
 
     if t['l2_played']:
         # Both legs done — show winner
@@ -974,6 +1041,11 @@ def format_ucl_tie(t: dict) -> str:
 
 BDL_BASE = 'https://api.balldontlie.io/v1'
 NBA_SEASON = 2025
+
+# Play-in tournament window — update each season
+# Games dated within this range that are tagged postseason=true are play-in games
+NBA_PLAYIN_START = datetime.date(2026, 4, 14)
+NBA_PLAYIN_END   = datetime.date(2026, 4, 17)
 
 # Game IDs for NBA Cup (In-Season Tournament) finals — not counted in regular season W/L record.
 # Add the new final's game ID each season.
@@ -1073,7 +1145,7 @@ def fetch_nba_team_data(team_id: int) -> dict | None:
         params = {
             'team_ids[]': team_id,
             'postseason': 'false',
-            'start_date': '2025-10-01',
+            'start_date': f'{NBA_SEASON}-10-01',
             'end_date': yesterday,
             'per_page': 100,
         }
@@ -1174,6 +1246,17 @@ def format_nba_game_line(game: dict, team_id: int) -> str:
         return f'{location} {opponent}{score_part} · {status}'
     return f'{location} {opponent} — {format_nba_datetime(game)}'
 
+def game_is_playin(game: dict) -> bool:
+    """Return True if a postseason game falls within the play-in tournament window."""
+    date_str = game.get('date') or (game.get('datetime') or '')[:10]
+    if not date_str:
+        return False
+    try:
+        game_date = datetime.date.fromisoformat(date_str)
+        return NBA_PLAYIN_START <= game_date <= NBA_PLAYIN_END
+    except ValueError:
+        return False
+
 def build_nba_series(games: list, team_id: int) -> dict | None:
     """
     Given a list of postseason games for a team, determine current series status.
@@ -1254,6 +1337,7 @@ def build_nba_series(games: list, team_id: int) -> dict | None:
         'is_eliminated': is_eliminated,
         'series_over': series_over,
     }
+
 
 # --- PUBLIC READ COMMANDS ---
 
@@ -1683,17 +1767,39 @@ async def nextmatch_command(interaction: discord.Interaction, sport: str):
                 continue
 
             if playoffs_started:
-                # Playoffs: use postseason games already fetched, plus 2 calls for team data
                 team_data = fetch_nba_team_data(team_id)
                 record_str = f'{team_data["wins"]}–{team_data["losses"]}' if team_data else 'N/A'
                 team_post_games = [
                     g for g in postseason_games
                     if int(g['home_team']['id']) == team_id or int(g['visitor_team']['id']) == team_id
                 ]
+
+                # Split into play-in and main bracket games by date
+                playin_games = [g for g in team_post_games if game_is_playin(g)]
+                bracket_games = [g for g in team_post_games if not game_is_playin(g)]
+
                 if not team_post_games:
-                    lines.append(f'**{brackt_name}** ({record_str}) — ❌ Did not qualify for playoffs')
+                    # Postseason started but no games yet — too early to tell
+                    lines.append(f'**{brackt_name}** ({record_str}) — ⏳ Awaiting playoff assignment')
                     continue
-                series = build_nba_series(team_post_games, team_id)
+
+                if playin_games and not bracket_games:
+                    # Team is in play-in only
+                    upcoming = [g for g in playin_games if g['status'] != 'Final']
+                    completed = [g for g in playin_games if g['status'] == 'Final']
+                    if upcoming:
+                        next_str = format_nba_game_line(upcoming[0], team_id)
+                        lines.append(f'**{brackt_name}** ({record_str}) — 🎟️ Play-In: {next_str}')
+                    elif completed:
+                        # All play-in games done and no bracket games — eliminated
+                        lines.append(f'**{brackt_name}** ({record_str}) — ❌ Eliminated in Play-In')
+                    else:
+                        lines.append(f'**{brackt_name}** ({record_str}) — 🎟️ Play-In pending')
+                    continue
+
+                # Main bracket (includes teams that came through play-in)
+                series_games = bracket_games if bracket_games else team_post_games
+                series = build_nba_series(series_games, team_id)
                 if not series:
                     lines.append(f'**{brackt_name}** ({record_str}) — No series data')
                     continue
