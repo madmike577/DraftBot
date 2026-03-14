@@ -2517,6 +2517,13 @@
       "team": "nermelcambium",
       "player": "Vanderbilt",
       "sport": "NCAAM Basketball"
+    },
+    {
+      "pick": 350,
+      "round": 25,
+      "team": "jom315",
+      "player": "Toronto Tempo",
+      "sport": "WNBA"
     }
   ],
   "team_rosters": {
@@ -4291,12 +4298,18 @@
         "pick": 323,
         "player": "Tyrrell Hatton",
         "sport": "PGA Golf"
+      },
+      {
+        "pick": 350,
+        "player": "Toronto Tempo",
+        "sport": "WNBA"
       }
     ]
   },
   "current_pick": 350,
   "last_known_pick": 349,
-  "api_available": false,
-  "using_sample_data": true,
-  "draft_was_paused": false
+  "api_available": true,
+  "using_sample_data": false,
+  "draft_was_paused": false,
+  "league_name": "Diablo"
 }

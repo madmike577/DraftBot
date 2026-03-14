@@ -2239,7 +2239,8 @@
   },
   "current_pick": 180,
   "last_known_pick": 179,
-  "api_available": false,
-  "using_sample_data": true,
-  "draft_was_paused": false
+  "api_available": true,
+  "using_sample_data": false,
+  "draft_was_paused": false,
+  "league_name": "Omni"
 }

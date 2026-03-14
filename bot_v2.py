@@ -4,10 +4,14 @@ import requests
 import asyncio
 import json
 import os
+import datetime
+from collections import Counter
 from dotenv import load_dotenv
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
+FOOTBALL_DATA_TOKEN = os.getenv('FOOTBALL_DATA_TOKEN')
+BALLDONTLIE_TOKEN = os.getenv('BALLDONTLIE_TOKEN')
 
 LEAGUES_DIR = 'leagues'
 USER_AGENT = 'BracktDraftNotify/1.0'
@@ -86,7 +90,9 @@ def default_league(channel_id: int, admin_id: int) -> dict:
         'last_known_pick': 0,
         'api_available': False,
         'using_sample_data': False,
-        'draft_was_paused': False
+        'draft_was_paused': False,
+        'draft_active': True,
+        'league_name': None
     }
 
 def is_admin(league: dict, user_id: int) -> bool:
@@ -97,6 +103,10 @@ def get_num_teams(league: dict) -> int:
 
 def get_total_picks(league: dict) -> int:
     return get_num_teams(league) * league['total_rounds']
+
+def league_display_name(league: dict) -> str:
+    """Return the league name if set, otherwise fall back to channel ID."""
+    return league.get('league_name') or f'Channel {league["channel_id"]}'
 
 # --- DRAFT LOGIC ---
 
@@ -219,6 +229,12 @@ async def not_league_admin_response(interaction: discord.Interaction):
     await interaction.response.send_message(
         '❌ Only the league admin can use this command. '
         'Ask the current admin to run `/bradmin admintransfer @you` if needed.',
+        ephemeral=True
+    )
+
+async def draft_inactive_response(interaction: discord.Interaction):
+    await interaction.response.send_message(
+        '📋 The draft for this league is complete. Draft commands are disabled.',
         ephemeral=True
     )
 
@@ -583,12 +599,56 @@ async def adminsettings(interaction: discord.Interaction):
         f'**Teams:** {get_num_teams(league)}\n'
         f'**Total Picks:** {get_total_picks(league)}\n'
         f'**Current Pick:** {league["current_pick"]}\n'
+        f'**Draft Active:** {"✅ Yes" if league.get("draft_active", True) else "🔴 No (disabled)"}\n'
         f'**Status:** {mode_label(league)}\n\n'
+        f'**League Name:** {league.get("league_name") or "Not set"}\n'
         f'**Draft Order:** {order_text}\n\n'
         f'**Players ({len(league["players"])}):**\n{players_text}\n\n'
         f'**Required Sports ({len(league["required_sports"])}):**\n{sports_text}'
     )
     await interaction.response.send_message(msg, ephemeral=True)
+
+@brackt.command(name="setname", description="Set a display name for this league")
+@app_commands.describe(name="The league name e.g. Diablo, Rumble, Omnifantasy")
+async def setname(interaction: discord.Interaction, name: str):
+    league, admin = check_league_and_admin(interaction)
+    if not league:
+        await no_league_response(interaction); return
+    if not admin:
+        await not_league_admin_response(interaction); return
+    name = name.strip()
+    if not name:
+        await interaction.response.send_message('❌ League name cannot be empty.', ephemeral=True)
+        return
+    if len(name) > 32:
+        await interaction.response.send_message('❌ League name must be 32 characters or fewer.', ephemeral=True)
+        return
+    league['league_name'] = name
+    update_cache(interaction.channel_id, league)
+    await interaction.response.send_message(
+        f'✅ League name set to **{name}**.', ephemeral=True
+    )
+
+@brackt.command(name="draftstatus", description="Enable or disable draft commands for this league")
+@app_commands.describe(status="Enable or disable draft commands")
+@app_commands.choices(status=[
+    app_commands.Choice(name="enable", value="enable"),
+    app_commands.Choice(name="disable", value="disable"),
+])
+async def draftstatus(interaction: discord.Interaction, status: str):
+    league, admin = check_league_and_admin(interaction)
+    if not league:
+        await no_league_response(interaction); return
+    if not admin:
+        await not_league_admin_response(interaction); return
+    league['draft_active'] = (status == 'enable')
+    update_cache(interaction.channel_id, league)
+    state = '✅ enabled' if league['draft_active'] else '🔴 disabled'
+    await interaction.response.send_message(
+        f'Draft commands are now **{state}**.\n'
+        f'Affected commands: `/brackt onclock`, `/brackt last5`, `/brackt status`',
+        ephemeral=True
+    )
 
 @brackt.command(name="adminpick", description="Manually record a pick")
 @app_commands.describe(
@@ -682,6 +742,519 @@ async def adminpick(interaction: discord.Interaction, player: str, sport: str, b
         ephemeral=True
     )
 
+@brackt.command(name="nbaids", description="Fetch and log all balldontlie NBA team IDs for verification")
+async def nbaids(interaction: discord.Interaction):
+    if not interaction.user.guild_permissions.manage_guild and \
+       not interaction.user.guild_permissions.administrator:
+        await interaction.response.send_message('❌ Admin only.', ephemeral=True); return
+    await interaction.response.defer(ephemeral=True)
+    try:
+        resp = requests.get(
+            f'{BDL_BASE}/teams',
+            headers=bdl_headers(),
+            params={'per_page': 35},
+            timeout=10
+        )
+        if resp.status_code != 200:
+            await interaction.followup.send(f'❌ API error {resp.status_code}', ephemeral=True)
+            return
+        teams = resp.json().get('data', [])
+        lines = ['**balldontlie NBA Team IDs:**\n```']
+        for t in sorted(teams, key=lambda x: x['full_name']):
+            marker = ' ← OUR TEAMS' if t['full_name'] in NBA_TEAM_IDS else ''
+            lines.append(f'{t["id"]:3d}  {t["full_name"]}{marker}')
+        lines.append('```')
+        # Also log to console for easy copy-paste
+        print('=== BDL TEAM IDS ===')
+        for t in sorted(teams, key=lambda x: x['id']):
+            print(f'  {t["id"]:3d}  {t["full_name"]}')
+        print('===================')
+        await interaction.followup.send('\n'.join(lines), ephemeral=True)
+    except Exception as e:
+        await interaction.followup.send(f'❌ Error: {e}', ephemeral=True)
+
+# --- UCL FIXTURE DATA ---
+
+UCL_COMPETITION_ID = 'CL'
+
+# Maps brackt.com club names to football-data.org club names
+UCL_NAME_MAP = {
+    'Arsenal': 'Arsenal FC',
+    'Bayern Munich': 'FC Bayern München',
+    'Barcelona': 'FC Barcelona',
+    'Paris Saint-Germain': 'Paris Saint-Germain FC',
+    'Manchester City': 'Manchester City FC',
+    'Liverpool': 'Liverpool FC',
+    'Chelsea': 'Chelsea FC',
+    'Atlético Madrid': 'Club Atlético de Madrid',
+    'Newcastle United': 'Newcastle United FC',
+    'Tottenham Hotspur': 'Tottenham Hotspur FC',
+    'Real Madrid': 'Real Madrid CF',
+    'Galatasaray': 'Galatasaray SK',
+    'Atalanta': 'Atalanta BC',
+    'Bayer Leverkusen': 'Bayer 04 Leverkusen',
+    'Bodø/Glimt': 'FK Bodø/Glimt',
+    'Sporting CP': 'Sporting Clube de Portugal',
+}
+# Reverse map: API name → brackt name
+UCL_REVERSE_MAP = {v: k for k, v in UCL_NAME_MAP.items()}
+
+def fetch_ucl_fixtures() -> list | None:
+    """Fetch UCL Round of 16 fixtures from football-data.org."""
+    if not FOOTBALL_DATA_TOKEN:
+        return None
+    try:
+        response = requests.get(
+            f'https://api.football-data.org/v4/competitions/{UCL_COMPETITION_ID}/matches',
+            headers={'X-Auth-Token': FOOTBALL_DATA_TOKEN},
+            params={'stage': 'LAST_16'},
+            timeout=10
+        )
+        if response.status_code == 200:
+            return response.json().get('matches', [])
+        else:
+            print(f'football-data.org returned {response.status_code}')
+            return None
+    except Exception as e:
+        print(f'UCL fixture fetch error: {e}')
+        return None
+
+def ucl_pick_owner(league: dict, brackt_name: str) -> str | None:
+    """Return the display handle of the manager who owns a UCL club."""
+    for p in league['pick_history']:
+        if p['sport'] == 'UEFA Champions League' and p['player'] == brackt_name:
+            return league['handles'].get(p['team'], p['team'])
+    return None
+
+def match_score(match: dict, team_key: str):
+    """Extract full-time score for 'home' or 'away' from a match dict. Returns None if not finished."""
+    if not match or match.get('status') != 'FINISHED':
+        return None
+    s = match.get('score', {}).get('fullTime', {})
+    return s.get('home') if team_key == 'home' else s.get('away')
+
+def build_ucl_matchups(league: dict, matches: list) -> list:
+    """
+    Group UCL matches into two-leg ties and compute aggregate scores.
+    Returns a list of tie dicts sorted by next relevant date.
+    """
+    # Set of API club names that were drafted
+    drafted = {
+        UCL_NAME_MAP.get(p['player'], p['player'])
+        for p in league['pick_history']
+        if p['sport'] == 'UEFA Champions League'
+    }
+
+    # Group matches into ties keyed by frozenset of the two club API names
+    ties: dict = {}
+    for m in matches:
+        home = m['homeTeam']['name']
+        away = m['awayTeam']['name']
+        key = frozenset([home, away])
+        if key not in ties:
+            ties[key] = []
+        ties[key].append(m)
+
+    result = []
+    for key, legs in ties.items():
+        legs = sorted(legs, key=lambda x: x['utcDate'])
+        home_api = legs[0]['homeTeam']['name']
+        away_api = legs[0]['awayTeam']['name']
+        home_brackt = UCL_REVERSE_MAP.get(home_api, home_api)
+        away_brackt = UCL_REVERSE_MAP.get(away_api, away_api)
+
+        # Only include ties where at least one club was drafted
+        if home_api not in drafted and away_api not in drafted:
+            continue
+
+        home_owner = ucl_pick_owner(league, home_brackt)
+        away_owner = ucl_pick_owner(league, away_brackt)
+
+        leg1 = legs[0] if len(legs) > 0 else None
+        leg2 = legs[1] if len(legs) > 1 else None
+
+        # Leg 1: home/away from leg 1 perspective
+        l1_home = match_score(leg1, 'home')
+        l1_away = match_score(leg1, 'away')
+        l1_played = l1_home is not None
+
+        # Leg 2 swaps home/away clubs relative to leg 1
+        l2_home = match_score(leg2, 'home')  # leg1 away club scores in leg2
+        l2_away = match_score(leg2, 'away')  # leg1 home club scores in leg2
+        l2_played = l2_home is not None
+
+        # Aggregate from leg1 home club perspective
+        agg_home = (l1_home or 0) + (l2_away or 0)
+        agg_away = (l1_away or 0) + (l2_home or 0)
+
+        # Next relevant date for sorting
+        if leg2 and leg2['status'] != 'FINISHED':
+            next_date = leg2['utcDate']
+        elif leg1 and leg1['status'] != 'FINISHED':
+            next_date = leg1['utcDate']
+        else:
+            next_date = leg2['utcDate'] if leg2 else leg1['utcDate']
+
+        result.append({
+            'home_brackt': home_brackt,
+            'away_brackt': away_brackt,
+            'home_owner': home_owner,
+            'away_owner': away_owner,
+            'leg1': leg1,
+            'leg2': leg2,
+            'l1_home': l1_home,
+            'l1_away': l1_away,
+            'l2_home': l2_home,
+            'l2_away': l2_away,
+            'l1_played': l1_played,
+            'l2_played': l2_played,
+            'agg_home': agg_home,
+            'agg_away': agg_away,
+            'next_date': next_date,
+        })
+
+    return sorted(result, key=lambda x: x['next_date'])
+
+def format_ucl_tie(t: dict) -> str:
+    """Format a single UCL two-leg tie into a Discord message block."""
+    home = t['home_brackt']
+    away = t['away_brackt']
+    home_o = f" ({t['home_owner']})" if t['home_owner'] else ''
+    away_o = f" ({t['away_owner']})" if t['away_owner'] else ''
+
+    if t['l2_played']:
+        # Both legs done — show winner
+        agg_home = t['agg_home']
+        agg_away = t['agg_away']
+        if agg_home > agg_away:
+            winner, loser = home, away
+            winner_o, loser_o = home_o, away_o
+            agg_w, agg_l = agg_home, agg_away
+        elif agg_away > agg_home:
+            winner, loser = away, home
+            winner_o, loser_o = away_o, home_o
+            agg_w, agg_l = agg_away, agg_home
+        else:
+            # Level on aggregate — went to extra time/penalties
+            return (
+                f'✅ **{home}{home_o}** vs **{away}{away_o}** — '
+                f'{agg_home}–{agg_away} agg (decided by extra time/pens)'
+            )
+        return (
+            f'✅ **{winner}{winner_o}** beat **{loser}{loser_o}** '
+            f'{agg_w}–{agg_l} on aggregate'
+        )
+
+    elif t['l1_played']:
+        # Leg 1 done, leg 2 upcoming
+        leg2_ts = int(datetime.datetime.fromisoformat(
+            t['leg2']['utcDate'].replace('Z', '+00:00')).timestamp()) if t['leg2'] else None
+        date_str = f'<t:{leg2_ts}:F>' if leg2_ts else 'TBD'
+        if t['l1_home'] > t['l1_away']:
+            lead_str = f'{home} leads {t["l1_home"]}–{t["l1_away"]} from leg 1'
+        elif t['l1_away'] > t['l1_home']:
+            lead_str = f'{away} leads {t["l1_away"]}–{t["l1_home"]} from leg 1'
+        else:
+            lead_str = f'Level {t["l1_home"]}–{t["l1_away"]} from leg 1'
+        return (
+            f'⏳ **{home}{home_o}** vs **{away}{away_o}**\n'
+            f'   Leg 2: {date_str} · {lead_str}'
+        )
+    else:
+        # Neither leg played
+        leg1_ts = int(datetime.datetime.fromisoformat(
+            t['leg1']['utcDate'].replace('Z', '+00:00')).timestamp()) if t['leg1'] else None
+        date_str = f'<t:{leg1_ts}:F>' if leg1_ts else 'TBD'
+        return (
+            f'🔜 **{home}{home_o}** vs **{away}{away_o}**\n'
+            f'   Leg 1: {date_str}'
+        )
+
+# --- NBA FIXTURE DATA ---
+
+BDL_BASE = 'https://api.balldontlie.io/v1'
+NBA_SEASON = 2025
+
+# Game IDs for NBA Cup (In-Season Tournament) finals — not counted in regular season W/L record.
+# Add the new final's game ID each season.
+NBA_CUP_GAME_IDS = {
+    20377171,  # 2025-26 NBA Cup Final: Knicks vs Spurs, Dec 16 2025
+}  # 2025 = 2025-26 season
+
+# Maps brackt.com NBA team names to balldontlie full_name
+NBA_NAME_MAP = {
+    'Boston Celtics':          'Boston Celtics',
+    'Charlotte Hornets':       'Charlotte Hornets',
+    'Cleveland Cavaliers':     'Cleveland Cavaliers',
+    'Denver Nuggets':          'Denver Nuggets',
+    'Detroit Pistons':         'Detroit Pistons',
+    'Golden State Warriors':   'Golden State Warriors',
+    'Houston Rockets':         'Houston Rockets',
+    'LA Lakers':               'Los Angeles Lakers',
+    'Miami Heat':              'Miami Heat',
+    'Minnesota Timberwolves':  'Minnesota Timberwolves',
+    'New York Knicks':         'New York Knicks',
+    'Oklahoma City Thunder':   'Oklahoma City Thunder',
+    'Orlando Magic':           'Orlando Magic',
+    'Philadelphia 76ers':      'Philadelphia 76ers',
+    'Phoenix Suns':            'Phoenix Suns',
+    'San Antonio Spurs':       'San Antonio Spurs',
+    'Toronto Raptors':         'Toronto Raptors',
+}
+
+# Stable balldontlie team IDs
+NBA_TEAM_IDS = {
+    'Boston Celtics': 2,
+    'Charlotte Hornets': 4,
+    'Cleveland Cavaliers': 6,
+    'Denver Nuggets': 7,
+    'Detroit Pistons': 8,
+    'Golden State Warriors': 10,
+    'Houston Rockets': 11,
+    'Los Angeles Lakers': 14,
+    'Miami Heat': 16,
+    'Minnesota Timberwolves': 18,
+    'New York Knicks': 20,
+    'Oklahoma City Thunder': 21,
+    'Orlando Magic': 22,
+    'Philadelphia 76ers': 23,
+    'Phoenix Suns': 24,
+    'San Antonio Spurs': 27,
+    'Toronto Raptors': 28,
+}
+
+def bdl_headers() -> dict:
+    return {'Authorization': BALLDONTLIE_TOKEN or ''}
+
+def brackt_to_bdl_name(brackt_name: str) -> str:
+    return NBA_NAME_MAP.get(brackt_name, brackt_name)
+
+def bdl_name_to_team_id(bdl_name: str) -> int | None:
+    return NBA_TEAM_IDS.get(bdl_name)
+
+def is_game_live(status: str) -> bool:
+    if not status or status == 'Final':
+        return False
+    try:
+        datetime.datetime.fromisoformat(status.replace('Z', '+00:00'))
+        return False
+    except ValueError:
+        pass
+    return True
+
+def bdl_get(params: dict) -> dict | None:
+    resp = requests.get(f'{BDL_BASE}/games', headers=bdl_headers(), params=params, timeout=10)
+    if resp.status_code == 429:
+        print(f'BDL rate limit hit')
+        return None
+    if resp.status_code != 200:
+        print(f'BDL error {resp.status_code}')
+        return None
+    return resp.json()
+
+def fetch_nba_team_data(team_id: int) -> dict | None:
+    """
+    Fetch everything needed for nextmatch in exactly 2 API calls:
+      Call 1 — completed regular season games (record)
+      Call 2 — today and upcoming games (live status + next game)
+    Returns dict with keys: wins, losses, live_game, next_game, or None on failure.
+    """
+    team_id = int(team_id)
+    today = datetime.date.today()
+    yesterday = (today - datetime.timedelta(days=1)).isoformat()
+    today_str = today.isoformat()
+
+    # --- Call 1: record from completed games up to yesterday ---
+    wins = 0
+    losses = 0
+    seen_ids = set()
+    cursor = None
+    while True:
+        params = {
+            'team_ids[]': team_id,
+            'postseason': 'false',
+            'start_date': '2025-10-01',
+            'end_date': yesterday,
+            'per_page': 100,
+        }
+        if cursor:
+            params['cursor'] = cursor
+        data = bdl_get(params)
+        if data is None:
+            return None
+        for g in data['data']:
+            if g['status'] != 'Final':
+                continue
+            if g['id'] in NBA_CUP_GAME_IDS:
+                continue
+            if g['id'] in seen_ids:
+                continue
+            seen_ids.add(g['id'])
+            home_id = int(g['home_team']['id'])
+            if home_id == team_id:
+                if g['home_team_score'] > g['visitor_team_score']:
+                    wins += 1
+                else:
+                    losses += 1
+            else:
+                if g['visitor_team_score'] > g['home_team_score']:
+                    wins += 1
+                else:
+                    losses += 1
+        cursor = data.get('meta', {}).get('next_cursor')
+        if not cursor:
+            break
+
+    # --- Call 2: today and upcoming games (live + next game) ---
+    data2 = bdl_get({
+        'team_ids[]': team_id,
+        'postseason': 'false',
+        'start_date': today_str,
+        'per_page': 10,
+    })
+    live_game = None
+    next_game = None
+    if data2:
+        for g in data2['data']:
+            if is_game_live(g.get('status', '')):
+                live_game = g
+                break
+        upcoming = [g for g in data2['data'] if g['status'] != 'Final']
+        if upcoming:
+            upcoming.sort(key=lambda g: g.get('datetime') or g.get('date') or '')
+            next_game = upcoming[0]
+
+    return {'wins': wins, 'losses': losses, 'live_game': live_game, 'next_game': next_game}
+
+def fetch_nba_postseason_games() -> list | None:
+    """Fetch all postseason games. Used to detect whether playoffs have started."""
+    try:
+        data = bdl_get({'seasons[]': NBA_SEASON, 'postseason': 'true', 'per_page': 100})
+        if data is None:
+            return None
+        return data.get('data', [])
+    except Exception as e:
+        print(f'fetch_nba_postseason_games error: {e}')
+        return None
+
+def format_nba_datetime(game: dict) -> str:
+    """Return a Discord local timestamp string for a game, or a plain date fallback."""
+    dt_str = game.get('datetime') or game.get('date')
+    if not dt_str:
+        return 'TBD'
+    try:
+        if 'T' in dt_str:
+            dt = datetime.datetime.fromisoformat(dt_str.replace('Z', '+00:00'))
+            return f'<t:{int(dt.timestamp())}:F>'
+        else:
+            return dt_str
+    except Exception:
+        return dt_str
+
+def format_nba_game_line(game: dict, team_id: int) -> str:
+    """Format a single NBA game as 'vs/@ Opponent — <timestamp or live score>'."""
+    home = game['home_team']
+    visitor = game['visitor_team']
+    team_id = int(team_id)
+    if int(home['id']) == team_id:
+        opponent = visitor['full_name']
+        location = 'vs'
+        team_score = game.get('home_team_score', 0)
+        opp_score = game.get('visitor_team_score', 0)
+    else:
+        opponent = home['full_name']
+        location = '@'
+        team_score = game.get('visitor_team_score', 0)
+        opp_score = game.get('home_team_score', 0)
+    status = game.get('status', '')
+    # Live game — show current score and period
+    if is_game_live(status):
+        score_str = f'{team_score}–{opp_score}' if team_score or opp_score else ''
+        score_part = f' ({score_str})' if score_str else ''
+        return f'{location} {opponent}{score_part} · {status}'
+    return f'{location} {opponent} — {format_nba_datetime(game)}'
+
+def build_nba_series(games: list, team_id: int) -> dict | None:
+    """
+    Given a list of postseason games for a team, determine current series status.
+    Returns a dict with opponent, wins, losses, next_game, is_eliminated.
+    Returns None if no games found.
+    """
+    if not games:
+        return None
+
+    # Find the opponent in the most recent/current series
+    opponent_counts = Counter()
+    for g in games:
+        if g['home_team']['id'] == team_id:
+            opp = g['visitor_team']['full_name']
+        else:
+            opp = g['home_team']['full_name']
+        opponent_counts[opp] += 1
+
+    # Current opponent = most recent game's opponent
+    games_sorted = sorted(games, key=lambda g: g.get('datetime') or g.get('date') or '')
+    current_opp = None
+    if games_sorted[-1]['home_team']['id'] == team_id:
+        current_opp = games_sorted[-1]['visitor_team']['full_name']
+    else:
+        current_opp = games_sorted[-1]['home_team']['full_name']
+
+    series_games = [g for g in games if
+        g['home_team']['full_name'] == current_opp or
+        g['visitor_team']['full_name'] == current_opp
+    ]
+
+    team_wins = 0
+    opp_wins = 0
+    for g in series_games:
+        if g['status'] != 'Final':
+            continue
+        if g['home_team']['id'] == team_id:
+            if g['home_team_score'] > g['visitor_team_score']:
+                team_wins += 1
+            else:
+                opp_wins += 1
+        else:
+            if g['visitor_team_score'] > g['home_team_score']:
+                team_wins += 1
+            else:
+                opp_wins += 1
+
+    is_eliminated = opp_wins == 4
+    series_over = team_wins == 4 or opp_wins == 4
+
+    next_game = None
+    if not series_over:
+        upcoming = [g for g in series_games if g['status'] != 'Final']
+        if upcoming:
+            upcoming.sort(key=lambda g: g.get('datetime') or g.get('date') or '')
+            next_game = upcoming[0]
+
+    # Series label
+    if team_wins > opp_wins:
+        if team_wins == 4:
+            series_label = f'Won series 4–{opp_wins}'
+        else:
+            series_label = f'Lead series {team_wins}–{opp_wins}'
+    elif opp_wins > team_wins:
+        if opp_wins == 4:
+            series_label = f'Lost series {team_wins}–4'
+        else:
+            series_label = f'Trail series {team_wins}–{opp_wins}'
+    else:
+        series_label = f'Series tied {team_wins}–{opp_wins}'
+
+    return {
+        'opponent': current_opp,
+        'team_wins': team_wins,
+        'opp_wins': opp_wins,
+        'series_label': series_label,
+        'next_game': next_game,
+        'is_eliminated': is_eliminated,
+        'series_over': series_over,
+    }
+
 # --- PUBLIC READ COMMANDS ---
 
 @brackt_public.command(name="onclock", description="Show who is currently on the clock")
@@ -691,6 +1264,8 @@ async def onclock(interaction: discord.Interaction, display: str = "public"):
     league = load_league(interaction.channel_id)
     if not league:
         await no_league_response(interaction); return
+    if not league.get('draft_active', True):
+        await draft_inactive_response(interaction); return
     if not league['draft_order']:
         await interaction.response.send_message('❌ Draft not configured yet.', ephemeral=True); return
     pick_num = league['current_pick']
@@ -711,6 +1286,8 @@ async def last5(interaction: discord.Interaction, display: str = "public"):
     league = load_league(interaction.channel_id)
     if not league:
         await no_league_response(interaction); return
+    if not league.get('draft_active', True):
+        await draft_inactive_response(interaction); return
     if not league['pick_history']:
         await interaction.response.send_message(
             '📋 No picks have been made yet.', ephemeral=is_ephemeral(display)
@@ -799,6 +1376,8 @@ async def status(interaction: discord.Interaction, display: str = "public"):
     league = load_league(interaction.channel_id)
     if not league:
         await no_league_response(interaction); return
+    if not league.get('draft_active', True):
+        await draft_inactive_response(interaction); return
     if not league['draft_order']:
         await interaction.response.send_message('❌ Draft not configured yet.', ephemeral=True); return
     pick_num = league['current_pick']
@@ -806,7 +1385,7 @@ async def status(interaction: discord.Interaction, display: str = "public"):
     _, round_num = format_pick_number(league, pick_num)
     username = get_team_for_pick(league, pick_num)
     msg = (
-        f'📋 **Draft Status** ({mode_label(league)})\n'
+        f'📋 **Draft Status — {league_display_name(league)}** ({mode_label(league)})\n'
         f'Round: {round_num} of {league["total_rounds"]}\n'
         f'Current Pick: {pick_num} of {total_picks}\n'
         f'On the Clock: {mention(league, username)}'
@@ -865,18 +1444,309 @@ async def sport_command(interaction: discord.Interaction, sport: str, display: s
 
     await interaction.response.send_message(text, ephemeral=is_ephemeral(display))
 
+async def schedule_sport_autocomplete(
+    interaction: discord.Interaction,
+    current: str
+) -> list[app_commands.Choice[str]]:
+    league = load_league(interaction.channel_id)
+    if not league or not league.get('required_sports'):
+        return []
+    return [
+        app_commands.Choice(name=s, value=s)
+        for s in league['required_sports']
+        if current.lower() in s.lower()
+    ][:25]
+
+# Sports with live fixture support implemented
+SCHEDULE_SUPPORTED_SPORTS = {'UEFA Champions League', 'NBA'}
+
+@brackt_public.command(name="schedule", description="Show upcoming fixtures and results for a sport")
+@app_commands.describe(
+    sport="Select a sport",
+    display="Show publicly or privately (default: private)"
+)
+@app_commands.autocomplete(sport=schedule_sport_autocomplete)
+@app_commands.choices(display=DISPLAY_CHOICES)
+async def schedule_command(interaction: discord.Interaction, sport: str, display: str = "private"):
+    league = load_league(interaction.channel_id)
+    if not league:
+        await no_league_response(interaction); return
+
+    if sport not in SCHEDULE_SUPPORTED_SPORTS:
+        await interaction.response.send_message(
+            f'🚧 Schedule support for **{sport}** is coming soon!',
+            ephemeral=True
+        ); return
+
+    if sport == 'UEFA Champions League':
+        if not any(p['sport'] == 'UEFA Champions League' for p in league.get('pick_history', [])):
+            await interaction.response.send_message(
+                '❌ No UEFA Champions League picks found in this league.', ephemeral=True
+            ); return
+        await interaction.response.defer(ephemeral=is_ephemeral(display))
+        matches = fetch_ucl_fixtures()
+        if matches is None:
+            await interaction.followup.send(
+                '❌ Could not reach the football data API. Try again later.',
+                ephemeral=True
+            ); return
+        ties = build_ucl_matchups(league, matches)
+        if not ties:
+            await interaction.followup.send(
+                '❌ No UCL fixtures found involving drafted clubs.',
+                ephemeral=True
+            ); return
+        lines = [f'🏆 **UEFA Champions League — Round of 16** · {league_display_name(league)}\n']
+        for t in ties:
+            lines.append(format_ucl_tie(t))
+        await interaction.followup.send('\n'.join(lines), ephemeral=is_ephemeral(display))
+
+    elif sport == 'NBA':
+        if not any(p['sport'] == 'NBA' for p in league.get('pick_history', [])):
+            await interaction.response.send_message(
+                '❌ No NBA picks found in this league.', ephemeral=True
+            ); return
+        await interaction.response.defer(ephemeral=is_ephemeral(display))
+
+        postseason_games = fetch_nba_postseason_games()
+        if postseason_games is None:
+            await interaction.followup.send(
+                '❌ Could not reach the NBA data API. Try again later.', ephemeral=True
+            ); return
+
+        playoffs_started = len(postseason_games) > 0
+
+        if not playoffs_started:
+            # Detect earliest postseason date dynamically
+            # Try fetching a broader window — if none found, show "not yet" message
+            # with a note to check back closer to April
+            lines = [
+                f'🏀 **NBA** · {league_display_name(league)}\n',
+                '🏆 **Playoffs haven\'t started yet.**\n',
+                '**Play-In Tournament** tips off mid-April across 3 games per conference:',
+                '• #7 hosts #8 → winner earns the 7 seed',
+                '• #9 hosts #10 → loser is eliminated',
+                '• Loser of 7/8 game hosts winner of 9/10 → winner earns the 8 seed\n',
+                '**First round of playoffs** begins shortly after the play-in concludes.\n',
+                'Use `/brackt nextmatch NBA` to see your team\'s next regular season game.',
+            ]
+            await interaction.followup.send('\n'.join(lines), ephemeral=is_ephemeral(display))
+            return
+
+        # Playoffs are live — show series status for all drafted NBA teams
+        drafted_nba = [
+            p['player'] for p in league['pick_history']
+            if p['sport'] == 'NBA'
+        ]
+        if not drafted_nba:
+            await interaction.followup.send(
+                '❌ No NBA picks found in this league.', ephemeral=True
+            ); return
+
+        lines = [f'🏀 **NBA Playoffs** · {league_display_name(league)}\n']
+        for brackt_name in drafted_nba:
+            bdl_name = brackt_to_bdl_name(brackt_name)
+            team_id = bdl_name_to_team_id(bdl_name)
+            if not team_id:
+                continue
+            team_games = [
+                g for g in postseason_games
+                if g['home_team']['id'] == team_id or g['visitor_team']['id'] == team_id
+            ]
+            if not team_games:
+                lines.append(f'**{brackt_name}** — ❌ Eliminated (did not qualify)')
+                continue
+            series = build_nba_series(team_games, team_id)
+            if not series:
+                lines.append(f'**{brackt_name}** — No series data available')
+                continue
+            if series['is_eliminated']:
+                lines.append(f'**{brackt_name}** — ❌ Eliminated · vs {series["opponent"]} ({series["series_label"]})')
+            elif series['series_over']:
+                lines.append(f'**{brackt_name}** — ✅ Advanced · vs {series["opponent"]} ({series["series_label"]})')
+            else:
+                next_str = format_nba_game_line(series['next_game'], team_id) if series['next_game'] else 'TBD'
+                lines.append(
+                    f'**{brackt_name}** — vs {series["opponent"]} · {series["series_label"]}\n'
+                    f'   Next: {next_str}'
+                )
+
+        await interaction.followup.send('\n'.join(lines), ephemeral=is_ephemeral(display))
+
+@brackt_public.command(name="nextmatch", description="Show your next upcoming match for a sport")
+@app_commands.describe(sport="Select a sport with fixture support")
+@app_commands.autocomplete(sport=schedule_sport_autocomplete)
+async def nextmatch_command(interaction: discord.Interaction, sport: str):
+    league = load_league(interaction.channel_id)
+    if not league:
+        await no_league_response(interaction); return
+
+    if sport not in SCHEDULE_SUPPORTED_SPORTS:
+        await interaction.response.send_message(
+            f'🚧 Schedule support for **{sport}** is coming soon!',
+            ephemeral=True
+        ); return
+
+    if sport == 'UEFA Champions League':
+        if not any(p['sport'] == 'UEFA Champions League' for p in league.get('pick_history', [])):
+            await interaction.response.send_message(
+                '❌ No UEFA Champions League picks found in this league.', ephemeral=True
+            ); return
+
+        sender_id = str(interaction.user.id)
+        user_teams = [u for u, uid in league['players'].items() if uid == sender_id]
+        if not user_teams:
+            await interaction.response.send_message(
+                '❌ Your Discord account is not mapped to any team in this league.',
+                ephemeral=True
+            ); return
+
+        user_ucl_picks = [
+            p['player'] for p in league['pick_history']
+            if p['sport'] == 'UEFA Champions League' and p['team'] in user_teams
+        ]
+        if not user_ucl_picks:
+            await interaction.response.send_message(
+                '❌ You have no UEFA Champions League picks in this league.',
+                ephemeral=True
+            ); return
+
+        await interaction.response.defer(ephemeral=True)
+        matches = fetch_ucl_fixtures()
+        if matches is None:
+            await interaction.followup.send(
+                '❌ Could not reach the football data API. Try again later.',
+                ephemeral=True
+            ); return
+
+        ties = build_ucl_matchups(league, matches)
+        user_api_names = {UCL_NAME_MAP.get(p, p) for p in user_ucl_picks}
+
+        relevant = []
+        for t in ties:
+            home_api = UCL_NAME_MAP.get(t['home_brackt'], t['home_brackt'])
+            away_api = UCL_NAME_MAP.get(t['away_brackt'], t['away_brackt'])
+            if home_api in user_api_names or away_api in user_api_names:
+                relevant.append(t)
+
+        if not relevant:
+            await interaction.followup.send(
+                '✅ All your UCL teams have finished their fixtures.',
+                ephemeral=True
+            ); return
+
+        lines = [f'📅 **Your next UCL match{"es" if len(relevant) > 1 else ""}:**\n']
+        for t in relevant:
+            lines.append(format_ucl_tie(t))
+        await interaction.followup.send('\n'.join(lines), ephemeral=True)
+
+    elif sport == 'NBA':
+        if not any(p['sport'] == 'NBA' for p in league.get('pick_history', [])):
+            await interaction.response.send_message(
+                '❌ No NBA picks found in this league.', ephemeral=True
+            ); return
+
+        sender_id = str(interaction.user.id)
+        user_teams = [u for u, uid in league['players'].items() if uid == sender_id]
+        if not user_teams:
+            await interaction.response.send_message(
+                '❌ Your Discord account is not mapped to any team in this league.',
+                ephemeral=True
+            ); return
+
+        user_nba_picks = [
+            p['player'] for p in league['pick_history']
+            if p['sport'] == 'NBA' and p['team'] in user_teams
+        ]
+        if not user_nba_picks:
+            await interaction.response.send_message(
+                '❌ You have no NBA picks in this league.', ephemeral=True
+            ); return
+
+        await interaction.response.defer(ephemeral=True)
+
+        # 1 call to check postseason status
+        postseason_games = fetch_nba_postseason_games()
+        if postseason_games is None:
+            await interaction.followup.send(
+                '❌ Could not reach the NBA data API. Try again later.', ephemeral=True
+            ); return
+
+        playoffs_started = len(postseason_games) > 0
+        lines = [f'📅 **Your NBA team{"s" if len(user_nba_picks) > 1 else ""}:**\n']
+
+        for brackt_name in user_nba_picks:
+            bdl_name = brackt_to_bdl_name(brackt_name)
+            team_id = bdl_name_to_team_id(bdl_name)
+            if not team_id:
+                lines.append(f'**{brackt_name}** — ❌ Team not found in data')
+                continue
+
+            if playoffs_started:
+                # Playoffs: use postseason games already fetched, plus 2 calls for team data
+                team_data = fetch_nba_team_data(team_id)
+                record_str = f'{team_data["wins"]}–{team_data["losses"]}' if team_data else 'N/A'
+                team_post_games = [
+                    g for g in postseason_games
+                    if int(g['home_team']['id']) == team_id or int(g['visitor_team']['id']) == team_id
+                ]
+                if not team_post_games:
+                    lines.append(f'**{brackt_name}** ({record_str}) — ❌ Did not qualify for playoffs')
+                    continue
+                series = build_nba_series(team_post_games, team_id)
+                if not series:
+                    lines.append(f'**{brackt_name}** ({record_str}) — No series data')
+                    continue
+                if series['is_eliminated']:
+                    lines.append(
+                        f'**{brackt_name}** ({record_str}) — ❌ Eliminated\n'
+                        f'   vs {series["opponent"]} · {series["series_label"]}'
+                    )
+                elif series['series_over']:
+                    lines.append(
+                        f'**{brackt_name}** ({record_str}) — ✅ Advanced\n'
+                        f'   vs {series["opponent"]} · {series["series_label"]}'
+                    )
+                else:
+                    next_str = format_nba_game_line(series['next_game'], team_id) if series['next_game'] else 'TBD'
+                    lines.append(
+                        f'**{brackt_name}** ({record_str}) — 🏀 In Playoffs\n'
+                        f'   vs {series["opponent"]} · {series["series_label"]}\n'
+                        f'   Next: {next_str}'
+                    )
+            else:
+                # Regular season: 2 calls total via fetch_nba_team_data
+                team_data = fetch_nba_team_data(team_id)
+                if team_data is None:
+                    lines.append(f'**{brackt_name}** — ❌ Could not fetch data (rate limit?)')
+                    continue
+                record_str = f'{team_data["wins"]}–{team_data["losses"]}'
+                if team_data['live_game']:
+                    live_str = format_nba_game_line(team_data['live_game'], team_id)
+                    lines.append(f'**{brackt_name}** ({record_str}) — 🔴 LIVE: {live_str}')
+                elif team_data['next_game']:
+                    next_str = format_nba_game_line(team_data['next_game'], team_id)
+                    lines.append(f'**{brackt_name}** ({record_str}) — Next: {next_str}')
+                else:
+                    lines.append(f'**{brackt_name}** ({record_str}) — No upcoming games found')
+
+        await interaction.followup.send('\n'.join(lines), ephemeral=True)
+
 @brackt_public.command(name="help", description="Show all available draft commands")
 async def help_command(interaction: discord.Interaction):
     league = load_league(interaction.channel_id)
     mode = mode_label(league) if league else '⚪ Not configured'
+    name = league_display_name(league) if league else 'Brackt Draft Bot'
     msg = (
-        f'📖 **Brackt Draft Bot** ({mode})\n\n'
+        f'📖 **{name}** ({mode})\n\n'
         '**Commands:**\n'
         '`/brackt onclock` — Show who is on the clock\n'
         '`/brackt last5` — Show the last 5 picks\n'
         '`/brackt team [username]` — Show a team\'s picks\n'
         '`/brackt mysports [username]` — Show missing sports and flex spots\n'
         '`/brackt sport [sport]` — Show all picks for a specific sport\n'
+        '`/brackt schedule [sport]` — Show upcoming fixtures and results\n'
+        '`/brackt nextmatch [sport]` — Show your next upcoming match\n'
         '`/brackt status` — Show current draft state\n'
         '`/brackt help` — Show this message\n\n'
         'All commands support a `display` option: **public** (default) or **private**\n\n'
@@ -961,7 +1831,10 @@ async def poll_all_leagues():
                     if not new_picks:
                         continue
 
-                    for pick in sorted(new_picks, key=lambda x: x['pickNumber']):
+                    sorted_new_picks = sorted(new_picks, key=lambda x: x['pickNumber'])
+                    last_pick_num = sorted_new_picks[-1]['pickNumber']
+
+                    for pick in sorted_new_picks:
                         username = pick['username']
                         player = pick['participantName']
                         sport = pick['sport']
@@ -977,7 +1850,7 @@ async def poll_all_leagues():
                             if on_deck_username and pick_num + 2 <= total else ''
                         )
 
-                        is_last_pick = data['isDraftComplete'] and pick_num == sorted(new_picks, key=lambda x: x['pickNumber'])[-1]['pickNumber']
+                        is_last_pick = data['isDraftComplete'] and pick_num == last_pick_num
                         if is_last_pick:
                             await channel.send(
                                 f'━━━━━━━━━━━━━━━━━━━━━━\n'
