@@ -1339,6 +1339,121 @@ def build_nba_series(games: list, team_id: int) -> dict | None:
     }
 
 
+# --- F1 FIXTURE DATA ---
+
+OPENF1_BASE = 'https://api.openf1.org/v1'
+F1_SEASON = 2026
+
+# Maps brackt.com driver names to 2026 F1 driver numbers (update each season)
+# Driver numbers are stable within a season
+F1_DRIVER_NUMBERS = {
+    'Max Verstappen':        3,
+    'Lando Norris':          1,
+    'Charles Leclerc':      16,
+    'Lewis Hamilton':       44,
+    'George Russell':       63,
+    'Oscar Piastri':        81,
+    'Carlos Sainz':         55,
+    'Fernando Alonso':      14,
+    'Pierre Gasly':         10,
+    'Esteban Ocon':         31,
+    'Lance Stroll':         18,
+    'Alex Albon':           23,
+    'Liam Lawson':          30,
+    'Isack Hadjar':          6,
+    'Andrea Kimi Antonelli':12,
+    'Oliver Bearman':       87,
+    'Arvid Lindblad':       41,
+    'Gabriel Bortoleto':     5,
+    'Nico Hülkenberg':      27,
+    'Franco Colapinto':     43,
+    'Sergio Perez':         11,
+    'Valtteri Bottas':      77,
+}
+
+def f1_driver_number(brackt_name: str) -> int | None:
+    """Return the 2026 driver number for a brackt.com driver name."""
+    return F1_DRIVER_NUMBERS.get(brackt_name)
+
+def openf1_get(endpoint: str, params: dict = None) -> list | None:
+    """GET request to OpenF1 API. Returns list of results or None on error."""
+    try:
+        resp = requests.get(
+            f'{OPENF1_BASE}/{endpoint}',
+            params=params or {},
+            timeout=10
+        )
+        if resp.status_code == 429:
+            print(f'OpenF1 rate limit hit: {endpoint}')
+            return None
+        if resp.status_code != 200:
+            print(f'OpenF1 error {resp.status_code}: {endpoint}')
+            return None
+        return resp.json()
+    except Exception as e:
+        print(f'OpenF1 fetch error ({endpoint}): {e}')
+        return None
+
+def fetch_f1_meetings() -> list | None:
+    """
+    Fetch all F1 race meetings for the current season, sorted by date.
+    Each meeting dict includes date_start (Thursday) and date_end (Sunday ~race finish).
+    """
+    meetings = openf1_get('meetings', {'year': F1_SEASON})
+    if meetings is None:
+        return None
+    races = [m for m in meetings if 'Grand Prix' in m.get('meeting_name', '')]
+    races.sort(key=lambda m: m.get('date_start', ''))
+    return races
+
+def fetch_f1_race_session_time(meeting_key: int) -> str | None:
+    """
+    Fetch the exact race start time for a meeting from the Sessions endpoint.
+    Returns a Discord timestamp string or None on failure.
+    One API call — only use for nextmatch where precision matters.
+    """
+    sessions = openf1_get('sessions', {
+        'meeting_key': meeting_key,
+        'session_type': 'Race',
+    })
+    if not sessions:
+        return None
+    race = sessions[0]
+    date_str = race.get('date_start', '')
+    if not date_str:
+        return None
+    try:
+        dt = datetime.datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+        return f'<t:{int(dt.timestamp())}:F>'
+    except ValueError:
+        return None
+
+def meeting_race_date_ts(meeting: dict) -> str:
+    """
+    Return a Discord date-only timestamp for a meeting's race day,
+    derived from date_end (Sunday) without an extra API call.
+    Used by /schedule for the next 3 GPs list.
+    """
+    date_str = meeting.get('date_end', '') or meeting.get('date_start', '')
+    if not date_str:
+        return 'TBD'
+    try:
+        dt = datetime.datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+        return f'<t:{int(dt.timestamp())}:D>'  # :D = date only e.g. "March 22, 2026"
+    except ValueError:
+        return 'TBD'
+
+def fetch_f1_standings() -> list | None:
+    """
+    Fetch current driver championship standings using the latest race session.
+    Returns list sorted by position, empty list if season hasn't started, or None on error.
+    """
+    results = openf1_get('championship_drivers', {'session_key': 'latest'})
+    if results is None:
+        return None
+    return sorted(results, key=lambda x: x.get('position_current', 99))
+
+
 # --- PUBLIC READ COMMANDS ---
 
 @brackt_public.command(name="onclock", description="Show who is currently on the clock")
@@ -1542,7 +1657,7 @@ async def schedule_sport_autocomplete(
     ][:25]
 
 # Sports with live fixture support implemented
-SCHEDULE_SUPPORTED_SPORTS = {'UEFA Champions League', 'NBA'}
+SCHEDULE_SUPPORTED_SPORTS = {'UEFA Champions League', 'NBA', 'Formula 1'}
 
 @brackt_public.command(name="schedule", description="Show upcoming fixtures and results for a sport")
 @app_commands.describe(
@@ -1655,6 +1770,68 @@ async def schedule_command(interaction: discord.Interaction, sport: str, display
                     f'   Next: {next_str}'
                 )
 
+        await interaction.followup.send('\n'.join(lines), ephemeral=is_ephemeral(display))
+
+    elif sport == 'Formula 1':
+        if not any(p['sport'] == 'Formula 1' for p in league.get('pick_history', [])):
+            await interaction.response.send_message(
+                '❌ No Formula 1 picks found in this league.', ephemeral=True
+            ); return
+        await interaction.response.defer(ephemeral=is_ephemeral(display))
+
+        meetings = fetch_f1_meetings()
+        standings = fetch_f1_standings()
+        if meetings is None or standings is None:
+            await interaction.followup.send(
+                '❌ Could not reach the F1 data API. Try again later.', ephemeral=True
+            ); return
+
+        today = datetime.date.today().isoformat()
+        upcoming = [m for m in meetings if m.get('date_end', m.get('date_start', '')) >= today]
+        completed = [m for m in meetings if m.get('date_end', m.get('date_start', '')) < today]
+        races_remaining = len(upcoming)
+
+        # Next 3 upcoming races — date only, no extra API calls
+        next_races = upcoming[:3]
+        race_lines = []
+        for m in next_races:
+            name = m.get('meeting_name', 'Unknown GP')
+            ts = meeting_race_date_ts(m)
+            race_lines.append(f'• **{name}** — {ts}')
+
+        # Build standings lookup: driver_number → {position, points}
+        standings_map = {
+            s['driver_number']: s for s in standings
+        }
+        # Reverse map: driver_number → brackt name
+        number_to_brackt = {v: k for k, v in F1_DRIVER_NUMBERS.items()}
+
+        # Top 10 standings, marking drafted drivers
+        drafted_numbers = {
+            F1_DRIVER_NUMBERS[p['player']]
+            for p in league['pick_history']
+            if p['sport'] == 'Formula 1' and p['player'] in F1_DRIVER_NUMBERS
+        }
+        if standings:
+            standing_lines = []
+            for s in standings[:10]:
+                num = s['driver_number']
+                pos = s.get('position_current', '?')
+                pts = s.get('points_current', '?')
+                name = number_to_brackt.get(num, f'#{num}')
+                marker = ' ⬅' if num in drafted_numbers else ''
+                standing_lines.append(f'`P{pos:>2}` **{name}** — {pts} pts{marker}')
+            standings_block = ['\n**Driver Championship (Top 10):**', *standing_lines]
+        else:
+            standings_block = ['\n*Standings not yet available — season may not have started.*']
+
+        lines = [
+            f'🏎️ **Formula 1** · {league_display_name(league)}',
+            f'**{races_remaining} races remaining**\n',
+            '**Next 3 GPs:**',
+            *race_lines,
+            *standings_block,
+        ]
         await interaction.followup.send('\n'.join(lines), ephemeral=is_ephemeral(display))
 
 @brackt_public.command(name="nextmatch", description="Show your next upcoming match for a sport")
@@ -1835,6 +2012,80 @@ async def nextmatch_command(interaction: discord.Interaction, sport: str):
                     lines.append(f'**{brackt_name}** ({record_str}) — Next: {next_str}')
                 else:
                     lines.append(f'**{brackt_name}** ({record_str}) — No upcoming games found')
+
+        await interaction.followup.send('\n'.join(lines), ephemeral=True)
+
+    elif sport == 'Formula 1':
+        if not any(p['sport'] == 'Formula 1' for p in league.get('pick_history', [])):
+            await interaction.response.send_message(
+                '❌ No Formula 1 picks found in this league.', ephemeral=True
+            ); return
+
+        sender_id = str(interaction.user.id)
+        user_teams = [u for u, uid in league['players'].items() if uid == sender_id]
+        if not user_teams:
+            await interaction.response.send_message(
+                '❌ Your Discord account is not mapped to any team in this league.',
+                ephemeral=True
+            ); return
+
+        user_f1_picks = [
+            p['player'] for p in league['pick_history']
+            if p['sport'] == 'Formula 1' and p['team'] in user_teams
+        ]
+        if not user_f1_picks:
+            await interaction.response.send_message(
+                '❌ You have no Formula 1 picks in this league.', ephemeral=True
+            ); return
+
+        await interaction.response.defer(ephemeral=True)
+
+        meetings = fetch_f1_meetings()
+        standings = fetch_f1_standings()
+        if meetings is None or standings is None:
+            await interaction.followup.send(
+                '❌ Could not reach the F1 data API. Try again later.', ephemeral=True
+            ); return
+
+        # Find next upcoming race
+        today = datetime.date.today().isoformat()
+        upcoming = [m for m in meetings if m.get('date_end', m.get('date_start', '')) >= today]
+        next_race = upcoming[0] if upcoming else None
+
+        # Build standings lookup
+        standings_map = {s['driver_number']: s for s in standings}
+
+        lines = [f'🏎️ **Your F1 driver{"s" if len(user_f1_picks) > 1 else ""}:**\n']
+
+        if next_race:
+            name = next_race.get('meeting_name', 'Unknown GP')
+            meeting_key = next_race.get('meeting_key')
+            # Fetch exact race start time — 1 extra API call but worth it for nextmatch
+            race_ts = fetch_f1_race_session_time(meeting_key) if meeting_key else None
+            if race_ts:
+                lines.append(f'📅 **Next Race:** {name} — {race_ts}\n')
+            else:
+                # Fallback to date_end approximation
+                ts = meeting_race_date_ts(next_race)
+                lines.append(f'📅 **Next Race:** {name} — {ts}\n')
+        else:
+            lines.append('📅 **Next Race:** Season complete\n')
+
+        for driver_name in user_f1_picks:
+            driver_num = f1_driver_number(driver_name)
+            if not driver_num:
+                lines.append(f'**{driver_name}** — ❌ Driver not found in data')
+                continue
+            if not standings:
+                lines.append(f'**{driver_name}** — Standings not yet available')
+                continue
+            standing = standings_map.get(driver_num)
+            if not standing:
+                lines.append(f'**{driver_name}** — No standings data yet')
+                continue
+            pos = standing.get('position_current', '?')
+            pts = standing.get('points_current', '?')
+            lines.append(f'**{driver_name}** — P{pos} · {pts} pts')
 
         await interaction.followup.send('\n'.join(lines), ephemeral=True)
 
