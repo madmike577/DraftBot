@@ -5,6 +5,7 @@ import asyncio
 import json
 import os
 import datetime
+import unicodedata
 from collections import Counter
 from dotenv import load_dotenv
 from bs4 import BeautifulSoup
@@ -1504,10 +1505,13 @@ def fetch_indycar_standings() -> list | None:
             try:
                 rank = int(cells[0])
                 # Driver name is cells[2], points cells[5], behind cells[6]
-                # Normalize curly apostrophes to straight (e.g. O'Ward → O'Ward)
-                # Also normalize accented chars to ASCII (e.g. Álex → Alex)
-                name = cells[2].replace('\u2019', "'").replace('\u2018', "'")
-                name = name.replace('Á', 'A').replace('á', 'a').replace('é', 'e').replace('í', 'i').replace('ó', 'o').replace('ú', 'u').replace('ü', 'u')
+                # Normalize unicode for consistent matching with brackt.com names:
+                # 1. Decompose accented chars (Á→A, é→e) via NFKD + ASCII strip
+                # 2. Normalize all apostrophe variants to straight apostrophe
+                raw_name = cells[2]
+                # Replace any apostrophe-like chars before NFKD so they survive
+                raw_name = raw_name.replace('\u2019', "'").replace('\u2018', "'").replace('\u02bc', "'")
+                name = unicodedata.normalize('NFKD', raw_name).encode('ascii', 'ignore').decode('ascii').strip()
                 points = int(cells[5])
                 behind_str = cells[6]
                 behind = int(behind_str) if behind_str.lstrip('-').isdigit() else 0
