@@ -7,6 +7,7 @@ import os
 import datetime
 from collections import Counter
 from dotenv import load_dotenv
+from bs4 import BeautifulSoup
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -1465,6 +1466,103 @@ def fetch_f1_standings() -> list | None:
     return sorted(results, key=lambda x: x.get('position_current', 99))
 
 
+# --- INDYCAR DATA ---
+
+INDYCAR_STANDINGS_URL = 'https://www.indycar.com/Standings'
+INDYCAR_SCOREBOARD_URL = 'https://site.api.espn.com/apis/site/v2/sports/racing/irl/scoreboard'
+INDYCAR_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+
+def fetch_indycar_standings() -> list | None:
+    """
+    Scrape championship standings from indycar.com/Standings.
+    Returns list of dicts: {rank, name, points, behind} sorted by rank,
+    or None on error.
+    """
+    try:
+        resp = requests.get(
+            INDYCAR_STANDINGS_URL,
+            headers={'User-Agent': INDYCAR_USER_AGENT},
+            timeout=15
+        )
+        if resp.status_code != 200:
+            print(f'IndyCar standings HTTP {resp.status_code}')
+            return None
+        soup = BeautifulSoup(resp.text, 'html.parser')
+
+        # Find the main standings table
+        table = soup.find('table')
+        if not table:
+            print('IndyCar standings: no table found')
+            return None
+
+        standings = []
+        for row in table.find_all('tr'):
+            cells = [td.get_text(strip=True) for td in row.find_all('td')]
+            if len(cells) < 5:
+                continue
+            # Row structure: Rank, No., Driver, Team, Engine, Points, Behind, ...
+            try:
+                rank = int(cells[0])
+                # Driver name is cells[2], points cells[5], behind cells[6]
+                name = cells[2]
+                points = int(cells[5])
+                behind_str = cells[6]
+                behind = int(behind_str) if behind_str.lstrip('-').isdigit() else 0
+                standings.append({
+                    'rank': rank,
+                    'name': name,
+                    'points': points,
+                    'behind': behind,
+                })
+            except (ValueError, IndexError):
+                continue
+
+        return standings if standings else None
+
+    except Exception as e:
+        print(f'IndyCar standings scrape error: {e}')
+        return None
+
+def fetch_indycar_schedule() -> dict | None:
+    """
+    Fetch IndyCar schedule and current event from ESPN scoreboard.
+    Returns dict with 'calendar' (all races) and 'last_event' (most recent completed),
+    or None on error.
+    """
+    try:
+        resp = requests.get(INDYCAR_SCOREBOARD_URL, timeout=10)
+        if resp.status_code != 200:
+            print(f'IndyCar ESPN scoreboard HTTP {resp.status_code}')
+            return None
+        data = resp.json()
+        calendar = data.get('leagues', [{}])[0].get('calendar', [])
+        return {'calendar': calendar}
+    except Exception as e:
+        print(f'IndyCar ESPN scoreboard error: {e}')
+        return None
+
+def indycar_upcoming_races(calendar: list) -> list:
+    """Return upcoming races from calendar, sorted by date."""
+    now = datetime.datetime.now(datetime.timezone.utc)
+    upcoming = []
+    for entry in calendar:
+        date_str = entry.get('startDate', '')
+        if not date_str:
+            continue
+        try:
+            dt = datetime.datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+            if dt > now:
+                upcoming.append({'name': entry['label'], 'dt': dt})
+        except ValueError:
+            continue
+    upcoming.sort(key=lambda x: x['dt'])
+    return upcoming
+
+def indycar_race_ts(dt: datetime.datetime) -> str:
+    """Return a Discord full datetime timestamp from a datetime object."""
+    return f'<t:{int(dt.timestamp())}:F>'
+
+
 # --- NCAA TOURNAMENT DATA ---
 
 NCAA_BASE = 'https://site.api.espn.com/apis/site/v2/sports/basketball'
@@ -1963,6 +2061,7 @@ SCHEDULE_SUPPORTED_SPORTS = {
     'UEFA Champions League',
     'NBA',
     'Formula 1',
+    'Indycar Series',
     'NCAAM Basketball',
     'NCAAW Basketball',
     "NCAA Basketball - Men's",
@@ -2144,6 +2243,56 @@ async def schedule_command(interaction: discord.Interaction, sport: str, display
             '**Next 3 GPs:**',
             *race_lines,
             *standings_block,
+        ]
+        await interaction.followup.send('\n'.join(lines), ephemeral=is_ephemeral(display))
+
+    elif sport == 'Indycar Series':
+        if not any(p['sport'] == 'Indycar Series' for p in league.get('pick_history', [])):
+            await interaction.response.send_message(
+                '❌ No IndyCar picks found in this league.', ephemeral=True
+            ); return
+        await interaction.response.defer(ephemeral=is_ephemeral(display))
+
+        standings = fetch_indycar_standings()
+        schedule = fetch_indycar_schedule()
+        if standings is None or schedule is None:
+            await interaction.followup.send(
+                '❌ Could not reach IndyCar data. Try again later.', ephemeral=True
+            ); return
+
+        # Build owner lookup: driver name → handle
+        driver_owners = {}
+        for p in league['pick_history']:
+            if p['sport'] == 'Indycar Series':
+                handle = league['handles'].get(p['team'], p['team'])
+                driver_owners[p['player']] = handle
+
+        # Top 10 standings
+        standing_lines = []
+        for s in standings[:10]:
+            name = s['name']
+            pts = s['points']
+            pos = s['rank']
+            owner = driver_owners.get(name)
+            marker = f' ⬅ {owner}' if owner else ''
+            standing_lines.append(f'`P{pos:>2}` **{name}** — {pts} pts{marker}')
+
+        # Next 3 upcoming races
+        upcoming = indycar_upcoming_races(schedule['calendar'])
+        race_lines = []
+        for r in upcoming[:3]:
+            ts = indycar_race_ts(r['dt'])
+            race_lines.append(f'• **{r["name"]}** — {ts}')
+
+        races_remaining = len(upcoming)
+
+        lines = [
+            f'🏎️ **IndyCar Series** · {league_display_name(league)}',
+            f'**{races_remaining} races remaining**\n',
+            '**Driver Championship (Top 10):**',
+            *standing_lines,
+            '\n**Next 3 Races:**',
+            *race_lines,
         ]
         await interaction.followup.send('\n'.join(lines), ephemeral=is_ephemeral(display))
 
@@ -2478,6 +2627,59 @@ async def nextmatch_command(interaction: discord.Interaction, sport: str):
             pos = standing.get('position_current', '?')
             pts = int(standing.get('points_current', 0))
             lines.append(f'**{driver_name}** — P{pos} · {pts} pts')
+
+        await interaction.followup.send('\n'.join(lines), ephemeral=True)
+
+    elif sport == 'Indycar Series':
+        if not any(p['sport'] == 'Indycar Series' for p in league.get('pick_history', [])):
+            await interaction.response.send_message(
+                '❌ No IndyCar picks found in this league.', ephemeral=True
+            ); return
+
+        sender_id = str(interaction.user.id)
+        user_teams = [u for u, uid in league['players'].items() if uid == sender_id]
+        if not user_teams:
+            await interaction.response.send_message(
+                '❌ Your Discord account is not mapped to any team in this league.',
+                ephemeral=True
+            ); return
+
+        user_picks = [
+            p['player'] for p in league['pick_history']
+            if p['sport'] == 'Indycar Series' and p['team'] in user_teams
+        ]
+        if not user_picks:
+            await interaction.response.send_message(
+                '❌ You have no IndyCar picks in this league.', ephemeral=True
+            ); return
+
+        await interaction.response.defer(ephemeral=True)
+
+        standings = fetch_indycar_standings()
+        schedule = fetch_indycar_schedule()
+        if standings is None or schedule is None:
+            await interaction.followup.send(
+                '❌ Could not reach IndyCar data. Try again later.', ephemeral=True
+            ); return
+
+        standings_map = {s['name']: s for s in standings}
+        upcoming = indycar_upcoming_races(schedule['calendar'])
+        next_race = upcoming[0] if upcoming else None
+
+        lines = [f'🏎️ **Your IndyCar driver{"s" if len(user_picks) > 1 else ""}:**\n']
+
+        if next_race:
+            ts = indycar_race_ts(next_race['dt'])
+            lines.append(f'📅 **Next Race:** {next_race["name"]} — {ts}\n')
+        else:
+            lines.append('📅 **Next Race:** Season complete\n')
+
+        for driver_name in user_picks:
+            s = standings_map.get(driver_name)
+            if not s:
+                lines.append(f'**{driver_name}** — No standings data found')
+                continue
+            lines.append(f'**{driver_name}** — P{s["rank"]} · {s["points"]} pts')
 
         await interaction.followup.send('\n'.join(lines), ephemeral=True)
 
