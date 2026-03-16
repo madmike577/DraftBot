@@ -1551,9 +1551,13 @@ def espn_normalize_game(event: dict) -> dict | None:
     home_parsed = parse_competitor(home_c)
     away_parsed = parse_competitor(away_c)
 
-    # Skip games where either team is TBD (seed 99 or name TBD)
-    if home_parsed['short'] == 'TBD' or away_parsed['short'] == 'TBD':
-        return None
+    # Mark teams awaiting First Four result as TBD
+    if home_c.get('curatedRank', {}).get('current') == 99:
+        home_parsed['short'] = 'TBD (First Four)'
+        home_parsed['seed'] = ''
+    if away_c.get('curatedRank', {}).get('current') == 99:
+        away_parsed['short'] = 'TBD (First Four)'
+        away_parsed['seed'] = ''
 
     status = comp.get('status', {})
     status_type = status.get('type', {})
