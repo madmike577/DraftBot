@@ -1492,14 +1492,28 @@ ESPN_ROUND_MAP = {
     'championship':  'Championship',
 }
 
-def espn_parse_round(notes: list) -> str:
-    """Extract bracket round from ESPN event notes list."""
+def espn_parse_round(notes: list) -> tuple[str, str]:
+    """
+    Extract bracket round and region from ESPN competition notes.
+    Returns (round_label, region) e.g. ('First Round', 'East').
+    """
     for note in notes:
         headline = note.get('headline', '').lower()
+        round_label = ''
         for key, label in ESPN_ROUND_MAP.items():
             if key in headline:
-                return label
-    return ''
+                round_label = label
+                break
+        if not round_label:
+            continue
+        # Extract region — appears as "East Region", "South Region", etc.
+        region = ''
+        for r in ('east', 'south', 'west', 'midwest'):
+            if r in headline:
+                region = r.capitalize()
+                break
+        return round_label, region
+    return '', ''
 
 def espn_normalize_game(event: dict) -> dict | None:
     """
@@ -1512,7 +1526,7 @@ def espn_normalize_game(event: dict) -> dict | None:
     comp = competitions[0]
 
     notes = comp.get('notes', [])
-    bracket_round = espn_parse_round(notes)
+    bracket_round, region = espn_parse_round(notes)
     if not bracket_round or bracket_round == 'First Four':
         return None
 
@@ -1571,6 +1585,7 @@ def espn_normalize_game(event: dict) -> dict | None:
         'away': away_parsed,
         'home': home_parsed,
         'bracketRound': bracket_round,
+        'region': region,
         'gameState': game_state,
         'startTimeEpoch': epoch,
         'currentPeriod': period_str,
@@ -2163,28 +2178,40 @@ async def schedule_command(interaction: discord.Interaction, sport: str, display
                 handle = league['handles'].get(p['team'], p['team'])
                 team_owners[norm.lower()] = handle
 
-        lines = [f'{emoji} **{sport_label}** · {league_display_name(league)}']
-        lines.append(f'📍 **{current_round}**\n')
+        # Group matching games by region in bracket order
+        region_order = ['East', 'South', 'West', 'Midwest', '']
+        by_region: dict[str, list] = {r: [] for r in region_order}
 
-        shown = 0
         for g in games:
             round_label = NCAA_ROUND_LABELS.get(g.get('bracketRound', ''), g.get('bracketRound', ''))
             if round_label != current_round:
                 continue
-
             away_name, away_seed, home_name, home_seed = ncaa_team_names(g)
             away_owner = ncaa_get_owner(away_name, team_owners)
             home_owner = ncaa_get_owner(home_name, team_owners)
-
             if not show_all and not away_owner and not home_owner:
                 continue
+            region = g.get('region', '')
+            if region not in by_region:
+                region = ''
+            by_region[region].append(g)
 
-            line = ncaa_format_game_line(g, team_owners)
-            lines.append(line)
-            shown += 1
+        lines = [f'{emoji} **{sport_label}** · {league_display_name(league)}']
+        lines.append(f'📍 **{current_round}**')
+
+        shown = 0
+        for region in region_order:
+            region_games = by_region.get(region, [])
+            if not region_games:
+                continue
+            if region:
+                lines.append(f'\n**{region}**')
+            for g in region_games:
+                lines.append(ncaa_format_game_line(g, team_owners))
+                shown += 1
 
         if shown == 0:
-            lines.append('No games involving drafted teams found.')
+            lines.append('\nNo games involving drafted teams found.')
 
         await interaction.followup.send('\n'.join(lines), ephemeral=is_ephemeral(display))
 
