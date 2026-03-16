@@ -1505,9 +1505,7 @@ def fetch_indycar_standings() -> list | None:
             try:
                 rank = int(cells[0])
                 # Driver name is cells[2], points cells[5], behind cells[6]
-                # Normalize unicode for consistent matching with brackt.com names:
-                # 1. Decompose accented chars (Á→A, é→e) via NFKD + ASCII strip
-                # 2. Normalize all apostrophe variants to straight apostrophe
+                # Normalize unicode for consistent matching with brackt.com names
                 raw_name = cells[2]
                 # Replace any apostrophe-like chars before NFKD so they survive
                 raw_name = raw_name.replace('\u2019', "'").replace('\u2018', "'").replace('\u02bc', "'")
@@ -1568,6 +1566,18 @@ def indycar_upcoming_races(calendar: list) -> list:
 def indycar_race_ts(dt: datetime.datetime) -> str:
     """Return a Discord full datetime timestamp from a datetime object."""
     return f'<t:{int(dt.timestamp())}:F>'
+
+def indycar_normalize_name(name: str) -> str:
+    """
+    Normalize a driver name for consistent matching between
+    brackt.com (curly apostrophes, accents) and indycar.com (straight apostrophes, accents).
+    Converts all apostrophe variants to straight, strips accent marks.
+    """
+    # Normalize apostrophe variants to straight apostrophe first
+    name = name.replace('\u2019', "'").replace('\u2018', "'").replace('\u02bc', "'")
+    # Strip accent marks via NFKD decomposition
+    name = unicodedata.normalize('NFKD', name).encode('ascii', 'ignore').decode('ascii')
+    return name.strip()
 
 
 # --- NCAA TOURNAMENT DATA ---
@@ -2267,12 +2277,12 @@ async def schedule_command(interaction: discord.Interaction, sport: str, display
                 '❌ Could not reach IndyCar data. Try again later.', ephemeral=True
             ); return
 
-        # Build owner lookup: driver name → handle
+        # Build owner lookup: normalized driver name → handle
         driver_owners = {}
         for p in league['pick_history']:
             if p['sport'] == 'Indycar Series':
                 handle = league['handles'].get(p['team'], p['team'])
-                driver_owners[p['player']] = handle
+                driver_owners[indycar_normalize_name(p['player'])] = handle
 
         # Top 10 standings
         standing_lines = []
@@ -2669,7 +2679,8 @@ async def nextmatch_command(interaction: discord.Interaction, sport: str):
                 '❌ Could not reach IndyCar data. Try again later.', ephemeral=True
             ); return
 
-        standings_map = {s['name']: s for s in standings}
+        # standings_map keyed by normalized name
+        standings_map = {s['name']: s for s in standings}  # already normalized by scraper
         upcoming = indycar_upcoming_races(schedule['calendar'])
         next_race = upcoming[0] if upcoming else None
 
@@ -2682,7 +2693,8 @@ async def nextmatch_command(interaction: discord.Interaction, sport: str):
             lines.append('📅 **Next Race:** Season complete\n')
 
         for driver_name in user_picks:
-            s = standings_map.get(driver_name)
+            norm = indycar_normalize_name(driver_name)
+            s = standings_map.get(norm)
             if not s:
                 lines.append(f'**{driver_name}** — No standings data found')
                 continue
