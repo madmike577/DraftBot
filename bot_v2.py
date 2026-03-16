@@ -1582,7 +1582,7 @@ def fetch_ncaa_scoreboard(gender: str, date: datetime.date) -> list | None:
     try:
         resp = requests.get(
             url,
-            params={'groups': '100', 'limit': '200', 'dates': date_str},
+            params={'groups': '100', 'limit': '200', 'dates': date_str, 'seasontype': '3'},
             headers={'User-Agent': USER_AGENT},
             timeout=10
         )
@@ -1618,12 +1618,17 @@ NCAA_SHOW_ALL_ROUNDS = {'Sweet Sixteen', 'Elite Eight', 'Final Four', 'Champions
 
 # Brackt name -> NCAA API short name, only where they differ
 NCAA_NAME_MAP = {
+    # Brackt abbreviated → ESPN shortDisplayName (full state names)
+    'Ohio St.':            'Ohio State',
+    'Michigan St.':        'Michigan State',
+    'Iowa St.':            'Iowa State',
+    # Brackt UConn variants → ESPN shortDisplayName
     'Connecticut (UConn)': 'UConn',
     'Connecticut':         'UConn',
-    'Iowa St.':            'Iowa St.',
-    'Michigan St.':        'Michigan St.',
-    'Ohio St.':            'Ohio St.',
+    # Others that pass through unchanged but listed for clarity
     "St. John's":          "St. John's",
+    'BYU':                 'BYU',
+    'TCU':                 'TCU',
 }
 
 def normalize_ncaa_name(brackt_name: str) -> str:
@@ -1667,8 +1672,11 @@ def fetch_ncaa_scoreboard(gender: str, date: datetime.date) -> list | None:
         print(f'NCAA scoreboard error ({gender} {date}): {e}')
         return None
 
-def fetch_ncaa_tournament_window(gender: str, days_ahead: int = 7) -> list:
-    """Fetch tournament games across next days_ahead days, sorted by tip time."""
+def fetch_ncaa_tournament_window(gender: str, days_ahead: int = 14) -> list:
+    """
+    Fetch tournament games across the next days_ahead days, sorted by tip time.
+    Uses 14 days by default so pre-tournament calls still find upcoming Round of 64 games.
+    """
     all_games = []
     today = datetime.date.today()
     for i in range(days_ahead):
@@ -2497,7 +2505,7 @@ async def nextmatch_command(interaction: discord.Interaction, sport: str):
 
         await interaction.response.defer(ephemeral=True)
 
-        games = fetch_ncaa_tournament_window(gender, days_ahead=10)
+        games = fetch_ncaa_tournament_window(gender, days_ahead=14)
 
         lines = [f'{emoji} **Your {sport_label} team{"s" if len(user_picks) > 1 else ""}:**\n']
 
