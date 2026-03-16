@@ -1504,7 +1504,10 @@ def fetch_indycar_standings() -> list | None:
             try:
                 rank = int(cells[0])
                 # Driver name is cells[2], points cells[5], behind cells[6]
-                name = cells[2]
+                # Normalize curly apostrophes to straight (e.g. O'Ward → O'Ward)
+                # Also normalize accented chars to ASCII (e.g. Álex → Alex)
+                name = cells[2].replace('\u2019', "'").replace('\u2018', "'")
+                name = name.replace('Á', 'A').replace('á', 'a').replace('é', 'e').replace('í', 'i').replace('ó', 'o').replace('ú', 'u').replace('ü', 'u')
                 points = int(cells[5])
                 behind_str = cells[6]
                 behind = int(behind_str) if behind_str.lstrip('-').isdigit() else 0
