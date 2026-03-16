@@ -1915,9 +1915,16 @@ async def sport_command(interaction: discord.Interaction, sport: str, display: s
             '📋 No picks recorded yet.', ephemeral=True
         ); return
 
+    # Normalize display sport names to pick_history sport names
+    SPORT_DISPLAY_TO_PICK = {
+        "NCAA Basketball - Men's":   'NCAAM Basketball',
+        "NCAA Basketball - Women's": 'NCAAW Basketball',
+    }
+    pick_sport = SPORT_DISPLAY_TO_PICK.get(sport, sport)
+
     # Filter picks by sport, sorted by overall pick number
     sport_picks = sorted(
-        [p for p in league['pick_history'] if p['sport'].lower() == sport.lower()],
+        [p for p in league['pick_history'] if p['sport'].lower() == pick_sport.lower()],
         key=lambda x: x['pick']
     )
 
