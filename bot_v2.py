@@ -1465,6 +1465,150 @@ def fetch_f1_standings() -> list | None:
     return sorted(results, key=lambda x: x.get('position_current', 99))
 
 
+# --- NCAA TOURNAMENT DATA ---
+
+NCAA_BASE = 'https://data.ncaa.com/casablanca/scoreboard'
+
+# Round labels as they appear in the NCAA API → display label
+NCAA_ROUND_LABELS = {
+    'First Four':    'First Four',
+    'First Round':   'Round of 64',
+    'Second Round':  'Round of 32',
+    'Sweet 16':      'Sweet Sixteen',
+    'Elite Eight':   'Elite Eight',
+    'Final Four':    'Final Four',
+    'Championship':  'Championship',
+}
+
+# Normalize brackt.com team names to NCAA API short names
+# NCAA API uses names like 'Duke', 'UConn', 'Iowa St.', 'Michigan St.'
+NCAA_NAME_MAP = {
+    'Connecticut (UConn)': 'UConn',
+    'Iowa St.':            'Iowa St.',
+    'Michigan St.':        'Michigan St.',
+    'Ohio St.':            'Ohio St.',
+    'Connecticut':         'UConn',
+    'St. John\'s':         'St. John\'s',
+}
+
+def normalize_ncaa_name(brackt_name: str) -> str:
+    """Normalize a brackt.com team name to match NCAA API short names."""
+    return NCAA_NAME_MAP.get(brackt_name, brackt_name)
+
+def fetch_ncaa_scoreboard(gender: str, date: datetime.date) -> list | None:
+    """
+    Fetch NCAA tournament games for a given date.
+    gender: 'men' or 'women'
+    Returns list of game dicts with bracketRound set, or None on error.
+    """
+    sport = f'basketball-{gender}'
+    url = f'{NCAA_BASE}/{sport}/d1/{date.year}/{date.month:02d}/{date.day:02d}/scoreboard.json'
+    try:
+        resp = requests.get(url, timeout=10, headers={'User-Agent': USER_AGENT})
+        if resp.status_code != 200:
+            return None
+        data = resp.json()
+        games = []
+        for day in data.get('games', []):
+            g = day.get('game', {})
+            if g.get('bracketRound'):  # only tournament games
+                games.append(g)
+        return games
+    except Exception as e:
+        print(f'NCAA scoreboard error ({gender} {date}): {e}')
+        return None
+
+def fetch_ncaa_tournament_window(gender: str, days_ahead: int = 7) -> list:
+    """
+    Fetch all tournament games across the next `days_ahead` days.
+    Returns combined list sorted by startTimeEpoch.
+    """
+    all_games = []
+    today = datetime.date.today()
+    for i in range(days_ahead):
+        day = today + datetime.timedelta(days=i)
+        games = fetch_ncaa_scoreboard(gender, day)
+        if games:
+            all_games.extend(games)
+    all_games.sort(key=lambda g: int(g.get('startTimeEpoch', 0) or 0))
+    return all_games
+
+def ncaa_team_names(game: dict) -> tuple[str, str, str, str]:
+    """Return (away_short, away_seed, home_short, home_seed) for a game."""
+    away = game.get('away', {})
+    home = game.get('home', {})
+    away_name = away.get('names', {}).get('short', '?')
+    home_name = home.get('names', {}).get('short', '?')
+    away_seed = away.get('seed', '')
+    home_seed = home.get('seed', '')
+    return away_name, away_seed, home_name, home_seed
+
+def find_ncaa_team_game(games: list, brackt_name: str) -> dict | None:
+    """Find the most relevant game for a team — next upcoming, or most recent if playing now."""
+    normalized = normalize_ncaa_name(brackt_name)
+    team_games = []
+    for g in games:
+        away, _, home, _ = ncaa_team_names(g)
+        if normalized.lower() in away.lower() or normalized.lower() in home.lower():
+            team_games.append(g)
+    if not team_games:
+        return None
+    # Prefer live or upcoming over finished
+    for g in team_games:
+        if g.get('gameState') != 'final':
+            return g
+    return team_games[-1]  # return most recent final if nothing else
+
+def format_ncaa_game(game: dict, brackt_name: str, show_owner: bool = False, owner: str = '') -> str:
+    """
+    Format a single NCAA tournament game for display.
+    Returns a string like:
+    (1) Duke ⬅ Madmike  vs  (16) Siena  —  Thursday, March 19 at 12:15 PM
+    """
+    away_name, away_seed, home_name, home_seed = ncaa_team_names(game)
+    normalized = normalize_ncaa_name(brackt_name)
+    round_raw = game.get('bracketRound', '')
+    round_label = NCAA_ROUND_LABELS.get(round_raw, round_raw)
+    state = game.get('gameState', '')
+
+    # Format each side with seed
+    def fmt_side(name, seed, is_owned, owner_name):
+        seed_str = f'({seed}) ' if seed else ''
+        owner_str = f' ⬅ {owner_name}' if is_owned and owner_name else (' ⬅' if is_owned else '')
+        return f'{seed_str}**{name}**{owner_str}'
+
+    away_owned = normalized.lower() in away_name.lower()
+    home_owned = normalized.lower() in home_name.lower()
+
+    away_str = fmt_side(away_name, away_seed, away_owned and show_owner, owner)
+    home_str = fmt_side(home_name, home_seed, home_owned and show_owner, owner)
+
+    if state == 'final':
+        away_score = game.get('away', {}).get('score', '')
+        home_score = game.get('home', {}).get('score', '')
+        winner_away = game.get('away', {}).get('winner', False)
+        score_str = f'{away_score}–{home_score}'
+        result = '✅' if (away_owned and winner_away) or (home_owned and not winner_away) else '❌'
+        return f'{result} {away_str}  vs  {home_str}  —  Final {score_str}'
+    elif state == 'live':
+        away_score = game.get('away', {}).get('score', '')
+        home_score = game.get('home', {}).get('score', '')
+        period = game.get('currentPeriod', '')
+        clock = game.get('contestClock', '')
+        live_str = f'{period} {clock}'.strip() or 'LIVE'
+        return f'🔴 {away_str}  vs  {home_str}  —  {away_score}–{home_score} ({live_str})'
+    else:
+        # Scheduled — show tip time
+        epoch = game.get('startTimeEpoch')
+        if epoch:
+            try:
+                ts = f'<t:{int(epoch)}:F>'
+            except (ValueError, TypeError):
+                ts = 'TBD'
+        else:
+            ts = 'TBD'
+        return f'🏀 {away_str}  vs  {home_str}  —  {ts}'
+
 # --- PUBLIC READ COMMANDS ---
 
 @brackt_public.command(name="onclock", description="Show who is currently on the clock")
@@ -1668,7 +1812,7 @@ async def schedule_sport_autocomplete(
     ][:25]
 
 # Sports with live fixture support implemented
-SCHEDULE_SUPPORTED_SPORTS = {'UEFA Champions League', 'NBA', 'Formula 1'}
+SCHEDULE_SUPPORTED_SPORTS = {'UEFA Champions League', 'NBA', 'Formula 1', 'NCAAM Basketball', 'NCAAW Basketball'}
 
 @brackt_public.command(name="schedule", description="Show upcoming fixtures and results for a sport")
 @app_commands.describe(
@@ -1846,6 +1990,103 @@ async def schedule_command(interaction: discord.Interaction, sport: str, display
             *race_lines,
             *standings_block,
         ]
+        await interaction.followup.send('\n'.join(lines), ephemeral=is_ephemeral(display))
+
+    elif sport in ('NCAAM Basketball', 'NCAAW Basketball'):
+        gender = 'men' if sport == 'NCAAM Basketball' else 'women'
+        emoji = '🏀'
+        sport_label = 'NCAA Men\'s Basketball' if gender == 'men' else 'NCAA Women\'s Basketball'
+
+        if not any(p['sport'] == sport for p in league.get('pick_history', [])):
+            await interaction.response.send_message(
+                f'❌ No {sport} picks found in this league.', ephemeral=True
+            ); return
+
+        await interaction.response.defer(ephemeral=is_ephemeral(display))
+
+        # Fetch tournament games across next 7 days
+        games = fetch_ncaa_tournament_window(gender, days_ahead=7)
+
+        if not games:
+            await interaction.followup.send(
+                f'{emoji} **{sport_label}** · {league_display_name(league)}\n'
+                '📋 No tournament games found in the next 7 days.',
+                ephemeral=is_ephemeral(display)
+            ); return
+
+        # Get current round from the first upcoming/live game
+        current_round = None
+        for g in games:
+            if g.get('gameState') != 'final':
+                current_round = NCAA_ROUND_LABELS.get(g.get('bracketRound', ''), g.get('bracketRound', ''))
+                break
+        if not current_round:
+            current_round = NCAA_ROUND_LABELS.get(games[-1].get('bracketRound', ''), 'Tournament')
+
+        # Determine display mode — full bracket for Sweet 16+, owned only for earlier rounds
+        sweet_16_plus = current_round in ('Sweet Sixteen', 'Elite Eight', 'Final Four', 'Championship')
+
+        # Build owner lookup: normalized team name → owner handle
+        team_owners: dict[str, str] = {}
+        for p in league['pick_history']:
+            if p['sport'] == sport:
+                norm = normalize_ncaa_name(p['player'])
+                handle = league['handles'].get(p['team'], p['team'])
+                team_owners[norm.lower()] = handle
+
+        drafted_names = set(team_owners.keys())
+
+        lines = [f'{emoji} **{sport_label}** · {league_display_name(league)}']
+        lines.append(f'📍 **{current_round}**\n')
+
+        shown = 0
+        for g in games:
+            round_label = NCAA_ROUND_LABELS.get(g.get('bracketRound', ''), g.get('bracketRound', ''))
+            if round_label != current_round:
+                continue
+
+            away_name, away_seed, home_name, home_seed = ncaa_team_names(g)
+            away_norm = away_name.lower()
+            home_norm = home_name.lower()
+            away_owned = any(d in away_norm for d in drafted_names)
+            home_owned = any(d in home_norm for d in drafted_names)
+
+            if not sweet_16_plus and not away_owned and not home_owned:
+                continue  # skip non-owned matchups in early rounds
+
+            # Format each side
+            def fmt(name, seed, is_owned, owner_lookup):
+                seed_str = f'({seed}) ' if seed else ''
+                owner = next((v for k, v in owner_lookup.items() if k in name.lower()), '')
+                owner_str = f' ⬅ {owner}' if is_owned and owner else ''
+                return f'{seed_str}**{name}**{owner_str}'
+
+            away_str = fmt(away_name, away_seed, away_owned, team_owners)
+            home_str = fmt(home_name, home_seed, home_owned, team_owners)
+
+            state = g.get('gameState', '')
+            if state == 'final':
+                a_score = g.get('away', {}).get('score', '')
+                h_score = g.get('home', {}).get('score', '')
+                a_won = g.get('away', {}).get('winner', False)
+                result = '✅' if (away_owned and a_won) or (home_owned and not a_won) else ('❌' if away_owned or home_owned else '🏁')
+                lines.append(f'{result} {away_str}  vs  {home_str}  —  Final {a_score}–{h_score}')
+            elif state == 'live':
+                a_score = g.get('away', {}).get('score', '')
+                h_score = g.get('home', {}).get('score', '')
+                period = g.get('currentPeriod', '')
+                clock = g.get('contestClock', '')
+                live_str = f'{period} {clock}'.strip() or 'LIVE'
+                lines.append(f'🔴 {away_str}  vs  {home_str}  —  {a_score}–{h_score} ({live_str})')
+            else:
+                epoch = g.get('startTimeEpoch')
+                ts = f'<t:{int(epoch)}:F>' if epoch else 'TBD'
+                lines.append(f'🏀 {away_str}  vs  {home_str}  —  {ts}')
+            shown += 1
+
+        if shown == 0:
+            lines.append('No games involving drafted teams found.')
+
         await interaction.followup.send('\n'.join(lines), ephemeral=is_ephemeral(display))
 
 @brackt_public.command(name="nextmatch", description="Show your next upcoming match for a sport")
@@ -2100,6 +2341,116 @@ async def nextmatch_command(interaction: discord.Interaction, sport: str):
             pos = standing.get('position_current', '?')
             pts = int(standing.get('points_current', 0))
             lines.append(f'**{driver_name}** — P{pos} · {pts} pts')
+
+        await interaction.followup.send('\n'.join(lines), ephemeral=True)
+
+    elif sport in ('NCAAM Basketball', 'NCAAW Basketball'):
+        gender = 'men' if sport == 'NCAAM Basketball' else 'women'
+        emoji = '🏀'
+        sport_label = 'NCAA Men\'s Basketball' if gender == 'men' else 'NCAA Women\'s Basketball'
+
+        if not any(p['sport'] == sport for p in league.get('pick_history', [])):
+            await interaction.response.send_message(
+                f'❌ No {sport} picks found in this league.', ephemeral=True
+            ); return
+
+        sender_id = str(interaction.user.id)
+        user_teams = [u for u, uid in league['players'].items() if uid == sender_id]
+        if not user_teams:
+            await interaction.response.send_message(
+                '❌ Your Discord account is not mapped to any team in this league.',
+                ephemeral=True
+            ); return
+
+        user_picks = [
+            p['player'] for p in league['pick_history']
+            if p['sport'] == sport and p['team'] in user_teams
+        ]
+        if not user_picks:
+            await interaction.response.send_message(
+                f'❌ You have no {sport} picks in this league.', ephemeral=True
+            ); return
+
+        await interaction.response.defer(ephemeral=True)
+
+        games = fetch_ncaa_tournament_window(gender, days_ahead=10)
+
+        lines = [f'{emoji} **Your {sport_label} team{"s" if len(user_picks) > 1 else ""}:**\n']
+
+        for brackt_name in user_picks:
+            normalized = normalize_ncaa_name(brackt_name)
+            game = find_ncaa_team_game(games, brackt_name)
+
+            if not game:
+                # Check if they were eliminated — search past 3 days
+                past_games = []
+                today = datetime.date.today()
+                for i in range(1, 4):
+                    day = today - datetime.timedelta(days=i)
+                    dg = fetch_ncaa_scoreboard(gender, day)
+                    if dg:
+                        past_games.extend(dg)
+                past_game = find_ncaa_team_game(past_games, brackt_name)
+                if past_game and past_game.get('gameState') == 'final':
+                    _, away_seed, _, home_seed = ncaa_team_names(past_game)
+                    away_name, _, home_name, _ = ncaa_team_names(past_game)
+                    won = (normalized.lower() in away_name.lower() and past_game.get('away', {}).get('winner')) or \
+                          (normalized.lower() in home_name.lower() and past_game.get('home', {}).get('winner'))
+                    round_label = NCAA_ROUND_LABELS.get(past_game.get('bracketRound', ''), past_game.get('bracketRound', ''))
+                    if won:
+                        lines.append(f'**{brackt_name}** — ✅ Advanced from {round_label}, awaiting next opponent')
+                    else:
+                        lines.append(f'**{brackt_name}** — ❌ Eliminated in {round_label}')
+                else:
+                    lines.append(f'**{brackt_name}** — No upcoming games found')
+                continue
+
+            round_raw = game.get('bracketRound', '')
+            round_label = NCAA_ROUND_LABELS.get(round_raw, round_raw)
+            away_name, away_seed, home_name, home_seed = ncaa_team_names(game)
+            state = game.get('gameState', '')
+
+            # Identify opponent
+            if normalized.lower() in away_name.lower():
+                my_seed, opp_name, opp_seed = away_seed, home_name, home_seed
+            else:
+                my_seed, opp_name, opp_seed = home_seed, away_name, away_seed
+
+            seed_str = f'({my_seed}) ' if my_seed else ''
+            opp_str = f'({opp_seed}) {opp_name}' if opp_seed else opp_name
+
+            if state == 'final':
+                a_score = game.get('away', {}).get('score', '')
+                h_score = game.get('home', {}).get('score', '')
+                my_away = normalized.lower() in away_name.lower()
+                won = (my_away and game.get('away', {}).get('winner')) or \
+                      (not my_away and game.get('home', {}).get('winner'))
+                score_str = f'{a_score}–{h_score}' if my_away else f'{h_score}–{a_score}'
+                result = '✅ Won' if won else '❌ Lost'
+                lines.append(
+                    f'{seed_str}**{brackt_name}** — {result} · {round_label}\n'
+                    f'   vs {opp_str} — Final {score_str}'
+                )
+            elif state == 'live':
+                a_score = game.get('away', {}).get('score', '')
+                h_score = game.get('home', {}).get('score', '')
+                my_away = normalized.lower() in away_name.lower()
+                my_score = a_score if my_away else h_score
+                opp_score = h_score if my_away else a_score
+                period = game.get('currentPeriod', '')
+                clock = game.get('contestClock', '')
+                live_str = f'{period} {clock}'.strip() or 'LIVE'
+                lines.append(
+                    f'{seed_str}**{brackt_name}** — 🔴 LIVE · {round_label}\n'
+                    f'   vs {opp_str} — {my_score}–{opp_score} ({live_str})'
+                )
+            else:
+                epoch = game.get('startTimeEpoch')
+                ts = f'<t:{int(epoch)}:F>' if epoch else 'TBD'
+                lines.append(
+                    f'{seed_str}**{brackt_name}** — {round_label}\n'
+                    f'   vs {opp_str} — {ts}'
+                )
 
         await interaction.followup.send('\n'.join(lines), ephemeral=True)
 
