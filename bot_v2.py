@@ -1621,9 +1621,9 @@ def espn_parse_round(notes: list) -> tuple[str, str]:
                 break
         if not round_label:
             continue
-        # Extract region — appears as "East Region", "South Region", etc.
+        # Extract region — check midwest BEFORE west to avoid 'west' matching 'midwest'
         region = ''
-        for r in ('east', 'south', 'west', 'midwest'):
+        for r in ('east', 'south', 'midwest', 'west'):
             if r in headline:
                 region = r.capitalize()
                 break
