@@ -1506,7 +1506,7 @@ def espn_normalize_game(event: dict) -> dict | None:
     Convert an ESPN scoreboard event into our normalized game dict shape.
     Returns None if not a tournament game or missing data.
     """
-    notes = event.get('notes', [])
+    notes = competitions[0].get('notes', [])
     bracket_round = espn_parse_round(notes)
     if not bracket_round or bracket_round == 'First Four':
         return None
