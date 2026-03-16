@@ -1344,6 +1344,13 @@ def build_nba_series(games: list, team_id: int) -> dict | None:
 OPENF1_BASE = 'https://api.openf1.org/v1'
 F1_SEASON = 2026
 
+# Races cancelled mid-season — excluded from schedule and race count.
+# Add meeting_name strings exactly as they appear in OpenF1 data.
+F1_CANCELLED_RACES = {
+    'Bahrain Grand Prix',       # Cancelled due to Middle East conflict
+    'Saudi Arabian Grand Prix', # Cancelled due to Middle East conflict
+}
+
 # Maps brackt.com driver names to 2026 F1 driver numbers (update each season)
 # Driver numbers are stable within a season
 F1_DRIVER_NUMBERS = {
@@ -1397,12 +1404,16 @@ def openf1_get(endpoint: str, params: dict = None) -> list | None:
 def fetch_f1_meetings() -> list | None:
     """
     Fetch all F1 race meetings for the current season, sorted by date.
-    Each meeting dict includes date_start (Thursday) and date_end (Sunday ~race finish).
+    Excludes cancelled races and pre-season testing.
     """
     meetings = openf1_get('meetings', {'year': F1_SEASON})
     if meetings is None:
         return None
-    races = [m for m in meetings if 'Grand Prix' in m.get('meeting_name', '')]
+    races = [
+        m for m in meetings
+        if 'Grand Prix' in m.get('meeting_name', '')
+        and m.get('meeting_name') not in F1_CANCELLED_RACES
+    ]
     races.sort(key=lambda m: m.get('date_start', ''))
     return races
 
@@ -1817,7 +1828,7 @@ async def schedule_command(interaction: discord.Interaction, sport: str, display
             for s in standings[:10]:
                 num = s['driver_number']
                 pos = s.get('position_current', '?')
-                pts = s.get('points_current', '?')
+                pts = int(s.get('points_current', 0))
                 name = number_to_brackt.get(num, f'#{num}')
                 marker = ' ⬅' if num in drafted_numbers else ''
                 standing_lines.append(f'`P{pos:>2}` **{name}** — {pts} pts{marker}')
@@ -2084,7 +2095,7 @@ async def nextmatch_command(interaction: discord.Interaction, sport: str):
                 lines.append(f'**{driver_name}** — No standings data yet')
                 continue
             pos = standing.get('position_current', '?')
-            pts = standing.get('points_current', '?')
+            pts = int(standing.get('points_current', 0))
             lines.append(f'**{driver_name}** — P{pos} · {pts} pts')
 
         await interaction.followup.send('\n'.join(lines), ephemeral=True)
