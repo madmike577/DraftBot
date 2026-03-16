@@ -1526,7 +1526,6 @@ def espn_normalize_game(event: dict) -> dict | None:
 
     def parse_competitor(c: dict) -> dict:
         team = c.get('team', {})
-        # Seed can be in curatedRank or as a string field
         seed = str(c.get('curatedRank', {}).get('current', '') or '')
         if not seed or seed == '99':
             seed = ''
@@ -1534,6 +1533,13 @@ def espn_normalize_game(event: dict) -> dict | None:
         winner = c.get('winner', False)
         name = team.get('shortDisplayName', team.get('displayName', '?'))
         return {'short': name, 'seed': seed, 'score': score, 'winner': winner}
+
+    home_parsed = parse_competitor(home_c)
+    away_parsed = parse_competitor(away_c)
+
+    # Skip games where either team is TBD (seed 99 or name TBD)
+    if home_parsed['short'] == 'TBD' or away_parsed['short'] == 'TBD':
+        return None
 
     status = comp.get('status', {})
     status_type = status.get('type', {})
@@ -1562,8 +1568,8 @@ def espn_normalize_game(event: dict) -> dict | None:
             pass
 
     return {
-        'away': parse_competitor(away_c),
-        'home': parse_competitor(home_c),
+        'away': away_parsed,
+        'home': home_parsed,
         'bracketRound': bracket_round,
         'gameState': game_state,
         'startTimeEpoch': epoch,
@@ -1618,17 +1624,13 @@ NCAA_SHOW_ALL_ROUNDS = {'Sweet Sixteen', 'Elite Eight', 'Final Four', 'Champions
 
 # Brackt name -> NCAA API short name, only where they differ
 NCAA_NAME_MAP = {
-    # Brackt abbreviated → ESPN shortDisplayName (full state names)
-    'Ohio St.':            'Ohio State',
-    'Michigan St.':        'Michigan State',
-    'Iowa St.':            'Iowa State',
-    # Brackt UConn variants → ESPN shortDisplayName
+    # Brackt name          → ESPN shortDisplayName
+    'Ohio St.':            'Ohio State',   # ESPN: full state name
+    'Michigan St.':        'Michigan St',  # ESPN: no trailing period
+    'Iowa St.':            'Iowa State',   # ESPN: full state name
+    "St. John's":          "St John's",    # ESPN: no period after St
     'Connecticut (UConn)': 'UConn',
     'Connecticut':         'UConn',
-    # Others that pass through unchanged but listed for clarity
-    "St. John's":          "St. John's",
-    'BYU':                 'BYU',
-    'TCU':                 'TCU',
 }
 
 def normalize_ncaa_name(brackt_name: str) -> str:
