@@ -2166,12 +2166,12 @@ async def schedule_command(interaction: discord.Interaction, sport: str, display
 
         await interaction.response.defer(ephemeral=is_ephemeral(display))
 
-        games = fetch_ncaa_tournament_window(gender, days_ahead=7)
+        games = fetch_ncaa_tournament_window(gender, days_ahead=14)
 
         if not games:
             await interaction.followup.send(
                 f'{emoji} **{sport_label}** · {league_display_name(league)}\n'
-                '📋 No tournament games found in the next 7 days. '
+                '📋 No tournament games found in the next 14 days. '
                 'Games may not be available in the data source yet — check back closer to tip-off.',
                 ephemeral=is_ephemeral(display)
             ); return
