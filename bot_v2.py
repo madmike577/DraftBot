@@ -1817,12 +1817,14 @@ async def schedule_command(interaction: discord.Interaction, sport: str, display
         # Reverse map: driver_number → brackt name
         number_to_brackt = {v: k for k, v in F1_DRIVER_NUMBERS.items()}
 
-        # Top 10 standings, marking drafted drivers
-        drafted_numbers = {
-            F1_DRIVER_NUMBERS[p['player']]
-            for p in league['pick_history']
-            if p['sport'] == 'Formula 1' and p['player'] in F1_DRIVER_NUMBERS
-        }
+        # Map driver_number → owner handle
+        driver_number_to_owner = {}
+        for p in league['pick_history']:
+            if p['sport'] == 'Formula 1' and p['player'] in F1_DRIVER_NUMBERS:
+                num = F1_DRIVER_NUMBERS[p['player']]
+                handle = league['handles'].get(p['team'], p['team'])
+                driver_number_to_owner[num] = handle
+
         if standings:
             standing_lines = []
             for s in standings[:10]:
@@ -1830,7 +1832,8 @@ async def schedule_command(interaction: discord.Interaction, sport: str, display
                 pos = s.get('position_current', '?')
                 pts = int(s.get('points_current', 0))
                 name = number_to_brackt.get(num, f'#{num}')
-                marker = ' ⬅' if num in drafted_numbers else ''
+                owner = driver_number_to_owner.get(num)
+                marker = f' ⬅ {owner}' if owner else ''
                 standing_lines.append(f'`P{pos:>2}` **{name}** — {pts} pts{marker}')
             standings_block = ['\n**Driver Championship (Top 10):**', *standing_lines]
         else:

@@ -11,6 +11,8 @@
 - [ ] Update `NBA_PLAYIN_START` and `NBA_PLAYIN_END` dates
 - [ ] Add new NBA Cup Final game ID to `NBA_CUP_GAME_IDS`
 - [ ] Update `NBA_SEASON` constant (drives season start date and postseason queries automatically)
+- [ ] Update `F1_SEASON` constant and `F1_DRIVER_NUMBERS` map with new driver numbers
+- [ ] Clear `F1_CANCELLED_RACES` at season start; re-add any mid-season cancellations as they occur
 
 ## Backlog
 - [ ] Discord embeds for cleaner output
