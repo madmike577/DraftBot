@@ -1506,15 +1506,15 @@ def espn_normalize_game(event: dict) -> dict | None:
     Convert an ESPN scoreboard event into our normalized game dict shape.
     Returns None if not a tournament game or missing data.
     """
-    notes = competitions[0].get('notes', [])
-    bracket_round = espn_parse_round(notes)
-    if not bracket_round or bracket_round == 'First Four':
-        return None
-
     competitions = event.get('competitions', [])
     if not competitions:
         return None
     comp = competitions[0]
+
+    notes = comp.get('notes', [])
+    bracket_round = espn_parse_round(notes)
+    if not bracket_round or bracket_round == 'First Four':
+        return None
 
     competitors = comp.get('competitors', [])
     if len(competitors) < 2:
@@ -1637,42 +1637,8 @@ def normalize_ncaa_name(brackt_name: str) -> str:
     return NCAA_NAME_MAP.get(brackt_name, brackt_name)
 
 def ncaa_names_match(api_name: str, normalized_brackt: str) -> bool:
-    """
-    Match NCAA API short name to normalized brackt name.
-    Uses exact match to prevent Iowa matching Iowa St., Michigan matching Michigan St., etc.
-    """
-    api_lower = api_name.strip().lower()
-    brackt_lower = normalized_brackt.strip().lower()
-    if api_lower == brackt_lower:
-        return True
-    # Only allow substring if brackt name is longer (API uses abbreviation)
-    if len(brackt_lower) > len(api_lower) and api_lower in brackt_lower:
-        return True
-    return False
-
-def fetch_ncaa_scoreboard(gender: str, date: datetime.date) -> list | None:
-    """
-    Fetch NCAA tournament games for a given date.
-    gender: 'men' or 'women'
-    Skips First Four — play-in teams rarely drafted.
-    """
-    sport = f'basketball-{gender}'
-    url = f'{NCAA_BASE}/{sport}/d1/{date.year}/{date.month:02d}/{date.day:02d}/scoreboard.json'
-    try:
-        resp = requests.get(url, timeout=10, headers={'User-Agent': USER_AGENT})
-        if resp.status_code != 200:
-            return None
-        data = resp.json()
-        games = []
-        for day in data.get('games', []):
-            g = day.get('game', {})
-            bracket_round = g.get('bracketRound', '')
-            if bracket_round and bracket_round != 'First Four':
-                games.append(g)
-        return games
-    except Exception as e:
-        print(f'NCAA scoreboard error ({gender} {date}): {e}')
-        return None
+    """Exact case-insensitive match between ESPN team name and normalized brackt name."""
+    return api_name.strip().lower() == normalized_brackt.strip().lower()
 
 def fetch_ncaa_tournament_window(gender: str, days_ahead: int = 14) -> list:
     """
