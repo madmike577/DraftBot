@@ -1467,7 +1467,138 @@ def fetch_f1_standings() -> list | None:
 
 # --- NCAA TOURNAMENT DATA ---
 
-NCAA_BASE = 'https://data.ncaa.com/casablanca/scoreboard'
+NCAA_BASE = 'https://site.api.espn.com/apis/site/v2/sports/basketball'
+
+# ESPN league slugs per gender
+ESPN_LEAGUE = {
+    'men':   'mens-college-basketball',
+    'women': 'womens-college-basketball',
+}
+
+# ESPN notes headline → bracket round label
+# ESPN uses strings like "Men's Basketball Championship - 1st Round"
+ESPN_ROUND_MAP = {
+    'first four':    'First Four',
+    '1st round':     'First Round',
+    'first round':   'First Round',
+    '2nd round':     'Second Round',
+    'second round':  'Second Round',
+    'sweet 16':      'Sweet 16',
+    'sweet sixteen': 'Sweet 16',
+    'elite eight':   'Elite Eight',
+    'elite 8':       'Elite Eight',
+    'final four':    'Final Four',
+    'national championship': 'Championship',
+    'championship':  'Championship',
+}
+
+def espn_parse_round(notes: list) -> str:
+    """Extract bracket round from ESPN event notes list."""
+    for note in notes:
+        headline = note.get('headline', '').lower()
+        for key, label in ESPN_ROUND_MAP.items():
+            if key in headline:
+                return label
+    return ''
+
+def espn_normalize_game(event: dict) -> dict | None:
+    """
+    Convert an ESPN scoreboard event into our normalized game dict shape.
+    Returns None if not a tournament game or missing data.
+    """
+    notes = event.get('notes', [])
+    bracket_round = espn_parse_round(notes)
+    if not bracket_round or bracket_round == 'First Four':
+        return None
+
+    competitions = event.get('competitions', [])
+    if not competitions:
+        return None
+    comp = competitions[0]
+
+    competitors = comp.get('competitors', [])
+    if len(competitors) < 2:
+        return None
+
+    # ESPN labels home/away with homeAway field
+    home_c = next((c for c in competitors if c.get('homeAway') == 'home'), competitors[0])
+    away_c = next((c for c in competitors if c.get('homeAway') == 'away'), competitors[1])
+
+    def parse_competitor(c: dict) -> dict:
+        team = c.get('team', {})
+        # Seed can be in curatedRank or as a string field
+        seed = str(c.get('curatedRank', {}).get('current', '') or '')
+        if not seed or seed == '99':
+            seed = ''
+        score = c.get('score', '')
+        winner = c.get('winner', False)
+        name = team.get('shortDisplayName', team.get('displayName', '?'))
+        return {'short': name, 'seed': seed, 'score': score, 'winner': winner}
+
+    status = comp.get('status', {})
+    status_type = status.get('type', {})
+    state_name = status_type.get('name', '').lower()
+
+    if 'final' in state_name:
+        game_state = 'final'
+    elif 'progress' in state_name or 'halftime' in state_name:
+        game_state = 'live'
+    else:
+        game_state = 'pre'
+
+    # Clock and period for live games
+    period = status.get('period', '')
+    clock = status.get('displayClock', '')
+    period_str = f'{period}H' if period else ''  # ESPN uses period numbers
+
+    # Start time as epoch
+    date_str = event.get('date', '')
+    epoch = ''
+    if date_str:
+        try:
+            dt = datetime.datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+            epoch = str(int(dt.timestamp()))
+        except ValueError:
+            pass
+
+    return {
+        'away': parse_competitor(away_c),
+        'home': parse_competitor(home_c),
+        'bracketRound': bracket_round,
+        'gameState': game_state,
+        'startTimeEpoch': epoch,
+        'currentPeriod': period_str,
+        'contestClock': clock,
+    }
+
+def fetch_ncaa_scoreboard(gender: str, date: datetime.date) -> list | None:
+    """
+    Fetch NCAA tournament games for a given date via ESPN API.
+    Returns list of normalized game dicts or None on error.
+    """
+    league = ESPN_LEAGUE.get(gender, 'mens-college-basketball')
+    date_str = date.strftime('%Y%m%d')
+    url = f'{NCAA_BASE}/{league}/scoreboard'
+    try:
+        resp = requests.get(
+            url,
+            params={'groups': '100', 'limit': '200', 'dates': date_str},
+            headers={'User-Agent': USER_AGENT},
+            timeout=10
+        )
+        if resp.status_code != 200:
+            print(f'ESPN NCAA error {resp.status_code} ({gender} {date})')
+            return None
+        events = resp.json().get('events', [])
+        games = []
+        for event in events:
+            g = espn_normalize_game(event)
+            if g:
+                games.append(g)
+        return games
+    except Exception as e:
+        print(f'ESPN NCAA scoreboard error ({gender} {date}): {e}')
+        return None
 
 # Round labels: NCAA API value -> display label
 # First Four is the 68->64 play-in. Excluded from display since those teams
@@ -1553,9 +1684,9 @@ def ncaa_team_names(game: dict) -> tuple:
     away = game.get('away', {})
     home = game.get('home', {})
     return (
-        away.get('names', {}).get('short', '?'),
+        away.get('short', '?'),
         str(away.get('seed', '') or ''),
-        home.get('names', {}).get('short', '?'),
+        home.get('short', '?'),
         str(home.get('seed', '') or ''),
     )
 
@@ -2032,7 +2163,8 @@ async def schedule_command(interaction: discord.Interaction, sport: str, display
         if not games:
             await interaction.followup.send(
                 f'{emoji} **{sport_label}** · {league_display_name(league)}\n'
-                '📋 No tournament games found in the next 7 days.',
+                '📋 No tournament games found in the next 7 days. '
+                'Games may not be available in the data source yet — check back closer to tip-off.',
                 ephemeral=is_ephemeral(display)
             ); return
 
@@ -2394,7 +2526,7 @@ async def nextmatch_command(interaction: discord.Interaction, sport: str):
                     else:
                         lines.append(f'**{brackt_name}** — ❌ Eliminated in {round_label}')
                 else:
-                    lines.append(f'**{brackt_name}** — No upcoming games found')
+                    lines.append(f'**{brackt_name}** — No upcoming games found (data may not be available yet)')
                 continue
 
             round_raw = game.get('bracketRound', '')
