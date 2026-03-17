@@ -1,0 +1,4316 @@
+{
+  "channel_id": 1474460875380494568,
+  "admin_id": 143201113800179713,
+  "api_url": "https://www.brackt.com/api/seasons/053984c5-26d9-48b4-b51b-af5bbd8dee19/draft",
+  "total_rounds": 25,
+  "flex_spots": 5,
+  "required_sports": [
+    "Aussie Rules Football",
+    "Counter Strike",
+    "FIFA Men's World Cup",
+    "Formula 1",
+    "Indycar Series",
+    "Little League World Series",
+    "MLB",
+    "NBA",
+    "NCAA Basketball - Men's",
+    "NCAA Basketball - Women's",
+    "NCAA Football",
+    "NFL",
+    "NHL",
+    "PDC Darts",
+    "PGA Golf",
+    "Snooker",
+    "Tennis - Men's",
+    "Tennis - Women's",
+    "UEFA Champions League",
+    "WNBA"
+  ],
+  "players": {
+    "code.monkey": "315303636291026947",
+    ".herbal": "106810276120137728",
+    "mart121": "566398688109395970",
+    "apatel78": "302865175294509057",
+    "pandabair": "243896457697034240",
+    "christhrowsrocks": "86530833749401600",
+    "snarkymcgee": "85915750753136640",
+    "Madmike": "143201113800179713",
+    "brando1609": "178725846985605121",
+    "tanay002": "1020448025254056006",
+    "ikyn": "194518766325989376",
+    "peteg__": "756896542325080064",
+    "smelscifi": "194862737157914624",
+    "bakrondo": "279216079279226882"
+  },
+  "handles": {
+    "code.monkey": "Code Monkey",
+    ".herbal": "Herbal",
+    "mart121": "matt T",
+    "apatel78": "MarshSzn",
+    "pandabair": "Pandabair",
+    "christhrowsrocks": "christhrowsrocks",
+    "snarkymcgee": "Snarky MikeGee",
+    "Madmike": "Madmike",
+    "brando1609": "Brando #EAGLESUPERBOWL2024",
+    "tanay002": "tanay002",
+    "ikyn": ".ikyn (fuck the pats)",
+    "peteg__": "PeteG",
+    "smelscifi": "Smelscifi",
+    "bakrondo": "Bakron"
+  },
+  "draft_order": [
+    "code.monkey",
+    ".herbal",
+    "mart121",
+    "apatel78",
+    "pandabair",
+    "christhrowsrocks",
+    "snarkymcgee",
+    "Madmike",
+    "brando1609",
+    "tanay002",
+    "ikyn",
+    "peteg__",
+    "smelscifi",
+    "bakrondo"
+  ],
+  "pick_history": [
+    {
+      "pick": 1,
+      "round": 1,
+      "team": "code.monkey",
+      "player": "Scottie Scheffler",
+      "sport": "PGA Golf"
+    },
+    {
+      "pick": 2,
+      "round": 1,
+      "team": ".herbal",
+      "player": "Carlos Alcaraz",
+      "sport": "Tennis - Men"
+    },
+    {
+      "pick": 3,
+      "round": 1,
+      "team": "mart121",
+      "player": "George Russell",
+      "sport": "Formula 1"
+    },
+    {
+      "pick": 4,
+      "round": 1,
+      "team": "apatel78",
+      "player": "Luke Littler",
+      "sport": "PDC Darts"
+    },
+    {
+      "pick": 5,
+      "round": 1,
+      "team": "pandabair",
+      "player": "Aryna Sabalenka",
+      "sport": "Tennis - Women"
+    },
+    {
+      "pick": 6,
+      "round": 1,
+      "team": "christhrowsrocks",
+      "player": "Alex Palou",
+      "sport": "Indycar Series"
+    },
+    {
+      "pick": 7,
+      "round": 1,
+      "team": "snarkymcgee",
+      "player": "Los Angeles Dodgers",
+      "sport": "MLB"
+    },
+    {
+      "pick": 8,
+      "round": 1,
+      "team": "Madmike",
+      "player": "Connecticut (UConn)",
+      "sport": "NCAAW Basketball"
+    },
+    {
+      "pick": 9,
+      "round": 1,
+      "team": "brando1609",
+      "player": "Team Vitality",
+      "sport": "Counter Strike"
+    },
+    {
+      "pick": 10,
+      "round": 1,
+      "team": "tanay002",
+      "player": "Jannik Sinner",
+      "sport": "Tennis - Men"
+    },
+    {
+      "pick": 11,
+      "round": 1,
+      "team": "ikyn",
+      "player": "Iga Swiatek",
+      "sport": "Tennis - Women"
+    },
+    {
+      "pick": 12,
+      "round": 1,
+      "team": "peteg__",
+      "player": "Arsenal",
+      "sport": "UEFA Champions League"
+    },
+    {
+      "pick": 13,
+      "round": 1,
+      "team": "smelscifi",
+      "player": "Oklahoma City Thunder",
+      "sport": "NBA"
+    },
+    {
+      "pick": 14,
+      "round": 1,
+      "team": "bakrondo",
+      "player": "Max Verstappen",
+      "sport": "Formula 1"
+    },
+    {
+      "pick": 15,
+      "round": 2,
+      "team": "bakrondo",
+      "player": "Brisbane Lions",
+      "sport": "Aussie Rules Football"
+    },
+    {
+      "pick": 16,
+      "round": 2,
+      "team": "smelscifi",
+      "player": "Judd Trump",
+      "sport": "Snooker"
+    },
+    {
+      "pick": 17,
+      "round": 2,
+      "team": "peteg__",
+      "player": "Asia-Pacific and Middle East",
+      "sport": "Little League World Series"
+    },
+    {
+      "pick": 18,
+      "round": 2,
+      "team": "ikyn",
+      "player": "Las Vegas Aces",
+      "sport": "WNBA"
+    },
+    {
+      "pick": 19,
+      "round": 2,
+      "team": "tanay002",
+      "player": "Colorado Avalanche",
+      "sport": "NHL"
+    },
+    {
+      "pick": 20,
+      "round": 2,
+      "team": "brando1609",
+      "player": "Lando Norris",
+      "sport": "Formula 1"
+    },
+    {
+      "pick": 21,
+      "round": 2,
+      "team": "Madmike",
+      "player": "Minnesota Lynx",
+      "sport": "WNBA"
+    },
+    {
+      "pick": 22,
+      "round": 2,
+      "team": "snarkymcgee",
+      "player": "Bayern Munich",
+      "sport": "UEFA Champions League"
+    },
+    {
+      "pick": 23,
+      "round": 2,
+      "team": "christhrowsrocks",
+      "player": "Michigan",
+      "sport": "NCAAM Basketball"
+    },
+    {
+      "pick": 24,
+      "round": 2,
+      "team": "pandabair",
+      "player": "Spain",
+      "sport": "FIFA Men's World Cup"
+    },
+    {
+      "pick": 25,
+      "round": 2,
+      "team": "apatel78",
+      "player": "Coco Gauff",
+      "sport": "Tennis - Women"
+    },
+    {
+      "pick": 26,
+      "round": 2,
+      "team": "mart121",
+      "player": "Indiana Fever",
+      "sport": "WNBA"
+    },
+    {
+      "pick": 27,
+      "round": 2,
+      "team": ".herbal",
+      "player": "Charles Leclerc",
+      "sport": "Formula 1"
+    },
+    {
+      "pick": 28,
+      "round": 2,
+      "team": "code.monkey",
+      "player": "Argentina",
+      "sport": "FIFA Men's World Cup"
+    },
+    {
+      "pick": 29,
+      "round": 3,
+      "team": "code.monkey",
+      "player": "Zhao Xintong",
+      "sport": "Snooker"
+    },
+    {
+      "pick": 30,
+      "round": 3,
+      "team": ".herbal",
+      "player": "Josef Newgarden",
+      "sport": "Indycar Series"
+    },
+    {
+      "pick": 31,
+      "round": 3,
+      "team": "mart121",
+      "player": "Denver Nuggets",
+      "sport": "NBA"
+    },
+    {
+      "pick": 32,
+      "round": 3,
+      "team": "apatel78",
+      "player": "Rory McIlroy",
+      "sport": "PGA Golf"
+    },
+    {
+      "pick": 33,
+      "round": 3,
+      "team": "pandabair",
+      "player": "Duke",
+      "sport": "NCAAM Basketball"
+    },
+    {
+      "pick": 34,
+      "round": 3,
+      "team": "christhrowsrocks",
+      "player": "New York Liberty",
+      "sport": "WNBA"
+    },
+    {
+      "pick": 35,
+      "round": 3,
+      "team": "snarkymcgee",
+      "player": "Brazil",
+      "sport": "FIFA Men's World Cup"
+    },
+    {
+      "pick": 36,
+      "round": 3,
+      "team": "Madmike",
+      "player": "Tampa Bay Lightning",
+      "sport": "NHL"
+    },
+    {
+      "pick": 37,
+      "round": 3,
+      "team": "brando1609",
+      "player": "Luke Humphries",
+      "sport": "PDC Darts"
+    },
+    {
+      "pick": 38,
+      "round": 3,
+      "team": "tanay002",
+      "player": "South Carolina",
+      "sport": "NCAAW Basketball"
+    },
+    {
+      "pick": 39,
+      "round": 3,
+      "team": "ikyn",
+      "player": "UCLA",
+      "sport": "NCAAW Basketball"
+    },
+    {
+      "pick": 40,
+      "round": 3,
+      "team": "peteg__",
+      "player": "England",
+      "sport": "FIFA Men's World Cup"
+    },
+    {
+      "pick": 41,
+      "round": 3,
+      "team": "smelscifi",
+      "player": "Tommy Fleetwood",
+      "sport": "PGA Golf"
+    },
+    {
+      "pick": 42,
+      "round": 3,
+      "team": "bakrondo",
+      "player": "Pato O\u2019Ward",
+      "sport": "Indycar Series"
+    },
+    {
+      "pick": 43,
+      "round": 4,
+      "team": "bakrondo",
+      "player": "Arizona",
+      "sport": "NCAAM Basketball"
+    },
+    {
+      "pick": 44,
+      "round": 4,
+      "team": "smelscifi",
+      "player": "France",
+      "sport": "FIFA Men's World Cup"
+    },
+    {
+      "pick": 45,
+      "round": 4,
+      "team": "peteg__",
+      "player": "Mark Selby",
+      "sport": "Snooker"
+    },
+    {
+      "pick": 46,
+      "round": 4,
+      "team": "ikyn",
+      "player": "Carolina Hurricanes",
+      "sport": "NHL"
+    },
+    {
+      "pick": 47,
+      "round": 4,
+      "team": "tanay002",
+      "player": "Japan",
+      "sport": "Little League World Series"
+    },
+    {
+      "pick": 48,
+      "round": 4,
+      "team": "brando1609",
+      "player": "Elena Rybakina",
+      "sport": "Tennis - Women"
+    },
+    {
+      "pick": 49,
+      "round": 4,
+      "team": "Madmike",
+      "player": "Lewis Hamilton",
+      "sport": "Formula 1"
+    },
+    {
+      "pick": 50,
+      "round": 4,
+      "team": "snarkymcgee",
+      "player": "Novak Djokovic",
+      "sport": "Tennis - Men"
+    },
+    {
+      "pick": 51,
+      "round": 4,
+      "team": "christhrowsrocks",
+      "player": "Kyle Kirkwood",
+      "sport": "Indycar Series"
+    },
+    {
+      "pick": 52,
+      "round": 4,
+      "team": "pandabair",
+      "player": "Paris Saint-Germain",
+      "sport": "UEFA Champions League"
+    },
+    {
+      "pick": 53,
+      "round": 4,
+      "team": "apatel78",
+      "player": "Houston",
+      "sport": "NCAAM Basketball"
+    },
+    {
+      "pick": 54,
+      "round": 4,
+      "team": "mart121",
+      "player": "Manchester City",
+      "sport": "UEFA Champions League"
+    },
+    {
+      "pick": 55,
+      "round": 4,
+      "team": ".herbal",
+      "player": "Seattle Seahawks",
+      "sport": "NFL"
+    },
+    {
+      "pick": 56,
+      "round": 4,
+      "team": "code.monkey",
+      "player": "Gian van Veen",
+      "sport": "PDC Darts"
+    },
+    {
+      "pick": 57,
+      "round": 5,
+      "team": "code.monkey",
+      "player": "Andrea Kimi Antonelli",
+      "sport": "Formula 1"
+    },
+    {
+      "pick": 58,
+      "round": 5,
+      "team": ".herbal",
+      "player": "Kyren Wilson",
+      "sport": "Snooker"
+    },
+    {
+      "pick": 59,
+      "round": 5,
+      "team": "mart121",
+      "player": "Team Falcons",
+      "sport": "Counter Strike"
+    },
+    {
+      "pick": 60,
+      "round": 5,
+      "team": "apatel78",
+      "player": "Wu Yize",
+      "sport": "Snooker"
+    },
+    {
+      "pick": 61,
+      "round": 5,
+      "team": "pandabair",
+      "player": "Neil Robertson",
+      "sport": "Snooker"
+    },
+    {
+      "pick": 62,
+      "round": 5,
+      "team": "christhrowsrocks",
+      "player": "Scott McLaughlin",
+      "sport": "Indycar Series"
+    },
+    {
+      "pick": 63,
+      "round": 5,
+      "team": "snarkymcgee",
+      "player": "San Antonio Spurs",
+      "sport": "NBA"
+    },
+    {
+      "pick": 64,
+      "round": 5,
+      "team": "Madmike",
+      "player": "Ohio State",
+      "sport": "NCAA Football"
+    },
+    {
+      "pick": 65,
+      "round": 5,
+      "team": "brando1609",
+      "player": "Xander Schauffele",
+      "sport": "PGA Golf"
+    },
+    {
+      "pick": 66,
+      "round": 5,
+      "team": "tanay002",
+      "player": "Oscar Piastri",
+      "sport": "Formula 1"
+    },
+    {
+      "pick": 67,
+      "round": 5,
+      "team": "ikyn",
+      "player": "Scott Dixon",
+      "sport": "Indycar Series"
+    },
+    {
+      "pick": 68,
+      "round": 5,
+      "team": "peteg__",
+      "player": "FURIA",
+      "sport": "Counter Strike"
+    },
+    {
+      "pick": 69,
+      "round": 5,
+      "team": "smelscifi",
+      "player": "Texas",
+      "sport": "NCAAW Basketball"
+    },
+    {
+      "pick": 70,
+      "round": 5,
+      "team": "bakrondo",
+      "player": "Notre Dame",
+      "sport": "NCAA Football"
+    },
+    {
+      "pick": 71,
+      "round": 6,
+      "team": "bakrondo",
+      "player": "Barcelona",
+      "sport": "UEFA Champions League"
+    },
+    {
+      "pick": 72,
+      "round": 6,
+      "team": "smelscifi",
+      "player": "Liverpool",
+      "sport": "UEFA Champions League"
+    },
+    {
+      "pick": 73,
+      "round": 6,
+      "team": "peteg__",
+      "player": "Gold Coast Suns",
+      "sport": "Aussie Rules Football"
+    },
+    {
+      "pick": 74,
+      "round": 6,
+      "team": "ikyn",
+      "player": "Michael van Gerwen",
+      "sport": "PDC Darts"
+    },
+    {
+      "pick": 75,
+      "round": 6,
+      "team": "tanay002",
+      "player": "Indiana",
+      "sport": "NCAA Football"
+    },
+    {
+      "pick": 76,
+      "round": 6,
+      "team": "brando1609",
+      "player": "Alexander Zverev",
+      "sport": "Tennis - Men"
+    },
+    {
+      "pick": 77,
+      "round": 6,
+      "team": "Madmike",
+      "player": "Phoenix Mercury",
+      "sport": "WNBA"
+    },
+    {
+      "pick": 78,
+      "round": 6,
+      "team": "snarkymcgee",
+      "player": "Illinois",
+      "sport": "NCAAM Basketball"
+    },
+    {
+      "pick": 79,
+      "round": 6,
+      "team": "christhrowsrocks",
+      "player": "Geelong Cats",
+      "sport": "Aussie Rules Football"
+    },
+    {
+      "pick": 80,
+      "round": 6,
+      "team": "pandabair",
+      "player": "Texas",
+      "sport": "NCAA Football"
+    },
+    {
+      "pick": 81,
+      "round": 6,
+      "team": "apatel78",
+      "player": "Team Spirit",
+      "sport": "Counter Strike"
+    },
+    {
+      "pick": 82,
+      "round": 6,
+      "team": "mart121",
+      "player": "New York Yankees",
+      "sport": "MLB"
+    },
+    {
+      "pick": 83,
+      "round": 6,
+      "team": ".herbal",
+      "player": "Adelaide Crows",
+      "sport": "Aussie Rules Football"
+    },
+    {
+      "pick": 84,
+      "round": 6,
+      "team": "code.monkey",
+      "player": "Atl\u00e9tico Madrid",
+      "sport": "UEFA Champions League"
+    },
+    {
+      "pick": 85,
+      "round": 7,
+      "team": "code.monkey",
+      "player": "PARIVISION",
+      "sport": "Counter Strike"
+    },
+    {
+      "pick": 86,
+      "round": 7,
+      "team": ".herbal",
+      "player": "Los Angeles Rams",
+      "sport": "NFL"
+    },
+    {
+      "pick": 87,
+      "round": 7,
+      "team": "mart121",
+      "player": "US - West",
+      "sport": "Little League World Series"
+    },
+    {
+      "pick": 88,
+      "round": 7,
+      "team": "apatel78",
+      "player": "Detroit Pistons",
+      "sport": "NBA"
+    },
+    {
+      "pick": 89,
+      "round": 7,
+      "team": "pandabair",
+      "player": "MOUZ",
+      "sport": "Counter Strike"
+    },
+    {
+      "pick": 90,
+      "round": 7,
+      "team": "christhrowsrocks",
+      "player": "Hawthorn Hawks",
+      "sport": "Aussie Rules Football"
+    },
+    {
+      "pick": 91,
+      "round": 7,
+      "team": "snarkymcgee",
+      "player": "Vanderbilt",
+      "sport": "NCAAW Basketball"
+    },
+    {
+      "pick": 92,
+      "round": 7,
+      "team": "Madmike",
+      "player": "Portugal",
+      "sport": "FIFA Men's World Cup"
+    },
+    {
+      "pick": 93,
+      "round": 7,
+      "team": "brando1609",
+      "player": "Connecticut",
+      "sport": "NCAAM Basketball"
+    },
+    {
+      "pick": 94,
+      "round": 7,
+      "team": "tanay002",
+      "player": "Boston Celtics",
+      "sport": "NBA"
+    },
+    {
+      "pick": 95,
+      "round": 7,
+      "team": "ikyn",
+      "player": "Latin America",
+      "sport": "Little League World Series"
+    },
+    {
+      "pick": 96,
+      "round": 7,
+      "team": "peteg__",
+      "player": "Amanda Anisimova",
+      "sport": "Tennis - Women"
+    },
+    {
+      "pick": 97,
+      "round": 7,
+      "team": "smelscifi",
+      "player": "Dallas Stars",
+      "sport": "NHL"
+    },
+    {
+      "pick": 98,
+      "round": 7,
+      "team": "bakrondo",
+      "player": "Minnesota Wild",
+      "sport": "NHL"
+    },
+    {
+      "pick": 99,
+      "round": 8,
+      "team": "bakrondo",
+      "player": "Cleveland Cavaliers",
+      "sport": "NBA"
+    },
+    {
+      "pick": 100,
+      "round": 8,
+      "team": "smelscifi",
+      "player": "Seattle Mariners",
+      "sport": "MLB"
+    },
+    {
+      "pick": 101,
+      "round": 8,
+      "team": "peteg__",
+      "player": "Bryson DeChambeau",
+      "sport": "PGA Golf"
+    },
+    {
+      "pick": 102,
+      "round": 8,
+      "team": "ikyn",
+      "player": "Vegas Golden Knights",
+      "sport": "NHL"
+    },
+    {
+      "pick": 103,
+      "round": 8,
+      "team": "tanay002",
+      "player": "Sydney Swans",
+      "sport": "Aussie Rules Football"
+    },
+    {
+      "pick": 104,
+      "round": 8,
+      "team": "brando1609",
+      "player": "Madison Keys",
+      "sport": "Tennis - Women"
+    },
+    {
+      "pick": 105,
+      "round": 8,
+      "team": "Madmike",
+      "player": "New York Knicks",
+      "sport": "NBA"
+    },
+    {
+      "pick": 106,
+      "round": 8,
+      "team": "snarkymcgee",
+      "player": "Will Power",
+      "sport": "Indycar Series"
+    },
+    {
+      "pick": 107,
+      "round": 8,
+      "team": "christhrowsrocks",
+      "player": "Western Bulldogs",
+      "sport": "Aussie Rules Football"
+    },
+    {
+      "pick": 108,
+      "round": 8,
+      "team": "pandabair",
+      "player": "LSU",
+      "sport": "NCAAW Basketball"
+    },
+    {
+      "pick": 109,
+      "round": 8,
+      "team": "apatel78",
+      "player": "Michigan",
+      "sport": "NCAAW Basketball"
+    },
+    {
+      "pick": 110,
+      "round": 8,
+      "team": "mart121",
+      "player": "Kansas",
+      "sport": "NCAAM Basketball"
+    },
+    {
+      "pick": 111,
+      "round": 8,
+      "team": ".herbal",
+      "player": "Oregon",
+      "sport": "NCAA Football"
+    },
+    {
+      "pick": 112,
+      "round": 8,
+      "team": "code.monkey",
+      "player": "Seattle Storm",
+      "sport": "WNBA"
+    },
+    {
+      "pick": 113,
+      "round": 9,
+      "team": "code.monkey",
+      "player": "Iowa St.",
+      "sport": "NCAAM Basketball"
+    },
+    {
+      "pick": 114,
+      "round": 9,
+      "team": ".herbal",
+      "player": "Florida",
+      "sport": "NCAAM Basketball"
+    },
+    {
+      "pick": 115,
+      "round": 9,
+      "team": "mart121",
+      "player": "Edmonton Oilers",
+      "sport": "NHL"
+    },
+    {
+      "pick": 116,
+      "round": 9,
+      "team": "apatel78",
+      "player": "Atlanta Dream",
+      "sport": "WNBA"
+    },
+    {
+      "pick": 117,
+      "round": 9,
+      "team": "pandabair",
+      "player": "Golden State Valkyries",
+      "sport": "WNBA"
+    },
+    {
+      "pick": 118,
+      "round": 9,
+      "team": "christhrowsrocks",
+      "player": "Jessica Pegula",
+      "sport": "Tennis - Women"
+    },
+    {
+      "pick": 119,
+      "round": 9,
+      "team": "snarkymcgee",
+      "player": "Florida Panthers",
+      "sport": "NHL"
+    },
+    {
+      "pick": 120,
+      "round": 9,
+      "team": "Madmike",
+      "player": "GWS Giants",
+      "sport": "Aussie Rules Football"
+    },
+    {
+      "pick": 121,
+      "round": 9,
+      "team": "brando1609",
+      "player": "Minnesota Timberwolves",
+      "sport": "NBA"
+    },
+    {
+      "pick": 122,
+      "round": 9,
+      "team": "tanay002",
+      "player": "Ronnie O\u2019Sullivan",
+      "sport": "Snooker"
+    },
+    {
+      "pick": 123,
+      "round": 9,
+      "team": "ikyn",
+      "player": "Caribbean",
+      "sport": "Little League World Series"
+    },
+    {
+      "pick": 124,
+      "round": 9,
+      "team": "peteg__",
+      "player": "Philadelphia Phillies",
+      "sport": "MLB"
+    },
+    {
+      "pick": 125,
+      "round": 9,
+      "team": "smelscifi",
+      "player": "Georgia",
+      "sport": "NCAA Football"
+    },
+    {
+      "pick": 126,
+      "round": 9,
+      "team": "bakrondo",
+      "player": "Toronto Blue Jays",
+      "sport": "MLB"
+    },
+    {
+      "pick": 127,
+      "round": 10,
+      "team": "bakrondo",
+      "player": "Mirra Andreeva",
+      "sport": "Tennis - Women"
+    },
+    {
+      "pick": 128,
+      "round": 10,
+      "team": "smelscifi",
+      "player": "US - Southeast",
+      "sport": "Little League World Series"
+    },
+    {
+      "pick": 129,
+      "round": 10,
+      "team": "peteg__",
+      "player": "Jack Draper",
+      "sport": "Tennis - Men"
+    },
+    {
+      "pick": 130,
+      "round": 10,
+      "team": "ikyn",
+      "player": "Houston Rockets",
+      "sport": "NBA"
+    },
+    {
+      "pick": 131,
+      "round": 10,
+      "team": "tanay002",
+      "player": "Germany",
+      "sport": "FIFA Men's World Cup"
+    },
+    {
+      "pick": 132,
+      "round": 10,
+      "team": "brando1609",
+      "player": "Detroit Red Wings",
+      "sport": "NHL"
+    },
+    {
+      "pick": 133,
+      "round": 10,
+      "team": "Madmike",
+      "player": "Christian Lundgaard",
+      "sport": "Indycar Series"
+    },
+    {
+      "pick": 134,
+      "round": 10,
+      "team": "snarkymcgee",
+      "player": "US - Southwest",
+      "sport": "Little League World Series"
+    },
+    {
+      "pick": 135,
+      "round": 10,
+      "team": "christhrowsrocks",
+      "player": "Atlanta Braves",
+      "sport": "MLB"
+    },
+    {
+      "pick": 136,
+      "round": 10,
+      "team": "pandabair",
+      "player": "New York Mets",
+      "sport": "MLB"
+    },
+    {
+      "pick": 137,
+      "round": 10,
+      "team": "apatel78",
+      "player": "Detroit Tigers",
+      "sport": "MLB"
+    },
+    {
+      "pick": 138,
+      "round": 10,
+      "team": "mart121",
+      "player": "Green Bay Packers",
+      "sport": "NFL"
+    },
+    {
+      "pick": 139,
+      "round": 10,
+      "team": ".herbal",
+      "player": "Boston Red Sox",
+      "sport": "MLB"
+    },
+    {
+      "pick": 140,
+      "round": 10,
+      "team": "code.monkey",
+      "player": "Baltimore Ravens",
+      "sport": "NFL"
+    },
+    {
+      "pick": 141,
+      "round": 11,
+      "team": "code.monkey",
+      "player": "Buffalo Bills",
+      "sport": "NFL"
+    },
+    {
+      "pick": 142,
+      "round": 11,
+      "team": ".herbal",
+      "player": "Real Madrid",
+      "sport": "UEFA Champions League"
+    },
+    {
+      "pick": 143,
+      "round": 11,
+      "team": "mart121",
+      "player": "Norway",
+      "sport": "FIFA Men's World Cup"
+    },
+    {
+      "pick": 144,
+      "round": 11,
+      "team": "apatel78",
+      "player": "Lorenzo Musetti",
+      "sport": "Tennis - Men"
+    },
+    {
+      "pick": 145,
+      "round": 11,
+      "team": "pandabair",
+      "player": "Ben Shelton",
+      "sport": "Tennis - Men"
+    },
+    {
+      "pick": 146,
+      "round": 11,
+      "team": "christhrowsrocks",
+      "player": "John Higgins",
+      "sport": "Snooker"
+    },
+    {
+      "pick": 147,
+      "round": 11,
+      "team": "snarkymcgee",
+      "player": "Fernando Alonso",
+      "sport": "Formula 1"
+    },
+    {
+      "pick": 148,
+      "round": 11,
+      "team": "Madmike",
+      "player": "Jon Rahm",
+      "sport": "PGA Golf"
+    },
+    {
+      "pick": 149,
+      "round": 11,
+      "team": "brando1609",
+      "player": "Natus Vincere",
+      "sport": "Counter Strike"
+    },
+    {
+      "pick": 150,
+      "round": 11,
+      "team": "tanay002",
+      "player": "David Malukas",
+      "sport": "Indycar Series"
+    },
+    {
+      "pick": 151,
+      "round": 11,
+      "team": "ikyn",
+      "player": "Collingwood Magpies",
+      "sport": "Aussie Rules Football"
+    },
+    {
+      "pick": 152,
+      "round": 11,
+      "team": "peteg__",
+      "player": "Josh Rock",
+      "sport": "PDC Darts"
+    },
+    {
+      "pick": 153,
+      "round": 11,
+      "team": "smelscifi",
+      "player": "Chelsea",
+      "sport": "UEFA Champions League"
+    },
+    {
+      "pick": 154,
+      "round": 11,
+      "team": "bakrondo",
+      "player": "The MongolZ",
+      "sport": "Counter Strike"
+    },
+    {
+      "pick": 155,
+      "round": 12,
+      "team": "bakrondo",
+      "player": "Fremantle Dockers",
+      "sport": "Aussie Rules Football"
+    },
+    {
+      "pick": 156,
+      "round": 12,
+      "team": "smelscifi",
+      "player": "Gerwyn Price",
+      "sport": "PDC Darts"
+    },
+    {
+      "pick": 157,
+      "round": 12,
+      "team": "peteg__",
+      "player": "Philadelphia Eagles",
+      "sport": "NFL"
+    },
+    {
+      "pick": 158,
+      "round": 12,
+      "team": "ikyn",
+      "player": "Denver Broncos",
+      "sport": "NFL"
+    },
+    {
+      "pick": 159,
+      "round": 12,
+      "team": "tanay002",
+      "player": "San Francisco 49ers",
+      "sport": "NFL"
+    },
+    {
+      "pick": 160,
+      "round": 12,
+      "team": "brando1609",
+      "player": "Detroit Lions",
+      "sport": "NFL"
+    },
+    {
+      "pick": 161,
+      "round": 12,
+      "team": "Madmike",
+      "player": "Aurora",
+      "sport": "Counter Strike"
+    },
+    {
+      "pick": 162,
+      "round": 12,
+      "team": "snarkymcgee",
+      "player": "Kansas City Chiefs",
+      "sport": "NFL"
+    },
+    {
+      "pick": 163,
+      "round": 12,
+      "team": "christhrowsrocks",
+      "player": "Mark Williams",
+      "sport": "Snooker"
+    },
+    {
+      "pick": 164,
+      "round": 12,
+      "team": "pandabair",
+      "player": "Alex de Minaur",
+      "sport": "Tennis - Men"
+    },
+    {
+      "pick": 165,
+      "round": 12,
+      "team": "apatel78",
+      "player": "Netherlands",
+      "sport": "FIFA Men's World Cup"
+    },
+    {
+      "pick": 166,
+      "round": 12,
+      "team": "mart121",
+      "player": "Gary Anderson",
+      "sport": "PDC Darts"
+    },
+    {
+      "pick": 167,
+      "round": 12,
+      "team": ".herbal",
+      "player": "Shaun Murphy",
+      "sport": "Snooker"
+    },
+    {
+      "pick": 168,
+      "round": 12,
+      "team": "code.monkey",
+      "player": "Taylor Fritz",
+      "sport": "Tennis - Men"
+    },
+    {
+      "pick": 169,
+      "round": 13,
+      "team": "code.monkey",
+      "player": "Miami (FL)",
+      "sport": "NCAA Football"
+    },
+    {
+      "pick": 170,
+      "round": 13,
+      "team": ".herbal",
+      "player": "Dallas Wings",
+      "sport": "WNBA"
+    },
+    {
+      "pick": 171,
+      "round": 13,
+      "team": "mart121",
+      "player": "United States",
+      "sport": "FIFA Men's World Cup"
+    },
+    {
+      "pick": 172,
+      "round": 13,
+      "team": "apatel78",
+      "player": "Texas Tech",
+      "sport": "NCAA Football"
+    },
+    {
+      "pick": 173,
+      "round": 13,
+      "team": "pandabair",
+      "player": "LSU",
+      "sport": "NCAA Football"
+    },
+    {
+      "pick": 174,
+      "round": 13,
+      "team": "christhrowsrocks",
+      "player": "G2 Esports",
+      "sport": "Counter Strike"
+    },
+    {
+      "pick": 175,
+      "round": 13,
+      "team": "snarkymcgee",
+      "player": "Victoria Mboko",
+      "sport": "Tennis - Women"
+    },
+    {
+      "pick": 176,
+      "round": 13,
+      "team": "Madmike",
+      "player": "Mark Allen",
+      "sport": "Snooker"
+    },
+    {
+      "pick": 177,
+      "round": 13,
+      "team": "brando1609",
+      "player": "Cleveland Guardians",
+      "sport": "MLB"
+    },
+    {
+      "pick": 178,
+      "round": 13,
+      "team": "tanay002",
+      "player": "FaZe Clan",
+      "sport": "Counter Strike"
+    },
+    {
+      "pick": 179,
+      "round": 13,
+      "team": "ikyn",
+      "player": "Alabama",
+      "sport": "NCAA Football"
+    },
+    {
+      "pick": 180,
+      "round": 13,
+      "team": "peteg__",
+      "player": "Texas A&M",
+      "sport": "NCAA Football"
+    },
+    {
+      "pick": 181,
+      "round": 13,
+      "team": "smelscifi",
+      "player": "New England Patriots",
+      "sport": "NFL"
+    },
+    {
+      "pick": 182,
+      "round": 13,
+      "team": "bakrondo",
+      "player": "Chicago Cubs",
+      "sport": "MLB"
+    },
+    {
+      "pick": 183,
+      "round": 14,
+      "team": "bakrondo",
+      "player": "Duke",
+      "sport": "NCAAW Basketball"
+    },
+    {
+      "pick": 184,
+      "round": 14,
+      "team": "smelscifi",
+      "player": "Gonzaga",
+      "sport": "NCAAM Basketball"
+    },
+    {
+      "pick": 185,
+      "round": 14,
+      "team": "peteg__",
+      "player": "Houston Astros",
+      "sport": "MLB"
+    },
+    {
+      "pick": 186,
+      "round": 14,
+      "team": "ikyn",
+      "player": "Melbourne Demons",
+      "sport": "Aussie Rules Football"
+    },
+    {
+      "pick": 187,
+      "round": 14,
+      "team": "tanay002",
+      "player": "Emma Raducanu",
+      "sport": "Tennis - Women"
+    },
+    {
+      "pick": 188,
+      "round": 14,
+      "team": "brando1609",
+      "player": "Mexico",
+      "sport": "Little League World Series"
+    },
+    {
+      "pick": 189,
+      "round": 14,
+      "team": "Madmike",
+      "player": "Ludvig Aberg",
+      "sport": "PGA Golf"
+    },
+    {
+      "pick": 190,
+      "round": 14,
+      "team": "snarkymcgee",
+      "player": "Baltimore Orioles",
+      "sport": "MLB"
+    },
+    {
+      "pick": 191,
+      "round": 14,
+      "team": "christhrowsrocks",
+      "player": "Curacao",
+      "sport": "Little League World Series"
+    },
+    {
+      "pick": 192,
+      "round": 14,
+      "team": "pandabair",
+      "player": "Wessel Nijman",
+      "sport": "PDC Darts"
+    },
+    {
+      "pick": 193,
+      "round": 14,
+      "team": "apatel78",
+      "player": "Los Angeles Chargers",
+      "sport": "NFL"
+    },
+    {
+      "pick": 194,
+      "round": 14,
+      "team": "mart121",
+      "player": "Florida",
+      "sport": "NCAA Football"
+    },
+    {
+      "pick": 195,
+      "round": 14,
+      "team": ".herbal",
+      "player": "Buffalo Sabres",
+      "sport": "NHL"
+    },
+    {
+      "pick": 196,
+      "round": 14,
+      "team": "code.monkey",
+      "player": "St Kilda Saints",
+      "sport": "Aussie Rules Football"
+    },
+    {
+      "pick": 197,
+      "round": 15,
+      "team": "code.monkey",
+      "player": "Marcus Ericsson",
+      "sport": "Indycar Series"
+    },
+    {
+      "pick": 198,
+      "round": 15,
+      "team": ".herbal",
+      "player": "Belgium",
+      "sport": "FIFA Men's World Cup"
+    },
+    {
+      "pick": 199,
+      "round": 15,
+      "team": "mart121",
+      "player": "Richmond Tigers",
+      "sport": "Aussie Rules Football"
+    },
+    {
+      "pick": 200,
+      "round": 15,
+      "team": "apatel78",
+      "player": "Bod\u00f8/Glimt",
+      "sport": "UEFA Champions League"
+    },
+    {
+      "pick": 201,
+      "round": 15,
+      "team": "pandabair",
+      "player": "Utah Mammoth",
+      "sport": "NHL"
+    },
+    {
+      "pick": 202,
+      "round": 15,
+      "team": "christhrowsrocks",
+      "player": "Sporting CP",
+      "sport": "UEFA Champions League"
+    },
+    {
+      "pick": 203,
+      "round": 15,
+      "team": "snarkymcgee",
+      "player": "Collin Morikawa",
+      "sport": "PGA Golf"
+    },
+    {
+      "pick": 204,
+      "round": 15,
+      "team": "Madmike",
+      "player": "Purdue",
+      "sport": "NCAAM Basketball"
+    },
+    {
+      "pick": 205,
+      "round": 15,
+      "team": "brando1609",
+      "player": "Houston Texans",
+      "sport": "NFL"
+    },
+    {
+      "pick": 206,
+      "round": 15,
+      "team": "tanay002",
+      "player": "Milwaukee Brewers",
+      "sport": "MLB"
+    },
+    {
+      "pick": 207,
+      "round": 15,
+      "team": "ikyn",
+      "player": "Chicago Bears",
+      "sport": "NFL"
+    },
+    {
+      "pick": 208,
+      "round": 15,
+      "team": "peteg__",
+      "player": "Isack Hadjar",
+      "sport": "Formula 1"
+    },
+    {
+      "pick": 209,
+      "round": 15,
+      "team": "smelscifi",
+      "player": "Daniil Medvedev",
+      "sport": "Tennis - Men"
+    },
+    {
+      "pick": 210,
+      "round": 15,
+      "team": "bakrondo",
+      "player": "Los Angeles Sparks",
+      "sport": "WNBA"
+    },
+    {
+      "pick": 211,
+      "round": 16,
+      "team": "bakrondo",
+      "player": "LA Lakers",
+      "sport": "NBA"
+    },
+    {
+      "pick": 212,
+      "round": 16,
+      "team": "smelscifi",
+      "player": "Morocco",
+      "sport": "FIFA Men's World Cup"
+    },
+    {
+      "pick": 213,
+      "round": 16,
+      "team": "peteg__",
+      "player": "Montreal Canadiens",
+      "sport": "NHL"
+    },
+    {
+      "pick": 214,
+      "round": 16,
+      "team": "ikyn",
+      "player": "Michigan St.",
+      "sport": "NCAAM Basketball"
+    },
+    {
+      "pick": 215,
+      "round": 16,
+      "team": "tanay002",
+      "player": "Texas Tech",
+      "sport": "NCAAM Basketball"
+    },
+    {
+      "pick": 216,
+      "round": 16,
+      "team": "brando1609",
+      "player": "Iowa",
+      "sport": "NCAAW Basketball"
+    },
+    {
+      "pick": 217,
+      "round": 16,
+      "team": "Madmike",
+      "player": "Joao Fonseca",
+      "sport": "Tennis - Men"
+    },
+    {
+      "pick": 218,
+      "round": 16,
+      "team": "snarkymcgee",
+      "player": "Kansas City Royals",
+      "sport": "MLB"
+    },
+    {
+      "pick": 219,
+      "round": 16,
+      "team": "christhrowsrocks",
+      "player": "Colombia",
+      "sport": "FIFA Men's World Cup"
+    },
+    {
+      "pick": 220,
+      "round": 16,
+      "team": "pandabair",
+      "player": "Jakub Mensik",
+      "sport": "Tennis - Men"
+    },
+    {
+      "pick": 221,
+      "round": 16,
+      "team": "apatel78",
+      "player": "New York Islanders",
+      "sport": "NHL"
+    },
+    {
+      "pick": 222,
+      "round": 16,
+      "team": "mart121",
+      "player": "Qinwen Zheng",
+      "sport": "Tennis - Women"
+    },
+    {
+      "pick": 223,
+      "round": 16,
+      "team": ".herbal",
+      "player": "Anaheim Ducks",
+      "sport": "NHL"
+    },
+    {
+      "pick": 224,
+      "round": 16,
+      "team": "code.monkey",
+      "player": "Jasmine Paolini",
+      "sport": "Tennis - Women"
+    },
+    {
+      "pick": 225,
+      "round": 17,
+      "team": "code.monkey",
+      "player": "Oklahoma",
+      "sport": "NCAAW Basketball"
+    },
+    {
+      "pick": 226,
+      "round": 17,
+      "team": ".herbal",
+      "player": "Toronto Raptors",
+      "sport": "NBA"
+    },
+    {
+      "pick": 227,
+      "round": 17,
+      "team": "mart121",
+      "player": "Justin Thomas",
+      "sport": "PGA Golf"
+    },
+    {
+      "pick": 228,
+      "round": 17,
+      "team": "apatel78",
+      "player": "Indianapolis Colts",
+      "sport": "NFL"
+    },
+    {
+      "pick": 229,
+      "round": 17,
+      "team": "pandabair",
+      "player": "Jacksonville Jaguars",
+      "sport": "NFL"
+    },
+    {
+      "pick": 230,
+      "round": 17,
+      "team": "christhrowsrocks",
+      "player": "Pittsburgh Penguins",
+      "sport": "NHL"
+    },
+    {
+      "pick": 231,
+      "round": 17,
+      "team": "snarkymcgee",
+      "player": "San Diego Padres",
+      "sport": "MLB"
+    },
+    {
+      "pick": 232,
+      "round": 17,
+      "team": "Madmike",
+      "player": "Stephen Bunting",
+      "sport": "PDC Darts"
+    },
+    {
+      "pick": 233,
+      "round": 17,
+      "team": "brando1609",
+      "player": "Oklahoma",
+      "sport": "NCAA Football"
+    },
+    {
+      "pick": 234,
+      "round": 17,
+      "team": "tanay002",
+      "player": "Viktor Hovland",
+      "sport": "PGA Golf"
+    },
+    {
+      "pick": 235,
+      "round": 17,
+      "team": "ikyn",
+      "player": "Japan",
+      "sport": "FIFA Men's World Cup"
+    },
+    {
+      "pick": 236,
+      "round": 17,
+      "team": "peteg__",
+      "player": "Chang Bingyu",
+      "sport": "Snooker"
+    },
+    {
+      "pick": 237,
+      "round": 17,
+      "team": "smelscifi",
+      "player": "St. John's",
+      "sport": "NCAAM Basketball"
+    },
+    {
+      "pick": 238,
+      "round": 17,
+      "team": "bakrondo",
+      "player": "US - Mountain",
+      "sport": "Little League World Series"
+    },
+    {
+      "pick": 239,
+      "round": 18,
+      "team": "bakrondo",
+      "player": "Chris Gotterup",
+      "sport": "PGA Golf"
+    },
+    {
+      "pick": 240,
+      "round": 18,
+      "team": "smelscifi",
+      "player": "BYU",
+      "sport": "NCAA Football"
+    },
+    {
+      "pick": 241,
+      "round": 18,
+      "team": "peteg__",
+      "player": "Oregon",
+      "sport": "NCAAW Basketball"
+    },
+    {
+      "pick": 242,
+      "round": 18,
+      "team": "ikyn",
+      "player": "Liam Lawson",
+      "sport": "Formula 1"
+    },
+    {
+      "pick": 243,
+      "round": 18,
+      "team": "tanay002",
+      "player": "Tottenham Hotspur",
+      "sport": "UEFA Champions League"
+    },
+    {
+      "pick": 244,
+      "round": 18,
+      "team": "brando1609",
+      "player": "Newcastle United",
+      "sport": "UEFA Champions League"
+    },
+    {
+      "pick": 245,
+      "round": 18,
+      "team": "Madmike",
+      "player": "Cincinnati Bengals",
+      "sport": "NFL"
+    },
+    {
+      "pick": 246,
+      "round": 18,
+      "team": "snarkymcgee",
+      "player": "Texas Rangers",
+      "sport": "MLB"
+    },
+    {
+      "pick": 247,
+      "round": 18,
+      "team": "christhrowsrocks",
+      "player": "Pierre Gasly",
+      "sport": "Formula 1"
+    },
+    {
+      "pick": 248,
+      "round": 18,
+      "team": "pandabair",
+      "player": "Alexander Bublik",
+      "sport": "Tennis - Men"
+    },
+    {
+      "pick": 249,
+      "round": 18,
+      "team": "apatel78",
+      "player": "Nebraska",
+      "sport": "NCAAM Basketball"
+    },
+    {
+      "pick": 250,
+      "round": 18,
+      "team": "mart121",
+      "player": "Luca Brecel",
+      "sport": "Snooker"
+    },
+    {
+      "pick": 251,
+      "round": 18,
+      "team": ".herbal",
+      "player": "Justin Rose",
+      "sport": "PGA Golf"
+    },
+    {
+      "pick": 252,
+      "round": 18,
+      "team": "code.monkey",
+      "player": "Ole Miss",
+      "sport": "NCAA Football"
+    },
+    {
+      "pick": 253,
+      "round": 19,
+      "team": "code.monkey",
+      "player": "Cincinnati Reds",
+      "sport": "MLB"
+    },
+    {
+      "pick": 254,
+      "round": 19,
+      "team": ".herbal",
+      "player": "Danny Noppert",
+      "sport": "PDC Darts"
+    },
+    {
+      "pick": 255,
+      "round": 19,
+      "team": "mart121",
+      "player": "Los Angeles Kings",
+      "sport": "NHL"
+    },
+    {
+      "pick": 256,
+      "round": 19,
+      "team": "apatel78",
+      "player": "Nico H\u00fclkenberg",
+      "sport": "Formula 1"
+    },
+    {
+      "pick": 257,
+      "round": 19,
+      "team": "pandabair",
+      "player": "Tampa Bay Buccaneers",
+      "sport": "NFL"
+    },
+    {
+      "pick": 258,
+      "round": 19,
+      "team": "christhrowsrocks",
+      "player": "TCU",
+      "sport": "NCAAW Basketball"
+    },
+    {
+      "pick": 259,
+      "round": 19,
+      "team": "snarkymcgee",
+      "player": "Astralis",
+      "sport": "Counter Strike"
+    },
+    {
+      "pick": 260,
+      "round": 19,
+      "team": "Madmike",
+      "player": "US - Metro",
+      "sport": "Little League World Series"
+    },
+    {
+      "pick": 261,
+      "round": 19,
+      "team": "brando1609",
+      "player": "Arkansas",
+      "sport": "NCAAM Basketball"
+    },
+    {
+      "pick": 262,
+      "round": 19,
+      "team": "tanay002",
+      "player": "Tyrrell Hatton",
+      "sport": "PGA Golf"
+    },
+    {
+      "pick": 263,
+      "round": 19,
+      "team": "ikyn",
+      "player": "Atalanta",
+      "sport": "UEFA Champions League"
+    },
+    {
+      "pick": 264,
+      "round": 19,
+      "team": "peteg__",
+      "player": "Italy",
+      "sport": "FIFA Men's World Cup"
+    },
+    {
+      "pick": 265,
+      "round": 19,
+      "team": "smelscifi",
+      "player": "BYU",
+      "sport": "NCAAM Basketball"
+    },
+    {
+      "pick": 266,
+      "round": 19,
+      "team": "bakrondo",
+      "player": "Jonny Clayton",
+      "sport": "PDC Darts"
+    },
+    {
+      "pick": 267,
+      "round": 20,
+      "team": "bakrondo",
+      "player": "Felix Auger-Aliassime",
+      "sport": "Tennis - Men"
+    },
+    {
+      "pick": 268,
+      "round": 20,
+      "team": "smelscifi",
+      "player": "Carlton Blues",
+      "sport": "Aussie Rules Football"
+    },
+    {
+      "pick": 269,
+      "round": 20,
+      "team": "peteg__",
+      "player": "Naomi Osaka",
+      "sport": "Tennis - Women"
+    },
+    {
+      "pick": 270,
+      "round": 20,
+      "team": "ikyn",
+      "player": "Patrick Reed",
+      "sport": "PGA Golf"
+    },
+    {
+      "pick": 271,
+      "round": 20,
+      "team": "tanay002",
+      "player": "Chris Dobey",
+      "sport": "PDC Darts"
+    },
+    {
+      "pick": 272,
+      "round": 20,
+      "team": "brando1609",
+      "player": "Washington Mystics",
+      "sport": "WNBA"
+    },
+    {
+      "pick": 273,
+      "round": 20,
+      "team": "Madmike",
+      "player": "Jack Lisowski",
+      "sport": "Snooker"
+    },
+    {
+      "pick": 274,
+      "round": 20,
+      "team": "snarkymcgee",
+      "player": "Xiao Guodong",
+      "sport": "Snooker"
+    },
+    {
+      "pick": 275,
+      "round": 20,
+      "team": "christhrowsrocks",
+      "player": "Nathan Aspinall",
+      "sport": "PDC Darts"
+    },
+    {
+      "pick": 276,
+      "round": 20,
+      "team": "pandabair",
+      "player": "Dennis Hauger",
+      "sport": "Indycar Series"
+    },
+    {
+      "pick": 277,
+      "round": 20,
+      "team": "apatel78",
+      "player": "US - Mid-Atlantic",
+      "sport": "Little League World Series"
+    },
+    {
+      "pick": 278,
+      "round": 20,
+      "team": "mart121",
+      "player": "FUT Esports",
+      "sport": "Counter Strike"
+    },
+    {
+      "pick": 279,
+      "round": 20,
+      "team": ".herbal",
+      "player": "Elina Svitolina",
+      "sport": "Tennis - Women"
+    },
+    {
+      "pick": 280,
+      "round": 20,
+      "team": "code.monkey",
+      "player": "Panama",
+      "sport": "Little League World Series"
+    },
+    {
+      "pick": 281,
+      "round": 21,
+      "team": "code.monkey",
+      "player": "Philadelphia 76ers",
+      "sport": "NBA"
+    },
+    {
+      "pick": 282,
+      "round": 21,
+      "team": ".herbal",
+      "player": "Louisville",
+      "sport": "NCAAW Basketball"
+    },
+    {
+      "pick": 283,
+      "round": 21,
+      "team": "mart121",
+      "player": "USC",
+      "sport": "NCAA Football"
+    },
+    {
+      "pick": 284,
+      "round": 21,
+      "team": "apatel78",
+      "player": "New Orleans Saints",
+      "sport": "NFL"
+    },
+    {
+      "pick": 285,
+      "round": 21,
+      "team": "pandabair",
+      "player": "Hideki Matsuyama",
+      "sport": "PGA Golf"
+    },
+    {
+      "pick": 286,
+      "round": 21,
+      "team": "christhrowsrocks",
+      "player": "Russell Henley",
+      "sport": "PGA Golf"
+    },
+    {
+      "pick": 287,
+      "round": 21,
+      "team": "snarkymcgee",
+      "player": "Michigan",
+      "sport": "NCAA Football"
+    },
+    {
+      "pick": 288,
+      "round": 21,
+      "team": "Madmike",
+      "player": "Galatasaray",
+      "sport": "UEFA Champions League"
+    },
+    {
+      "pick": 289,
+      "round": 21,
+      "team": "brando1609",
+      "player": "North Melbourne Kangaroos",
+      "sport": "Aussie Rules Football"
+    },
+    {
+      "pick": 290,
+      "round": 21,
+      "team": "tanay002",
+      "player": "Robert MacIntyre",
+      "sport": "PGA Golf"
+    },
+    {
+      "pick": 291,
+      "round": 21,
+      "team": "ikyn",
+      "player": "Andrey Rublev",
+      "sport": "Tennis - Men"
+    },
+    {
+      "pick": 292,
+      "round": 21,
+      "team": "peteg__",
+      "player": "Felix Rosenqvist",
+      "sport": "Indycar Series"
+    },
+    {
+      "pick": 293,
+      "round": 21,
+      "team": "smelscifi",
+      "player": "Paula Badosa",
+      "sport": "Tennis - Women"
+    },
+    {
+      "pick": 294,
+      "round": 21,
+      "team": "bakrondo",
+      "player": "Mexico",
+      "sport": "FIFA Men's World Cup"
+    },
+    {
+      "pick": 295,
+      "round": 22,
+      "team": "bakrondo",
+      "player": "Phoenix Suns",
+      "sport": "NBA"
+    },
+    {
+      "pick": 296,
+      "round": 22,
+      "team": "smelscifi",
+      "player": "Arvid Lindblad",
+      "sport": "Formula 1"
+    },
+    {
+      "pick": 297,
+      "round": 22,
+      "team": "peteg__",
+      "player": "Ohio St.",
+      "sport": "NCAAM Basketball"
+    },
+    {
+      "pick": 298,
+      "round": 22,
+      "team": "ikyn",
+      "player": "Ding Junhui",
+      "sport": "Snooker"
+    },
+    {
+      "pick": 299,
+      "round": 22,
+      "team": "tanay002",
+      "player": "Patrick Cantlay",
+      "sport": "PGA Golf"
+    },
+    {
+      "pick": 300,
+      "round": 22,
+      "team": "brando1609",
+      "player": "Uruguay",
+      "sport": "FIFA Men's World Cup"
+    },
+    {
+      "pick": 301,
+      "round": 22,
+      "team": "Madmike",
+      "player": "Karolina Muchova",
+      "sport": "Tennis - Women"
+    },
+    {
+      "pick": 302,
+      "round": 22,
+      "team": "snarkymcgee",
+      "player": "Rob Cross",
+      "sport": "PDC Darts"
+    },
+    {
+      "pick": 303,
+      "round": 22,
+      "team": "christhrowsrocks",
+      "player": "Miami Heat",
+      "sport": "NBA"
+    },
+    {
+      "pick": 304,
+      "round": 22,
+      "team": "pandabair",
+      "player": "Charlotte Hornets",
+      "sport": "NBA"
+    },
+    {
+      "pick": 305,
+      "round": 22,
+      "team": "apatel78",
+      "player": "Akshay Bhatia",
+      "sport": "PGA Golf"
+    },
+    {
+      "pick": 306,
+      "round": 22,
+      "team": "mart121",
+      "player": "US - Great Lakes",
+      "sport": "Little League World Series"
+    },
+    {
+      "pick": 307,
+      "round": 22,
+      "team": ".herbal",
+      "player": "Golden State Warriors",
+      "sport": "NBA"
+    },
+    {
+      "pick": 308,
+      "round": 22,
+      "team": "code.monkey",
+      "player": "Beau Greaves",
+      "sport": "PDC Darts"
+    },
+    {
+      "pick": 309,
+      "round": 23,
+      "team": "code.monkey",
+      "player": "Barry Hawkins",
+      "sport": "Snooker"
+    },
+    {
+      "pick": 310,
+      "round": 23,
+      "team": ".herbal",
+      "player": "Boston Bruins",
+      "sport": "NHL"
+    },
+    {
+      "pick": 311,
+      "round": 23,
+      "team": "mart121",
+      "player": "Alexander Rossi",
+      "sport": "Indycar Series"
+    },
+    {
+      "pick": 312,
+      "round": 23,
+      "team": "apatel78",
+      "player": "Alexandra Eala",
+      "sport": "Tennis - Women"
+    },
+    {
+      "pick": 313,
+      "round": 23,
+      "team": "pandabair",
+      "player": "Gabriel Bortoleto",
+      "sport": "Formula 1"
+    },
+    {
+      "pick": 314,
+      "round": 23,
+      "team": "christhrowsrocks",
+      "player": "Penn State",
+      "sport": "NCAA Football"
+    },
+    {
+      "pick": 315,
+      "round": 23,
+      "team": "snarkymcgee",
+      "player": "Port Adelaide Power",
+      "sport": "Aussie Rules Football"
+    },
+    {
+      "pick": 316,
+      "round": 23,
+      "team": "Madmike",
+      "player": "Iva Jovic",
+      "sport": "Tennis - Women"
+    },
+    {
+      "pick": 317,
+      "round": 23,
+      "team": "brando1609",
+      "player": "Mick Schumacher",
+      "sport": "Indycar Series"
+    },
+    {
+      "pick": 318,
+      "round": 23,
+      "team": "tanay002",
+      "player": "Cameron Young",
+      "sport": "PGA Golf"
+    },
+    {
+      "pick": 319,
+      "round": 23,
+      "team": "ikyn",
+      "player": "San Francisco Giants",
+      "sport": "MLB"
+    },
+    {
+      "pick": 320,
+      "round": 23,
+      "team": "peteg__",
+      "player": "Orlando Magic",
+      "sport": "NBA"
+    },
+    {
+      "pick": 321,
+      "round": 23,
+      "team": "smelscifi",
+      "player": "Chicago Sky",
+      "sport": "WNBA"
+    },
+    {
+      "pick": 322,
+      "round": 23,
+      "team": "bakrondo",
+      "player": "Si Jiahui",
+      "sport": "Snooker"
+    },
+    {
+      "pick": 323,
+      "round": 24,
+      "team": "bakrondo",
+      "player": "Dallas Cowboys",
+      "sport": "NFL"
+    },
+    {
+      "pick": 324,
+      "round": 24,
+      "team": "smelscifi",
+      "player": "Christian Rasmussen",
+      "sport": "Indycar Series"
+    },
+    {
+      "pick": 325,
+      "round": 24,
+      "team": "peteg__",
+      "player": "Connecticut Sun",
+      "sport": "WNBA"
+    },
+    {
+      "pick": 326,
+      "round": 24,
+      "team": "ikyn",
+      "player": "Team Liquid",
+      "sport": "Counter Strike"
+    },
+    {
+      "pick": 327,
+      "round": 24,
+      "team": "tanay002",
+      "player": "Wisconsin",
+      "sport": "NCAAM Basketball"
+    },
+    {
+      "pick": 328,
+      "round": 24,
+      "team": "brando1609",
+      "player": "Vanderbilt",
+      "sport": "NCAAM Basketball"
+    },
+    {
+      "pick": 329,
+      "round": 24,
+      "team": "Madmike",
+      "player": "Pittsburgh Pirates",
+      "sport": "MLB"
+    },
+    {
+      "pick": 330,
+      "round": 24,
+      "team": "snarkymcgee",
+      "player": "Portland Fire",
+      "sport": "WNBA"
+    },
+    {
+      "pick": 331,
+      "round": 24,
+      "team": "christhrowsrocks",
+      "player": "Atlanta Falcons",
+      "sport": "NFL"
+    },
+    {
+      "pick": 332,
+      "round": 24,
+      "team": "pandabair",
+      "player": "US - Northwest",
+      "sport": "Little League World Series"
+    },
+    {
+      "pick": 333,
+      "round": 24,
+      "team": "apatel78",
+      "player": "Marcus Armstrong",
+      "sport": "Indycar Series"
+    },
+    {
+      "pick": 334,
+      "round": 24,
+      "team": "mart121",
+      "player": "North Carolina",
+      "sport": "NCAAW Basketball"
+    },
+    {
+      "pick": 335,
+      "round": 24,
+      "team": ".herbal",
+      "player": "US - Midwest",
+      "sport": "Little League World Series"
+    },
+    {
+      "pick": 336,
+      "round": 24,
+      "team": "code.monkey",
+      "player": "Seattle Kraken",
+      "sport": "NHL"
+    },
+    {
+      "pick": 337,
+      "round": 25,
+      "team": "code.monkey",
+      "player": "Oliver Bearman",
+      "sport": "Formula 1"
+    },
+    {
+      "pick": 338,
+      "round": 25,
+      "team": ".herbal",
+      "player": "3DMAX",
+      "sport": "Counter Strike"
+    },
+    {
+      "pick": 339,
+      "round": 25,
+      "team": "mart121",
+      "player": "Matteo Berrettini",
+      "sport": "Tennis - Men"
+    },
+    {
+      "pick": 340,
+      "round": 25,
+      "team": "apatel78",
+      "player": "Essendon Bombers",
+      "sport": "Aussie Rules Football"
+    },
+    {
+      "pick": 341,
+      "round": 25,
+      "team": "pandabair",
+      "player": "West Coast Eagles",
+      "sport": "Aussie Rules Football"
+    },
+    {
+      "pick": 342,
+      "round": 25,
+      "team": "christhrowsrocks",
+      "player": "Tommy Paul",
+      "sport": "Tennis - Men"
+    },
+    {
+      "pick": 343,
+      "round": 25,
+      "team": "snarkymcgee",
+      "player": "Arizona Diamondbacks",
+      "sport": "MLB"
+    },
+    {
+      "pick": 344,
+      "round": 25,
+      "team": "Madmike",
+      "player": "Ali Carter",
+      "sport": "Snooker"
+    },
+    {
+      "pick": 345,
+      "round": 25,
+      "team": "brando1609",
+      "player": "Gary Wilson",
+      "sport": "Snooker"
+    },
+    {
+      "pick": 346,
+      "round": 25,
+      "team": "tanay002",
+      "player": "Toronto Tempo",
+      "sport": "WNBA"
+    },
+    {
+      "pick": 347,
+      "round": 25,
+      "team": "ikyn",
+      "player": "Esteban Ocon",
+      "sport": "Formula 1"
+    },
+    {
+      "pick": 348,
+      "round": 25,
+      "team": "peteg__",
+      "player": "Brooks Koepka",
+      "sport": "PGA Golf"
+    },
+    {
+      "pick": 349,
+      "round": 25,
+      "team": "smelscifi",
+      "player": "Ninjas in Pyjamas",
+      "sport": "Counter Strike"
+    },
+    {
+      "pick": 350,
+      "round": 25,
+      "team": "bakrondo",
+      "player": "Pittsburgh Steelers",
+      "sport": "NFL"
+    }
+  ],
+  "team_rosters": {
+    "code.monkey": [
+      {
+        "pick": 1,
+        "player": "Scottie Scheffler",
+        "sport": "PGA Golf"
+      },
+      {
+        "pick": 28,
+        "player": "Argentina",
+        "sport": "FIFA Men's World Cup"
+      },
+      {
+        "pick": 29,
+        "player": "Zhao Xintong",
+        "sport": "Snooker"
+      },
+      {
+        "pick": 56,
+        "player": "Gian van Veen",
+        "sport": "PDC Darts"
+      },
+      {
+        "pick": 57,
+        "player": "Andrea Kimi Antonelli",
+        "sport": "Formula 1"
+      },
+      {
+        "pick": 84,
+        "player": "Atl\u00e9tico Madrid",
+        "sport": "UEFA Champions League"
+      },
+      {
+        "pick": 85,
+        "player": "PARIVISION",
+        "sport": "Counter Strike"
+      },
+      {
+        "pick": 112,
+        "player": "Seattle Storm",
+        "sport": "WNBA"
+      },
+      {
+        "pick": 113,
+        "player": "Iowa St.",
+        "sport": "NCAAM Basketball"
+      },
+      {
+        "pick": 140,
+        "player": "Baltimore Ravens",
+        "sport": "NFL"
+      },
+      {
+        "pick": 141,
+        "player": "Buffalo Bills",
+        "sport": "NFL"
+      },
+      {
+        "pick": 168,
+        "player": "Taylor Fritz",
+        "sport": "Tennis - Men"
+      },
+      {
+        "pick": 169,
+        "player": "Miami (FL)",
+        "sport": "NCAA Football"
+      },
+      {
+        "pick": 196,
+        "player": "St Kilda Saints",
+        "sport": "Aussie Rules Football"
+      },
+      {
+        "pick": 197,
+        "player": "Marcus Ericsson",
+        "sport": "Indycar Series"
+      },
+      {
+        "pick": 224,
+        "player": "Jasmine Paolini",
+        "sport": "Tennis - Women"
+      },
+      {
+        "pick": 225,
+        "player": "Oklahoma",
+        "sport": "NCAAW Basketball"
+      },
+      {
+        "pick": 252,
+        "player": "Ole Miss",
+        "sport": "NCAA Football"
+      },
+      {
+        "pick": 253,
+        "player": "Cincinnati Reds",
+        "sport": "MLB"
+      },
+      {
+        "pick": 280,
+        "player": "Panama",
+        "sport": "Little League World Series"
+      },
+      {
+        "pick": 281,
+        "player": "Philadelphia 76ers",
+        "sport": "NBA"
+      },
+      {
+        "pick": 308,
+        "player": "Beau Greaves",
+        "sport": "PDC Darts"
+      },
+      {
+        "pick": 309,
+        "player": "Barry Hawkins",
+        "sport": "Snooker"
+      },
+      {
+        "pick": 336,
+        "player": "Seattle Kraken",
+        "sport": "NHL"
+      },
+      {
+        "pick": 337,
+        "player": "Oliver Bearman",
+        "sport": "Formula 1"
+      }
+    ],
+    ".herbal": [
+      {
+        "pick": 2,
+        "player": "Carlos Alcaraz",
+        "sport": "Tennis - Men"
+      },
+      {
+        "pick": 27,
+        "player": "Charles Leclerc",
+        "sport": "Formula 1"
+      },
+      {
+        "pick": 30,
+        "player": "Josef Newgarden",
+        "sport": "Indycar Series"
+      },
+      {
+        "pick": 55,
+        "player": "Seattle Seahawks",
+        "sport": "NFL"
+      },
+      {
+        "pick": 58,
+        "player": "Kyren Wilson",
+        "sport": "Snooker"
+      },
+      {
+        "pick": 83,
+        "player": "Adelaide Crows",
+        "sport": "Aussie Rules Football"
+      },
+      {
+        "pick": 86,
+        "player": "Los Angeles Rams",
+        "sport": "NFL"
+      },
+      {
+        "pick": 111,
+        "player": "Oregon",
+        "sport": "NCAA Football"
+      },
+      {
+        "pick": 114,
+        "player": "Florida",
+        "sport": "NCAAM Basketball"
+      },
+      {
+        "pick": 139,
+        "player": "Boston Red Sox",
+        "sport": "MLB"
+      },
+      {
+        "pick": 142,
+        "player": "Real Madrid",
+        "sport": "UEFA Champions League"
+      },
+      {
+        "pick": 167,
+        "player": "Shaun Murphy",
+        "sport": "Snooker"
+      },
+      {
+        "pick": 170,
+        "player": "Dallas Wings",
+        "sport": "WNBA"
+      },
+      {
+        "pick": 195,
+        "player": "Buffalo Sabres",
+        "sport": "NHL"
+      },
+      {
+        "pick": 198,
+        "player": "Belgium",
+        "sport": "FIFA Men's World Cup"
+      },
+      {
+        "pick": 223,
+        "player": "Anaheim Ducks",
+        "sport": "NHL"
+      },
+      {
+        "pick": 226,
+        "player": "Toronto Raptors",
+        "sport": "NBA"
+      },
+      {
+        "pick": 251,
+        "player": "Justin Rose",
+        "sport": "PGA Golf"
+      },
+      {
+        "pick": 254,
+        "player": "Danny Noppert",
+        "sport": "PDC Darts"
+      },
+      {
+        "pick": 279,
+        "player": "Elina Svitolina",
+        "sport": "Tennis - Women"
+      },
+      {
+        "pick": 282,
+        "player": "Louisville",
+        "sport": "NCAAW Basketball"
+      },
+      {
+        "pick": 307,
+        "player": "Golden State Warriors",
+        "sport": "NBA"
+      },
+      {
+        "pick": 310,
+        "player": "Boston Bruins",
+        "sport": "NHL"
+      },
+      {
+        "pick": 335,
+        "player": "US - Midwest",
+        "sport": "Little League World Series"
+      },
+      {
+        "pick": 338,
+        "player": "3DMAX",
+        "sport": "Counter Strike"
+      }
+    ],
+    "mart121": [
+      {
+        "pick": 3,
+        "player": "George Russell",
+        "sport": "Formula 1"
+      },
+      {
+        "pick": 26,
+        "player": "Indiana Fever",
+        "sport": "WNBA"
+      },
+      {
+        "pick": 31,
+        "player": "Denver Nuggets",
+        "sport": "NBA"
+      },
+      {
+        "pick": 54,
+        "player": "Manchester City",
+        "sport": "UEFA Champions League"
+      },
+      {
+        "pick": 59,
+        "player": "Team Falcons",
+        "sport": "Counter Strike"
+      },
+      {
+        "pick": 82,
+        "player": "New York Yankees",
+        "sport": "MLB"
+      },
+      {
+        "pick": 87,
+        "player": "US - West",
+        "sport": "Little League World Series"
+      },
+      {
+        "pick": 110,
+        "player": "Kansas",
+        "sport": "NCAAM Basketball"
+      },
+      {
+        "pick": 115,
+        "player": "Edmonton Oilers",
+        "sport": "NHL"
+      },
+      {
+        "pick": 138,
+        "player": "Green Bay Packers",
+        "sport": "NFL"
+      },
+      {
+        "pick": 143,
+        "player": "Norway",
+        "sport": "FIFA Men's World Cup"
+      },
+      {
+        "pick": 166,
+        "player": "Gary Anderson",
+        "sport": "PDC Darts"
+      },
+      {
+        "pick": 171,
+        "player": "United States",
+        "sport": "FIFA Men's World Cup"
+      },
+      {
+        "pick": 194,
+        "player": "Florida",
+        "sport": "NCAA Football"
+      },
+      {
+        "pick": 199,
+        "player": "Richmond Tigers",
+        "sport": "Aussie Rules Football"
+      },
+      {
+        "pick": 222,
+        "player": "Qinwen Zheng",
+        "sport": "Tennis - Women"
+      },
+      {
+        "pick": 227,
+        "player": "Justin Thomas",
+        "sport": "PGA Golf"
+      },
+      {
+        "pick": 250,
+        "player": "Luca Brecel",
+        "sport": "Snooker"
+      },
+      {
+        "pick": 255,
+        "player": "Los Angeles Kings",
+        "sport": "NHL"
+      },
+      {
+        "pick": 278,
+        "player": "FUT Esports",
+        "sport": "Counter Strike"
+      },
+      {
+        "pick": 283,
+        "player": "USC",
+        "sport": "NCAA Football"
+      },
+      {
+        "pick": 306,
+        "player": "US - Great Lakes",
+        "sport": "Little League World Series"
+      },
+      {
+        "pick": 311,
+        "player": "Alexander Rossi",
+        "sport": "Indycar Series"
+      },
+      {
+        "pick": 334,
+        "player": "North Carolina",
+        "sport": "NCAAW Basketball"
+      },
+      {
+        "pick": 339,
+        "player": "Matteo Berrettini",
+        "sport": "Tennis - Men"
+      }
+    ],
+    "apatel78": [
+      {
+        "pick": 4,
+        "player": "Luke Littler",
+        "sport": "PDC Darts"
+      },
+      {
+        "pick": 25,
+        "player": "Coco Gauff",
+        "sport": "Tennis - Women"
+      },
+      {
+        "pick": 32,
+        "player": "Rory McIlroy",
+        "sport": "PGA Golf"
+      },
+      {
+        "pick": 53,
+        "player": "Houston",
+        "sport": "NCAAM Basketball"
+      },
+      {
+        "pick": 60,
+        "player": "Wu Yize",
+        "sport": "Snooker"
+      },
+      {
+        "pick": 81,
+        "player": "Team Spirit",
+        "sport": "Counter Strike"
+      },
+      {
+        "pick": 88,
+        "player": "Detroit Pistons",
+        "sport": "NBA"
+      },
+      {
+        "pick": 109,
+        "player": "Michigan",
+        "sport": "NCAAW Basketball"
+      },
+      {
+        "pick": 116,
+        "player": "Atlanta Dream",
+        "sport": "WNBA"
+      },
+      {
+        "pick": 137,
+        "player": "Detroit Tigers",
+        "sport": "MLB"
+      },
+      {
+        "pick": 144,
+        "player": "Lorenzo Musetti",
+        "sport": "Tennis - Men"
+      },
+      {
+        "pick": 165,
+        "player": "Netherlands",
+        "sport": "FIFA Men's World Cup"
+      },
+      {
+        "pick": 172,
+        "player": "Texas Tech",
+        "sport": "NCAA Football"
+      },
+      {
+        "pick": 193,
+        "player": "Los Angeles Chargers",
+        "sport": "NFL"
+      },
+      {
+        "pick": 200,
+        "player": "Bod\u00f8/Glimt",
+        "sport": "UEFA Champions League"
+      },
+      {
+        "pick": 221,
+        "player": "New York Islanders",
+        "sport": "NHL"
+      },
+      {
+        "pick": 228,
+        "player": "Indianapolis Colts",
+        "sport": "NFL"
+      },
+      {
+        "pick": 249,
+        "player": "Nebraska",
+        "sport": "NCAAM Basketball"
+      },
+      {
+        "pick": 256,
+        "player": "Nico H\u00fclkenberg",
+        "sport": "Formula 1"
+      },
+      {
+        "pick": 277,
+        "player": "US - Mid-Atlantic",
+        "sport": "Little League World Series"
+      },
+      {
+        "pick": 284,
+        "player": "New Orleans Saints",
+        "sport": "NFL"
+      },
+      {
+        "pick": 305,
+        "player": "Akshay Bhatia",
+        "sport": "PGA Golf"
+      },
+      {
+        "pick": 312,
+        "player": "Alexandra Eala",
+        "sport": "Tennis - Women"
+      },
+      {
+        "pick": 333,
+        "player": "Marcus Armstrong",
+        "sport": "Indycar Series"
+      },
+      {
+        "pick": 340,
+        "player": "Essendon Bombers",
+        "sport": "Aussie Rules Football"
+      }
+    ],
+    "pandabair": [
+      {
+        "pick": 5,
+        "player": "Aryna Sabalenka",
+        "sport": "Tennis - Women"
+      },
+      {
+        "pick": 24,
+        "player": "Spain",
+        "sport": "FIFA Men's World Cup"
+      },
+      {
+        "pick": 33,
+        "player": "Duke",
+        "sport": "NCAAM Basketball"
+      },
+      {
+        "pick": 52,
+        "player": "Paris Saint-Germain",
+        "sport": "UEFA Champions League"
+      },
+      {
+        "pick": 61,
+        "player": "Neil Robertson",
+        "sport": "Snooker"
+      },
+      {
+        "pick": 80,
+        "player": "Texas",
+        "sport": "NCAA Football"
+      },
+      {
+        "pick": 89,
+        "player": "MOUZ",
+        "sport": "Counter Strike"
+      },
+      {
+        "pick": 108,
+        "player": "LSU",
+        "sport": "NCAAW Basketball"
+      },
+      {
+        "pick": 117,
+        "player": "Golden State Valkyries",
+        "sport": "WNBA"
+      },
+      {
+        "pick": 136,
+        "player": "New York Mets",
+        "sport": "MLB"
+      },
+      {
+        "pick": 145,
+        "player": "Ben Shelton",
+        "sport": "Tennis - Men"
+      },
+      {
+        "pick": 164,
+        "player": "Alex de Minaur",
+        "sport": "Tennis - Men"
+      },
+      {
+        "pick": 173,
+        "player": "LSU",
+        "sport": "NCAA Football"
+      },
+      {
+        "pick": 192,
+        "player": "Wessel Nijman",
+        "sport": "PDC Darts"
+      },
+      {
+        "pick": 201,
+        "player": "Utah Mammoth",
+        "sport": "NHL"
+      },
+      {
+        "pick": 220,
+        "player": "Jakub Mensik",
+        "sport": "Tennis - Men"
+      },
+      {
+        "pick": 229,
+        "player": "Jacksonville Jaguars",
+        "sport": "NFL"
+      },
+      {
+        "pick": 248,
+        "player": "Alexander Bublik",
+        "sport": "Tennis - Men"
+      },
+      {
+        "pick": 257,
+        "player": "Tampa Bay Buccaneers",
+        "sport": "NFL"
+      },
+      {
+        "pick": 276,
+        "player": "Dennis Hauger",
+        "sport": "Indycar Series"
+      },
+      {
+        "pick": 285,
+        "player": "Hideki Matsuyama",
+        "sport": "PGA Golf"
+      },
+      {
+        "pick": 304,
+        "player": "Charlotte Hornets",
+        "sport": "NBA"
+      },
+      {
+        "pick": 313,
+        "player": "Gabriel Bortoleto",
+        "sport": "Formula 1"
+      },
+      {
+        "pick": 332,
+        "player": "US - Northwest",
+        "sport": "Little League World Series"
+      },
+      {
+        "pick": 341,
+        "player": "West Coast Eagles",
+        "sport": "Aussie Rules Football"
+      }
+    ],
+    "christhrowsrocks": [
+      {
+        "pick": 6,
+        "player": "Alex Palou",
+        "sport": "Indycar Series"
+      },
+      {
+        "pick": 23,
+        "player": "Michigan",
+        "sport": "NCAAM Basketball"
+      },
+      {
+        "pick": 34,
+        "player": "New York Liberty",
+        "sport": "WNBA"
+      },
+      {
+        "pick": 51,
+        "player": "Kyle Kirkwood",
+        "sport": "Indycar Series"
+      },
+      {
+        "pick": 62,
+        "player": "Scott McLaughlin",
+        "sport": "Indycar Series"
+      },
+      {
+        "pick": 79,
+        "player": "Geelong Cats",
+        "sport": "Aussie Rules Football"
+      },
+      {
+        "pick": 90,
+        "player": "Hawthorn Hawks",
+        "sport": "Aussie Rules Football"
+      },
+      {
+        "pick": 107,
+        "player": "Western Bulldogs",
+        "sport": "Aussie Rules Football"
+      },
+      {
+        "pick": 118,
+        "player": "Jessica Pegula",
+        "sport": "Tennis - Women"
+      },
+      {
+        "pick": 135,
+        "player": "Atlanta Braves",
+        "sport": "MLB"
+      },
+      {
+        "pick": 146,
+        "player": "John Higgins",
+        "sport": "Snooker"
+      },
+      {
+        "pick": 163,
+        "player": "Mark Williams",
+        "sport": "Snooker"
+      },
+      {
+        "pick": 174,
+        "player": "G2 Esports",
+        "sport": "Counter Strike"
+      },
+      {
+        "pick": 191,
+        "player": "Curacao",
+        "sport": "Little League World Series"
+      },
+      {
+        "pick": 202,
+        "player": "Sporting CP",
+        "sport": "UEFA Champions League"
+      },
+      {
+        "pick": 219,
+        "player": "Colombia",
+        "sport": "FIFA Men's World Cup"
+      },
+      {
+        "pick": 230,
+        "player": "Pittsburgh Penguins",
+        "sport": "NHL"
+      },
+      {
+        "pick": 247,
+        "player": "Pierre Gasly",
+        "sport": "Formula 1"
+      },
+      {
+        "pick": 258,
+        "player": "TCU",
+        "sport": "NCAAW Basketball"
+      },
+      {
+        "pick": 275,
+        "player": "Nathan Aspinall",
+        "sport": "PDC Darts"
+      },
+      {
+        "pick": 286,
+        "player": "Russell Henley",
+        "sport": "PGA Golf"
+      },
+      {
+        "pick": 303,
+        "player": "Miami Heat",
+        "sport": "NBA"
+      },
+      {
+        "pick": 314,
+        "player": "Penn State",
+        "sport": "NCAA Football"
+      },
+      {
+        "pick": 331,
+        "player": "Atlanta Falcons",
+        "sport": "NFL"
+      },
+      {
+        "pick": 342,
+        "player": "Tommy Paul",
+        "sport": "Tennis - Men"
+      }
+    ],
+    "snarkymcgee": [
+      {
+        "pick": 7,
+        "player": "Los Angeles Dodgers",
+        "sport": "MLB"
+      },
+      {
+        "pick": 22,
+        "player": "Bayern Munich",
+        "sport": "UEFA Champions League"
+      },
+      {
+        "pick": 35,
+        "player": "Brazil",
+        "sport": "FIFA Men's World Cup"
+      },
+      {
+        "pick": 50,
+        "player": "Novak Djokovic",
+        "sport": "Tennis - Men"
+      },
+      {
+        "pick": 63,
+        "player": "San Antonio Spurs",
+        "sport": "NBA"
+      },
+      {
+        "pick": 78,
+        "player": "Illinois",
+        "sport": "NCAAM Basketball"
+      },
+      {
+        "pick": 91,
+        "player": "Vanderbilt",
+        "sport": "NCAAW Basketball"
+      },
+      {
+        "pick": 106,
+        "player": "Will Power",
+        "sport": "Indycar Series"
+      },
+      {
+        "pick": 119,
+        "player": "Florida Panthers",
+        "sport": "NHL"
+      },
+      {
+        "pick": 134,
+        "player": "US - Southwest",
+        "sport": "Little League World Series"
+      },
+      {
+        "pick": 147,
+        "player": "Fernando Alonso",
+        "sport": "Formula 1"
+      },
+      {
+        "pick": 162,
+        "player": "Kansas City Chiefs",
+        "sport": "NFL"
+      },
+      {
+        "pick": 175,
+        "player": "Victoria Mboko",
+        "sport": "Tennis - Women"
+      },
+      {
+        "pick": 190,
+        "player": "Baltimore Orioles",
+        "sport": "MLB"
+      },
+      {
+        "pick": 203,
+        "player": "Collin Morikawa",
+        "sport": "PGA Golf"
+      },
+      {
+        "pick": 218,
+        "player": "Kansas City Royals",
+        "sport": "MLB"
+      },
+      {
+        "pick": 231,
+        "player": "San Diego Padres",
+        "sport": "MLB"
+      },
+      {
+        "pick": 246,
+        "player": "Texas Rangers",
+        "sport": "MLB"
+      },
+      {
+        "pick": 259,
+        "player": "Astralis",
+        "sport": "Counter Strike"
+      },
+      {
+        "pick": 274,
+        "player": "Xiao Guodong",
+        "sport": "Snooker"
+      },
+      {
+        "pick": 287,
+        "player": "Michigan",
+        "sport": "NCAA Football"
+      },
+      {
+        "pick": 302,
+        "player": "Rob Cross",
+        "sport": "PDC Darts"
+      },
+      {
+        "pick": 315,
+        "player": "Port Adelaide Power",
+        "sport": "Aussie Rules Football"
+      },
+      {
+        "pick": 330,
+        "player": "Portland Fire",
+        "sport": "WNBA"
+      },
+      {
+        "pick": 343,
+        "player": "Arizona Diamondbacks",
+        "sport": "MLB"
+      }
+    ],
+    "Madmike": [
+      {
+        "pick": 8,
+        "player": "Connecticut (UConn)",
+        "sport": "NCAAW Basketball"
+      },
+      {
+        "pick": 21,
+        "player": "Minnesota Lynx",
+        "sport": "WNBA"
+      },
+      {
+        "pick": 36,
+        "player": "Tampa Bay Lightning",
+        "sport": "NHL"
+      },
+      {
+        "pick": 49,
+        "player": "Lewis Hamilton",
+        "sport": "Formula 1"
+      },
+      {
+        "pick": 64,
+        "player": "Ohio State",
+        "sport": "NCAA Football"
+      },
+      {
+        "pick": 77,
+        "player": "Phoenix Mercury",
+        "sport": "WNBA"
+      },
+      {
+        "pick": 92,
+        "player": "Portugal",
+        "sport": "FIFA Men's World Cup"
+      },
+      {
+        "pick": 105,
+        "player": "New York Knicks",
+        "sport": "NBA"
+      },
+      {
+        "pick": 120,
+        "player": "GWS Giants",
+        "sport": "Aussie Rules Football"
+      },
+      {
+        "pick": 133,
+        "player": "Christian Lundgaard",
+        "sport": "Indycar Series"
+      },
+      {
+        "pick": 148,
+        "player": "Jon Rahm",
+        "sport": "PGA Golf"
+      },
+      {
+        "pick": 161,
+        "player": "Aurora",
+        "sport": "Counter Strike"
+      },
+      {
+        "pick": 176,
+        "player": "Mark Allen",
+        "sport": "Snooker"
+      },
+      {
+        "pick": 189,
+        "player": "Ludvig Aberg",
+        "sport": "PGA Golf"
+      },
+      {
+        "pick": 204,
+        "player": "Purdue",
+        "sport": "NCAAM Basketball"
+      },
+      {
+        "pick": 217,
+        "player": "Joao Fonseca",
+        "sport": "Tennis - Men"
+      },
+      {
+        "pick": 232,
+        "player": "Stephen Bunting",
+        "sport": "PDC Darts"
+      },
+      {
+        "pick": 245,
+        "player": "Cincinnati Bengals",
+        "sport": "NFL"
+      },
+      {
+        "pick": 260,
+        "player": "US - Metro",
+        "sport": "Little League World Series"
+      },
+      {
+        "pick": 273,
+        "player": "Jack Lisowski",
+        "sport": "Snooker"
+      },
+      {
+        "pick": 288,
+        "player": "Galatasaray",
+        "sport": "UEFA Champions League"
+      },
+      {
+        "pick": 301,
+        "player": "Karolina Muchova",
+        "sport": "Tennis - Women"
+      },
+      {
+        "pick": 316,
+        "player": "Iva Jovic",
+        "sport": "Tennis - Women"
+      },
+      {
+        "pick": 329,
+        "player": "Pittsburgh Pirates",
+        "sport": "MLB"
+      },
+      {
+        "pick": 344,
+        "player": "Ali Carter",
+        "sport": "Snooker"
+      }
+    ],
+    "brando1609": [
+      {
+        "pick": 9,
+        "player": "Team Vitality",
+        "sport": "Counter Strike"
+      },
+      {
+        "pick": 20,
+        "player": "Lando Norris",
+        "sport": "Formula 1"
+      },
+      {
+        "pick": 37,
+        "player": "Luke Humphries",
+        "sport": "PDC Darts"
+      },
+      {
+        "pick": 48,
+        "player": "Elena Rybakina",
+        "sport": "Tennis - Women"
+      },
+      {
+        "pick": 65,
+        "player": "Xander Schauffele",
+        "sport": "PGA Golf"
+      },
+      {
+        "pick": 76,
+        "player": "Alexander Zverev",
+        "sport": "Tennis - Men"
+      },
+      {
+        "pick": 93,
+        "player": "Connecticut",
+        "sport": "NCAAM Basketball"
+      },
+      {
+        "pick": 104,
+        "player": "Madison Keys",
+        "sport": "Tennis - Women"
+      },
+      {
+        "pick": 121,
+        "player": "Minnesota Timberwolves",
+        "sport": "NBA"
+      },
+      {
+        "pick": 132,
+        "player": "Detroit Red Wings",
+        "sport": "NHL"
+      },
+      {
+        "pick": 149,
+        "player": "Natus Vincere",
+        "sport": "Counter Strike"
+      },
+      {
+        "pick": 160,
+        "player": "Detroit Lions",
+        "sport": "NFL"
+      },
+      {
+        "pick": 177,
+        "player": "Cleveland Guardians",
+        "sport": "MLB"
+      },
+      {
+        "pick": 188,
+        "player": "Mexico",
+        "sport": "Little League World Series"
+      },
+      {
+        "pick": 205,
+        "player": "Houston Texans",
+        "sport": "NFL"
+      },
+      {
+        "pick": 216,
+        "player": "Iowa",
+        "sport": "NCAAW Basketball"
+      },
+      {
+        "pick": 233,
+        "player": "Oklahoma",
+        "sport": "NCAA Football"
+      },
+      {
+        "pick": 244,
+        "player": "Newcastle United",
+        "sport": "UEFA Champions League"
+      },
+      {
+        "pick": 261,
+        "player": "Arkansas",
+        "sport": "NCAAM Basketball"
+      },
+      {
+        "pick": 272,
+        "player": "Washington Mystics",
+        "sport": "WNBA"
+      },
+      {
+        "pick": 289,
+        "player": "North Melbourne Kangaroos",
+        "sport": "Aussie Rules Football"
+      },
+      {
+        "pick": 300,
+        "player": "Uruguay",
+        "sport": "FIFA Men's World Cup"
+      },
+      {
+        "pick": 317,
+        "player": "Mick Schumacher",
+        "sport": "Indycar Series"
+      },
+      {
+        "pick": 328,
+        "player": "Vanderbilt",
+        "sport": "NCAAM Basketball"
+      },
+      {
+        "pick": 345,
+        "player": "Gary Wilson",
+        "sport": "Snooker"
+      }
+    ],
+    "tanay002": [
+      {
+        "pick": 10,
+        "player": "Jannik Sinner",
+        "sport": "Tennis - Men"
+      },
+      {
+        "pick": 19,
+        "player": "Colorado Avalanche",
+        "sport": "NHL"
+      },
+      {
+        "pick": 38,
+        "player": "South Carolina",
+        "sport": "NCAAW Basketball"
+      },
+      {
+        "pick": 47,
+        "player": "Japan",
+        "sport": "Little League World Series"
+      },
+      {
+        "pick": 66,
+        "player": "Oscar Piastri",
+        "sport": "Formula 1"
+      },
+      {
+        "pick": 75,
+        "player": "Indiana",
+        "sport": "NCAA Football"
+      },
+      {
+        "pick": 94,
+        "player": "Boston Celtics",
+        "sport": "NBA"
+      },
+      {
+        "pick": 103,
+        "player": "Sydney Swans",
+        "sport": "Aussie Rules Football"
+      },
+      {
+        "pick": 122,
+        "player": "Ronnie O\u2019Sullivan",
+        "sport": "Snooker"
+      },
+      {
+        "pick": 131,
+        "player": "Germany",
+        "sport": "FIFA Men's World Cup"
+      },
+      {
+        "pick": 150,
+        "player": "David Malukas",
+        "sport": "Indycar Series"
+      },
+      {
+        "pick": 159,
+        "player": "San Francisco 49ers",
+        "sport": "NFL"
+      },
+      {
+        "pick": 178,
+        "player": "FaZe Clan",
+        "sport": "Counter Strike"
+      },
+      {
+        "pick": 187,
+        "player": "Emma Raducanu",
+        "sport": "Tennis - Women"
+      },
+      {
+        "pick": 206,
+        "player": "Milwaukee Brewers",
+        "sport": "MLB"
+      },
+      {
+        "pick": 215,
+        "player": "Texas Tech",
+        "sport": "NCAAM Basketball"
+      },
+      {
+        "pick": 234,
+        "player": "Viktor Hovland",
+        "sport": "PGA Golf"
+      },
+      {
+        "pick": 243,
+        "player": "Tottenham Hotspur",
+        "sport": "UEFA Champions League"
+      },
+      {
+        "pick": 262,
+        "player": "Tyrrell Hatton",
+        "sport": "PGA Golf"
+      },
+      {
+        "pick": 271,
+        "player": "Chris Dobey",
+        "sport": "PDC Darts"
+      },
+      {
+        "pick": 290,
+        "player": "Robert MacIntyre",
+        "sport": "PGA Golf"
+      },
+      {
+        "pick": 299,
+        "player": "Patrick Cantlay",
+        "sport": "PGA Golf"
+      },
+      {
+        "pick": 318,
+        "player": "Cameron Young",
+        "sport": "PGA Golf"
+      },
+      {
+        "pick": 327,
+        "player": "Wisconsin",
+        "sport": "NCAAM Basketball"
+      },
+      {
+        "pick": 346,
+        "player": "Toronto Tempo",
+        "sport": "WNBA"
+      }
+    ],
+    "ikyn": [
+      {
+        "pick": 11,
+        "player": "Iga Swiatek",
+        "sport": "Tennis - Women"
+      },
+      {
+        "pick": 18,
+        "player": "Las Vegas Aces",
+        "sport": "WNBA"
+      },
+      {
+        "pick": 39,
+        "player": "UCLA",
+        "sport": "NCAAW Basketball"
+      },
+      {
+        "pick": 46,
+        "player": "Carolina Hurricanes",
+        "sport": "NHL"
+      },
+      {
+        "pick": 67,
+        "player": "Scott Dixon",
+        "sport": "Indycar Series"
+      },
+      {
+        "pick": 74,
+        "player": "Michael van Gerwen",
+        "sport": "PDC Darts"
+      },
+      {
+        "pick": 95,
+        "player": "Latin America",
+        "sport": "Little League World Series"
+      },
+      {
+        "pick": 102,
+        "player": "Vegas Golden Knights",
+        "sport": "NHL"
+      },
+      {
+        "pick": 123,
+        "player": "Caribbean",
+        "sport": "Little League World Series"
+      },
+      {
+        "pick": 130,
+        "player": "Houston Rockets",
+        "sport": "NBA"
+      },
+      {
+        "pick": 151,
+        "player": "Collingwood Magpies",
+        "sport": "Aussie Rules Football"
+      },
+      {
+        "pick": 158,
+        "player": "Denver Broncos",
+        "sport": "NFL"
+      },
+      {
+        "pick": 179,
+        "player": "Alabama",
+        "sport": "NCAA Football"
+      },
+      {
+        "pick": 186,
+        "player": "Melbourne Demons",
+        "sport": "Aussie Rules Football"
+      },
+      {
+        "pick": 207,
+        "player": "Chicago Bears",
+        "sport": "NFL"
+      },
+      {
+        "pick": 214,
+        "player": "Michigan St.",
+        "sport": "NCAAM Basketball"
+      },
+      {
+        "pick": 235,
+        "player": "Japan",
+        "sport": "FIFA Men's World Cup"
+      },
+      {
+        "pick": 242,
+        "player": "Liam Lawson",
+        "sport": "Formula 1"
+      },
+      {
+        "pick": 263,
+        "player": "Atalanta",
+        "sport": "UEFA Champions League"
+      },
+      {
+        "pick": 270,
+        "player": "Patrick Reed",
+        "sport": "PGA Golf"
+      },
+      {
+        "pick": 291,
+        "player": "Andrey Rublev",
+        "sport": "Tennis - Men"
+      },
+      {
+        "pick": 298,
+        "player": "Ding Junhui",
+        "sport": "Snooker"
+      },
+      {
+        "pick": 319,
+        "player": "San Francisco Giants",
+        "sport": "MLB"
+      },
+      {
+        "pick": 326,
+        "player": "Team Liquid",
+        "sport": "Counter Strike"
+      },
+      {
+        "pick": 347,
+        "player": "Esteban Ocon",
+        "sport": "Formula 1"
+      }
+    ],
+    "peteg__": [
+      {
+        "pick": 12,
+        "player": "Arsenal",
+        "sport": "UEFA Champions League"
+      },
+      {
+        "pick": 17,
+        "player": "Asia-Pacific and Middle East",
+        "sport": "Little League World Series"
+      },
+      {
+        "pick": 40,
+        "player": "England",
+        "sport": "FIFA Men's World Cup"
+      },
+      {
+        "pick": 45,
+        "player": "Mark Selby",
+        "sport": "Snooker"
+      },
+      {
+        "pick": 68,
+        "player": "FURIA",
+        "sport": "Counter Strike"
+      },
+      {
+        "pick": 73,
+        "player": "Gold Coast Suns",
+        "sport": "Aussie Rules Football"
+      },
+      {
+        "pick": 96,
+        "player": "Amanda Anisimova",
+        "sport": "Tennis - Women"
+      },
+      {
+        "pick": 101,
+        "player": "Bryson DeChambeau",
+        "sport": "PGA Golf"
+      },
+      {
+        "pick": 124,
+        "player": "Philadelphia Phillies",
+        "sport": "MLB"
+      },
+      {
+        "pick": 129,
+        "player": "Jack Draper",
+        "sport": "Tennis - Men"
+      },
+      {
+        "pick": 152,
+        "player": "Josh Rock",
+        "sport": "PDC Darts"
+      },
+      {
+        "pick": 157,
+        "player": "Philadelphia Eagles",
+        "sport": "NFL"
+      },
+      {
+        "pick": 180,
+        "player": "Texas A&M",
+        "sport": "NCAA Football"
+      },
+      {
+        "pick": 185,
+        "player": "Houston Astros",
+        "sport": "MLB"
+      },
+      {
+        "pick": 208,
+        "player": "Isack Hadjar",
+        "sport": "Formula 1"
+      },
+      {
+        "pick": 213,
+        "player": "Montreal Canadiens",
+        "sport": "NHL"
+      },
+      {
+        "pick": 236,
+        "player": "Chang Bingyu",
+        "sport": "Snooker"
+      },
+      {
+        "pick": 241,
+        "player": "Oregon",
+        "sport": "NCAAW Basketball"
+      },
+      {
+        "pick": 264,
+        "player": "Italy",
+        "sport": "FIFA Men's World Cup"
+      },
+      {
+        "pick": 269,
+        "player": "Naomi Osaka",
+        "sport": "Tennis - Women"
+      },
+      {
+        "pick": 292,
+        "player": "Felix Rosenqvist",
+        "sport": "Indycar Series"
+      },
+      {
+        "pick": 297,
+        "player": "Ohio St.",
+        "sport": "NCAAM Basketball"
+      },
+      {
+        "pick": 320,
+        "player": "Orlando Magic",
+        "sport": "NBA"
+      },
+      {
+        "pick": 325,
+        "player": "Connecticut Sun",
+        "sport": "WNBA"
+      },
+      {
+        "pick": 348,
+        "player": "Brooks Koepka",
+        "sport": "PGA Golf"
+      }
+    ],
+    "smelscifi": [
+      {
+        "pick": 13,
+        "player": "Oklahoma City Thunder",
+        "sport": "NBA"
+      },
+      {
+        "pick": 16,
+        "player": "Judd Trump",
+        "sport": "Snooker"
+      },
+      {
+        "pick": 41,
+        "player": "Tommy Fleetwood",
+        "sport": "PGA Golf"
+      },
+      {
+        "pick": 44,
+        "player": "France",
+        "sport": "FIFA Men's World Cup"
+      },
+      {
+        "pick": 69,
+        "player": "Texas",
+        "sport": "NCAAW Basketball"
+      },
+      {
+        "pick": 72,
+        "player": "Liverpool",
+        "sport": "UEFA Champions League"
+      },
+      {
+        "pick": 97,
+        "player": "Dallas Stars",
+        "sport": "NHL"
+      },
+      {
+        "pick": 100,
+        "player": "Seattle Mariners",
+        "sport": "MLB"
+      },
+      {
+        "pick": 125,
+        "player": "Georgia",
+        "sport": "NCAA Football"
+      },
+      {
+        "pick": 128,
+        "player": "US - Southeast",
+        "sport": "Little League World Series"
+      },
+      {
+        "pick": 153,
+        "player": "Chelsea",
+        "sport": "UEFA Champions League"
+      },
+      {
+        "pick": 156,
+        "player": "Gerwyn Price",
+        "sport": "PDC Darts"
+      },
+      {
+        "pick": 181,
+        "player": "New England Patriots",
+        "sport": "NFL"
+      },
+      {
+        "pick": 184,
+        "player": "Gonzaga",
+        "sport": "NCAAM Basketball"
+      },
+      {
+        "pick": 209,
+        "player": "Daniil Medvedev",
+        "sport": "Tennis - Men"
+      },
+      {
+        "pick": 212,
+        "player": "Morocco",
+        "sport": "FIFA Men's World Cup"
+      },
+      {
+        "pick": 237,
+        "player": "St. John's",
+        "sport": "NCAAM Basketball"
+      },
+      {
+        "pick": 240,
+        "player": "BYU",
+        "sport": "NCAA Football"
+      },
+      {
+        "pick": 265,
+        "player": "BYU",
+        "sport": "NCAAM Basketball"
+      },
+      {
+        "pick": 268,
+        "player": "Carlton Blues",
+        "sport": "Aussie Rules Football"
+      },
+      {
+        "pick": 293,
+        "player": "Paula Badosa",
+        "sport": "Tennis - Women"
+      },
+      {
+        "pick": 296,
+        "player": "Arvid Lindblad",
+        "sport": "Formula 1"
+      },
+      {
+        "pick": 321,
+        "player": "Chicago Sky",
+        "sport": "WNBA"
+      },
+      {
+        "pick": 324,
+        "player": "Christian Rasmussen",
+        "sport": "Indycar Series"
+      },
+      {
+        "pick": 349,
+        "player": "Ninjas in Pyjamas",
+        "sport": "Counter Strike"
+      }
+    ],
+    "bakrondo": [
+      {
+        "pick": 14,
+        "player": "Max Verstappen",
+        "sport": "Formula 1"
+      },
+      {
+        "pick": 15,
+        "player": "Brisbane Lions",
+        "sport": "Aussie Rules Football"
+      },
+      {
+        "pick": 42,
+        "player": "Pato O\u2019Ward",
+        "sport": "Indycar Series"
+      },
+      {
+        "pick": 43,
+        "player": "Arizona",
+        "sport": "NCAAM Basketball"
+      },
+      {
+        "pick": 70,
+        "player": "Notre Dame",
+        "sport": "NCAA Football"
+      },
+      {
+        "pick": 71,
+        "player": "Barcelona",
+        "sport": "UEFA Champions League"
+      },
+      {
+        "pick": 98,
+        "player": "Minnesota Wild",
+        "sport": "NHL"
+      },
+      {
+        "pick": 99,
+        "player": "Cleveland Cavaliers",
+        "sport": "NBA"
+      },
+      {
+        "pick": 126,
+        "player": "Toronto Blue Jays",
+        "sport": "MLB"
+      },
+      {
+        "pick": 127,
+        "player": "Mirra Andreeva",
+        "sport": "Tennis - Women"
+      },
+      {
+        "pick": 154,
+        "player": "The MongolZ",
+        "sport": "Counter Strike"
+      },
+      {
+        "pick": 155,
+        "player": "Fremantle Dockers",
+        "sport": "Aussie Rules Football"
+      },
+      {
+        "pick": 182,
+        "player": "Chicago Cubs",
+        "sport": "MLB"
+      },
+      {
+        "pick": 183,
+        "player": "Duke",
+        "sport": "NCAAW Basketball"
+      },
+      {
+        "pick": 210,
+        "player": "Los Angeles Sparks",
+        "sport": "WNBA"
+      },
+      {
+        "pick": 211,
+        "player": "LA Lakers",
+        "sport": "NBA"
+      },
+      {
+        "pick": 238,
+        "player": "US - Mountain",
+        "sport": "Little League World Series"
+      },
+      {
+        "pick": 239,
+        "player": "Chris Gotterup",
+        "sport": "PGA Golf"
+      },
+      {
+        "pick": 266,
+        "player": "Jonny Clayton",
+        "sport": "PDC Darts"
+      },
+      {
+        "pick": 267,
+        "player": "Felix Auger-Aliassime",
+        "sport": "Tennis - Men"
+      },
+      {
+        "pick": 294,
+        "player": "Mexico",
+        "sport": "FIFA Men's World Cup"
+      },
+      {
+        "pick": 295,
+        "player": "Phoenix Suns",
+        "sport": "NBA"
+      },
+      {
+        "pick": 322,
+        "player": "Si Jiahui",
+        "sport": "Snooker"
+      },
+      {
+        "pick": 323,
+        "player": "Dallas Cowboys",
+        "sport": "NFL"
+      },
+      {
+        "pick": 350,
+        "player": "Pittsburgh Steelers",
+        "sport": "NFL"
+      }
+    ]
+  },
+  "current_pick": 350,
+  "last_known_pick": 349,
+  "api_available": false,
+  "using_sample_data": true,
+  "draft_was_paused": false,
+  "draft_active": false,
+  "league_name": "Rumble"
+}
